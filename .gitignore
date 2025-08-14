@@ -1,0 +1,41 @@
+# Node.js & npm
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Tailwind CSS
+dist/
+build/
+.tailwindcss
+
+# Environment files
+.env
+.env.local
+.env*.local
+
+# IDE/Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# System
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Test/coverage
+coverage/
+.nyc_output/
+
+# Optional: Cache (falls du einen Static Site Generator nutzt)
+.cache/
+.sass-cache/
