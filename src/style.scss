@@ -24,14 +24,22 @@ body {
 
 
 body {
-    background: url("/assets/images/background.jpg") center/cover no-repeat;; 
+    // background: url("/assets/images/background.jpg") center/cover no-repeat;; 
+
   
   min-height: 100vh;
   font-family: 'Roboto', sans-serif;
   font-weight: 400;
+  // Scroll-Balken wird dadurch verhindert 
+  overflow: hidden;
 }
 
-
+canvas#bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1; // Legt das Canvas hinter alles andere
+}
 
 
 
@@ -43,6 +51,7 @@ body {
     justify-content: center;
     text-align: center;
     width: 100%;
+    background-color: transparent; 
 }
 
 // Button wrap
