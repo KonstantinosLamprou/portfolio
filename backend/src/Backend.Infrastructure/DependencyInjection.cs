@@ -3,7 +3,6 @@ using Backend.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Identity; 
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,10 +18,6 @@ public static class DependencyInjection
         // DbContext mit PostgreSQL konfigurieren
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(connectionString));
-
-        // Identity konfigurieren
-        services.AddIdentityApiEndpoints<ApplicationUser>()
-            .AddEntityFrameworkStores<ApplicationDbContext>();
 
         return services;
     }
