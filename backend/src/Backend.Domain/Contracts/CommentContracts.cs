@@ -1,0 +1,33 @@
+﻿using Backend.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Backend.Domain.Contracts;
+
+public record AuthorDto(
+    Guid Id,
+    string Name,
+    string? ProfilePictureUrl,
+    UserRole Role // "Admin"-Badge bei eigenen kommentaren 
+);
+
+
+public record CommentResponseDto(
+    Guid Id,
+    string Text,
+    DateTime CreatedAt,
+    AuthorDto Author,
+    // Votes
+    int Upvotes,
+    int Downvotes,
+    // Die Replies sind einfach wieder eine Liste von CommentResponseDto
+    List<CommentResponseDto> Replies
+);
+
+
+public record CreateCommentRequest(
+    string Text,
+    int ContentId, 
+    Guid? ParentCommentId
+    ); 
