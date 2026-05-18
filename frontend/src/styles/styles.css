@@ -1,0 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk&display=swap');
+@import "tailwindcss";
+
+@theme {
+
+  --font-sans:
+    'Space Grotesk', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  /* Dadurch entstehen Klassen wie: bg-main, text-main, text-matcha */
+  --color-main: var(--bg-color);
+  --color-surface: var(--surface-color);
+  --color-body: var(--text-color);
+  --color-heading: var(--heading-color);
+  --color-matcha: var(--matcha-color);
+  --color-koi: var(--koi-color);
+  --color-picture: var(--picture-color);
+  --animate-blink: blink 3s linear infinite;
+  --color-link: var(--link-color);
+  --color-sky: var(--sky-color);
+  --color-gray: var(--gray-color);
+  --color-onlydarkmatcha: var(--only-darkmatcha);
+  --color-accent: var(--accent-color);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-background: var(--accent-background);
+  --color-tertiary: var(--tertiary-color);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-destructive: var(--destructive);
+
+
+  --color-bright: var(--bright);
+
+  --color-tab: var(--tab-background);
+
+  @keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+  }
+
+}
+
+/* 2. Die echten Farbwerte definieren (Hell und Dunkel) */
+@layer base {
+  body {
+    font-family: var(--font-sans);
+  }
+
+  /* :root ist dein Standard (Helles Theme) */
+  :root {
+    --bg-color: oklch(1 0 0);
+    --surface-color: #1c1c1c;
+    --text-color: #3c3c3c;
+    --heading-color: #1c1c1c;
+    --matcha-color: #21241d;
+    --koi-color: #ce5a57;
+    --text-font: var(--font-sans);
+    --picture-color: #e5e7eb;
+    --sky-color: #82c0fa;
+    --link-color:  #6ab0f3;
+    --gray-color: #e5e7eb;
+    --only-darkmatcha: #90a955;
+      /* noch ändern */
+    --accent-color: #82c0fa;
+    --accent-background: oklch(0.145 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+
+    --tertiary-color: #222222;
+    --foreground: oklch(0.145 0 0);
+
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --destructive: oklch(0.58 0.22 27);
+
+    --bright: rgb(243 243 243);
+
+    --tab-background: oklch(1 0 0 / 15%);
+
+  }
+
+  /* .dark überschreibt die Farben, wenn der Darkmode aktiv ist */
+  .dark {
+    --bg-color:  oklch(0.141 0.005 285.823);
+    --surface-color: #1f1f1f;
+    --text-color: #cfc5b8;
+    --heading-color: #e7dfd1;
+    --matcha-color: #90a955;
+    /* Etwas heller für besseren Kontrast im Dunkeln */
+    --koi-color: #e46f68;
+    --text-font: var(--font-sans);
+    --picture-color: #1c1e21;
+    --link-color: #6ab0f3;
+    --sky-color: #82c0fa;
+    --gray-color:  #1e2939;
+    --only-darkmatcha: #90a955;
+
+    --accent-color: rgb(243 243 243);
+    --accent-background:  rgb(243 243 243);
+    --accent-foreground: oklch(0.205 0 0);
+
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+
+    --tertiary-color: #222222;
+
+    --foreground: oklch(0.985 0 0);
+
+
+    --destructive: oklch(0.704 0.191 22.216);
+
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+
+    --bright: rgb(243 243 243);
+
+    --tab-background: oklch(1 0 0 / 15%);
+  }
+}
+
+
+@layer components {
+  .glass3d {
+    --filter-glass3d: blur(10px) brightness(0.8) saturate(1.9);
+    --color-glass3d: hsl(169 12% 10% / 0.2);
+    --noise-glass3d: url('https://www.transparenttextures.com/patterns/fabric-1-light.png');
+
+    position: relative;
+    z-index: 4;
+    box-shadow:
+      0 0 0.75px hsl(205 20% 10% / 0.2),
+      0.7px 0.8px 1.2px -0.4px hsl(205 20% 10% / 0.1),
+      1.3px 1.5px 2.2px -0.8px hsl(205 20% 10% / 0.1),
+      2.3px 2.6px 3.9px -1.2px hsl(205 20% 10% / 0.1),
+      3.9px 4.4px 6.6px -1.7px hsl(205 20% 10% / 0.1),
+      6.5px 7.2px 10.9px -2.1px hsl(205 20% 10% / 0.1),
+      8px 9px 14px -2.5px hsl(205 20% 10% / 0.2);
+  }
+
+  .glass3d::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit; /* Wichtig: Übernimmt das border-radius vom Parent! */
+    overflow: hidden;
+    z-index: 3;
+
+    -webkit-backdrop-filter: var(--filter-glass3d);
+    backdrop-filter: var(--filter-glass3d);
+    background-color: var(--color-glass3d);
+    background-image: var(--noise-glass3d);
+    background-size: 100px;
+    background-repeat: repeat;
+  }
+
+  .glass3d::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    overflow: hidden;
+    z-index: 5;
+
+    box-shadow:
+      inset 2px 2px 1px -3px hsl(205 20% 90% / 0.8),
+      inset 4px 4px 2px -6px hsl(205 20% 90% / 0.3),
+      inset 1.5px 1.5px 1.5px -0.75px hsl(205 20% 90% / 0.15),
+      inset 1.5px 1.5px 0.25px hsl(205 20% 90% / 0.03),
+      inset 0 0 0.25px 0.5px hsl(205 20% 90% / 0.03);
+  }
+
+  .glass3d > * {
+    position: relative;
+    z-index: 6;
+  }
+
+
+}
