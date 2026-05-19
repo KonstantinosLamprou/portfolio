@@ -19,10 +19,20 @@ namespace Backend.Infrastructure.Persistence.Repositories
         }
 
 
-        public async Task<Project?> SearchProjectAsync(int id)
+        public async Task<Project?> GetProjectByIdAsync(int id)
         {
             return await _context.Projects.SingleOrDefaultAsync(project => project.Id == id);
         }
+
+        public async Task<Project?> GetProjectWithDetailsAsync(int id)
+        {
+            return await _context.Projects
+                .Include(p => p.Likes)
+                .Include(p => p.Comments)
+                .SingleOrDefaultAsync(project => project.Id == id); 
+
+        }
+
         public async Task<Project> SaveProjectAsync(Project project)
         {
             if (project.Id == 0)
@@ -48,11 +58,13 @@ namespace Backend.Infrastructure.Persistence.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
         public async Task<IEnumerable<Project>> GetAllProjectsAsync()
         { 
             return await _context.Projects
-                .Include(b => b.Likes)
-                .Include(b => b.Comments)
+                .Include(p => p.Likes)
+                .Include(p => p.Comments)
+                .OrderByDescending(project => project.DateOfCreation)
                 .ToListAsync();
         }
 

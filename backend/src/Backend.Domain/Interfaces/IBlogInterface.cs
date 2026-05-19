@@ -7,12 +7,13 @@ namespace Backend.Domain.Interfaces
 {
     public interface IBlogInterface
     {
-        Task<Blog?> SearchBlogAsync(int id);
+        Task<Blog?> GetBlogByIdAsync(int id); 
+        Task<Blog?> GetBlogWithDetailsAsync(int id);
+
         Task<Blog> SaveBlogAsync(Blog blog);
         Task<bool> DeleteBlogAsync(int id);
         Task<IEnumerable<Blog>> GetAllBlogsAsync();
         Task<IEnumerable<Blog>> GetLatestBlogsAsync(int count = 3);
 
-        //TODO: Hier fehlt doch die Methode wenn man auf ein Blog klickt und die Detailansicht aufmacht oder sollte man hier einfach SearchBlogAsync nutzen? 
     }
 }

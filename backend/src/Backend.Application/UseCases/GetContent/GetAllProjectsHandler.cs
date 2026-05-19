@@ -1,4 +1,5 @@
-﻿using Backend.Domain.Entities;
+﻿using Backend.Domain.Contracts;
+using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -15,9 +16,22 @@ namespace Backend.Application.UseCases.GetContent
             _repository = repository;
         }
 
-        public async Task<IEnumerable<Project>> Handle()
+        public async Task<IEnumerable<ContentListResponse>> Handle()
         {
-            return await _repository.GetAllProjectsAsync();
+            var projects = await _repository.GetAllProjectsAsync();
+
+            //Mapping Entity -> DTO
+            return projects.Select(p => new ContentListResponse(
+                Id: p.Id,
+                Title: p.Title,
+                Slug: p.Slug,
+                DateOfCreation: p.DateOfCreation,
+                ImgSrc: p.ImgSrc,
+                Description: p.Description,
+                Views: p.Views,
+                LikesCount: p.Likes?.Sum(l => l.Count) ?? 0,
+                CommentsCount: p.Comments?.Count ?? 0
+            ));
         }
     }
 }
