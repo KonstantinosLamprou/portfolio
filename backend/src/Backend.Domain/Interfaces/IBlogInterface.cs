@@ -13,6 +13,6 @@ namespace Backend.Domain.Interfaces
         Task<IEnumerable<Blog>> GetAllBlogsAsync();
         Task<IEnumerable<Blog>> GetLatestBlogsAsync(int count = 3);
 
-
+        //TODO: Hier fehlt doch die Methode wenn man auf ein Blog klickt und die Detailansicht aufmacht oder sollte man hier einfach SearchBlogAsync nutzen? 
     }
 }

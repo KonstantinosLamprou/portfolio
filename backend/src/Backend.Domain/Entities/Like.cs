@@ -7,7 +7,8 @@ namespace Backend.Domain.Entities
     public class Like
     {
         public Guid Id { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime LastLikedAt { get; set; } = DateTime.UtcNow;
+        public int Count { get; set; } = 1;
 
         // Welcher Blog/Projekt wurde geliked?
         public int ContentId { get; set; }

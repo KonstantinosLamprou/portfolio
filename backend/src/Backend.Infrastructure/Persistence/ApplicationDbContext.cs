@@ -37,6 +37,10 @@ namespace Backend.Infrastructure.Persistence
                         builder.ToJson();
                     });
 
+
+            builder.Entity<Like>()
+                .HasKey(cl => new { cl.ContentId, cl.UserId });
+
             builder.Entity<Comment>()
                 .HasOne(c => c.ParentComment)
                 .WithMany(c => c.Replies)

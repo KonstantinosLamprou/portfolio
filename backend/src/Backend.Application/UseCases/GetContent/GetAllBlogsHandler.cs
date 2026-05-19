@@ -1,4 +1,4 @@
-﻿using Backend.Domain.Entities;
+﻿using Backend.Domain.Contracts;
 using Backend.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -15,9 +15,22 @@ namespace Backend.Application.UseCases.GetContent
             _repository = repository; 
         }
 
-        public async Task<IEnumerable<Blog>> Handle()
+        public async Task<IEnumerable<ContentListResponse>> Handle()
         {
-            return await _repository.GetAllBlogsAsync(); 
+            var blogs = await _repository.GetAllBlogsAsync();
+
+            //Mapping Entity -> DTO
+            return blogs.Select(b => new ContentListResponse(
+                Id: b.Id,
+                Title: b.Title,
+                Slug: b.Slug,
+                DateOfCreation: b.DateOfCreation,
+                ImgSrc: b.ImgSrc,
+                Description: b.Description,
+                Views: b.Views,
+                LikesCount: b.Likes?.Sum(l => l.Count) ?? 0,
+                CommentsCount: b.Comments?.Count ?? 0
+            ));
         }
     }
 }

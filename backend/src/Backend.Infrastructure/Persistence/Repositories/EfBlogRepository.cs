@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+//refactoring 
+
+
 namespace Backend.Infrastructure.Persistence.Repositories
 {
     public class EfBlogRepository : IBlogInterface
@@ -50,11 +53,16 @@ namespace Backend.Infrastructure.Persistence.Repositories
         }
         public async Task<IEnumerable<Blog>> GetAllBlogsAsync()
         {
-            return await _context.Blogs.ToListAsync();
+            return await _context.Blogs
+                .Include(b => b.Likes)
+                .Include(b => b.Comments)
+                .ToListAsync();
         }
         public async  Task<IEnumerable<Blog>> GetLatestBlogsAsync(int count = 3)
         {
             return await _context.Blogs
+                .Include(b => b.Likes)
+                .Include(b => b.Comments)
                 .OrderByDescending(blog => blog.DateOfCreation)
                 .Take(count)
                 .ToListAsync();

@@ -50,7 +50,10 @@ namespace Backend.Infrastructure.Persistence.Repositories
         }
         public async Task<IEnumerable<Project>> GetAllProjectsAsync()
         { 
-            return await _context.Projects.ToListAsync();
+            return await _context.Projects
+                .Include(b => b.Likes)
+                .Include(b => b.Comments)
+                .ToListAsync();
         }
 
 

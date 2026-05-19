@@ -1,5 +1,8 @@
+using Backend.Application.UseCases.GetContent;
 using Backend.Domain.Entities;
+using Backend.Domain.Interfaces;
 using Backend.Infrastructure;
+using Backend.Infrastructure.Persistence.Repositories;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI; 
 
@@ -10,6 +13,11 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IBlogInterface, EfBlogRepository>();
+builder.Services.AddScoped<IProjectInterface, EfProjectRepository>();
+
+builder.Services.AddScoped<GetAllBlogsHandler>();
 
 var app = builder.Build();
 
