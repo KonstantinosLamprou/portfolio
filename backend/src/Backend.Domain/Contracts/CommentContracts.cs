@@ -23,6 +23,8 @@ public record CommentResponseDto(
     // Votes
     int Upvotes,
     int Downvotes,
+    // downvoted (false) oder gar nicht gevotet (null)?
+    bool? CurrentUserVote,
     // Die Replies sind einfach wieder eine Liste von CommentResponseDto
     List<CommentResponseDto> Replies
 );

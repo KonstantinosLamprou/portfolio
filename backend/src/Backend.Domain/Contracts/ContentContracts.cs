@@ -5,25 +5,40 @@ using System.Text.Json;
 
 namespace Backend.Domain.Contracts;
 
-// Sollte ja Projekte oder Blogs liefern 
-public record ContentResponseSummary(
-    Guid Id,
+// Listen-Ansicht 
+public record ContentListResponse(
+    int Id, 
     string Title,
     string Slug,
     DateTime DateOfCreation,
     string ImgSrc,
     string Description,
+    int Views,
+    int LikesCount,
+    int CommentsCount
+);
 
+
+// Für die Detail-Ansicht (wenn man den Blog anklickt)
+public record ContentDetailResponse(
+    int Id,
+    string Title,
+    string Slug,
+    DateTime DateOfCreation,
+    string ImgSrc,
+    string Description,
     List<ContentBlockDto> Content,
-
-    // Metriken
     int Views,
     int LikesCount,
     int CommentsCount,
+    AuthorDto Author,
 
-    AuthorDto Author
+    // für: ob der aktuelle User noch liken darf
+    int CurrentUserLikeCount
+);
 
-    );
+
+
 
 public record ContentBlockDto(
     string Id,
@@ -32,11 +47,13 @@ public record ContentBlockDto(
 );
 
 
+
+// Admin Dashboard DTO 
 public record CreateBlogRequest(
     string Title,
     string Slug,
     string ImgSrc,
     string Description,
-    // Die Blöcke kommen aus deinem Vue-Editor (z.B. Editor.js)
+    // Die Blöcke kommen aus deinem Vue-Editor 
     List<ContentBlockDto> Content
 );
