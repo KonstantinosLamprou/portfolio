@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Presentation.Controllers;
 
 [ApiController]
-[Route("api/[controller]")] // /api/blogs
+[Route("api/blogs")] // /api/blogs
 public class BlogsController : ControllerBase
 {
     private readonly GetAllBlogsHandler _getAllBlogsHandler;

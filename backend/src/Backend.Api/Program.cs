@@ -1,5 +1,4 @@
 using Backend.Application.UseCases.GetContent;
-using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
 using Backend.Infrastructure;
 using Backend.Infrastructure.Persistence.Repositories;

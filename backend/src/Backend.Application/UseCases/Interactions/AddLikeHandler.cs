@@ -39,7 +39,7 @@ public class AddLikeHandler
 
             existingLike.Count++;
             existingLike.LastLikedAt = DateTime.UtcNow;
-en.
+
         }
 
         // speichern in der Datenbank 

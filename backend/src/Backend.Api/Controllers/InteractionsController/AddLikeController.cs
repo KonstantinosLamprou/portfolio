@@ -6,12 +6,12 @@ using Backend.Application.UseCases.Interactions;
 namespace Backend.Presentation.Controllers;
 
 [ApiController]
-[Route("api/content")]
-public class InteractionController : ControllerBase
+[Route("api/addlike")]
+public class AddLikeController : ControllerBase
 {
     private readonly AddLikeHandler _addLikeHandler;
 
-    public InteractionController(AddLikeHandler addLikeHandler)
+    public AddLikeController(AddLikeHandler addLikeHandler)
     {
         _addLikeHandler = addLikeHandler;
     }
