@@ -14,25 +14,33 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-          test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d portfoliodb"]
-          interval: 5s
-          timeout: 5s
-          retries: 5
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d portfoliodb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  backend:
-    build: 
-      context: ../backend
-      dockerfile: Dockerfile
-    container_name: portfolio_backend
-    ports:
-      - "8080:8080"
+  backend-dev:
+    image: mcr.microsoft.com/devcontainers/dotnet:10.0
+    container_name: dev_portfolio_backend
+    command: /bin/sh -c "while sleep 1000; do :; done"
+    volumes:
+      - ../backend:/workspace:cached
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      # .NET zieht sich das Passwort hier vollautomatisch heraus
-      - ConnectionStrings__DefaultConnection=Host=db;Database=portfoliodb;Username=${DB_USER};Password=${DB_PASSWORD}
+      - ConnectionStrings__DefaultConnection=Host=db;Database=portfoliodb;Username=${DB_USER:-devuser};Password=${DB_PASSWORD:-devpass}
     depends_on:
-      db: 
+      db:
         condition: service_healthy
+
+  # Container 2: Pures Node.js
+  frontend-dev:
+    image: mcr.microsoft.com/devcontainers/typescript-node:20
+    container_name: dev_portfolio_frontend
+    command: /bin/sh -c "while sleep 1000; do :; done"
+    volumes:
+      - ../frontend:/workspace:cached
+    ports:
+      - "5173:5173" # Vite Port für deinen Browser
 
 volumes:
   postgres_data:

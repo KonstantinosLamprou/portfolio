@@ -1,0 +1,16 @@
+{
+  "name": "Portfolio Frontend (Vue)",
+  "dockerComposeFile": "../../deployment/docker-compose.yml",
+  "service": "frontend-dev",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Vue.volar",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
+  },
+  "forwardPorts": [5173],
+  "remoteUser": "node"
+}

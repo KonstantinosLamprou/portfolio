@@ -1,6 +1,4 @@
 .env
 .vs/
 
-```bash
-    git rm -r --cached .vs
-```
+
