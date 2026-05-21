@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { ref, watch, onUnmounted } from 'vue'
 import LoginForm from '../components/adminboard/AdminLogin.vue'
-import Loader from '@/components/loaders/ArcadeLoader.vue'
+import Loader from '@/components/ui/loaders/ArcadeLoader.vue'
 import { useAuth } from '@/composables/useAuth'
 import type { LoginCredentials } from '@/types/auth'
 

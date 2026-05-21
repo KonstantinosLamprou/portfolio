@@ -19,28 +19,19 @@ services:
       timeout: 5s
       retries: 5
 
-  backend-dev:
+  # Dein neuer Super-Container für .NET und Vue
+  workspace:
     image: mcr.microsoft.com/devcontainers/dotnet:10.0
-    container_name: dev_portfolio_backend
+    container_name: portfolio_workspace
     command: /bin/sh -c "while sleep 1000; do :; done"
     volumes:
-      - ../backend:/workspace:cached
+      - ../:/workspace:cached
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=db;Database=portfoliodb;Username=${DB_USER:-devuser};Password=${DB_PASSWORD:-devpass}
     depends_on:
       db:
         condition: service_healthy
-
-  # Container 2: Pures Node.js
-  frontend-dev:
-    image: mcr.microsoft.com/devcontainers/typescript-node:20
-    container_name: dev_portfolio_frontend
-    command: /bin/sh -c "while sleep 1000; do :; done"
-    volumes:
-      - ../frontend:/workspace:cached
-    ports:
-      - "5173:5173" # Vite Port für deinen Browser
 
 volumes:
   postgres_data:
