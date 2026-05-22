@@ -44,6 +44,9 @@ namespace Backend.Infrastructure.Persistence.Repositories
                 _context.Blogs.Update(blog);
             }
             await _context.SaveChangesAsync();
+
+            // Author laden für die Response!
+            await _context.Entry(blog).Reference(b => b.Author).LoadAsync();
             return blog;
         }
 

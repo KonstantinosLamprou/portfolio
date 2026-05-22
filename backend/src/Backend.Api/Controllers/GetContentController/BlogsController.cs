@@ -1,5 +1,7 @@
 ﻿using Backend.Application.UseCases.GetContent;
+using Backend.Application.UseCases.SaveContent;
 using Backend.Domain.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -11,13 +13,15 @@ public class BlogsController : ControllerBase
 {
     private readonly GetAllBlogsHandler _getAllBlogsHandler;
     private readonly GetBlogDetailsHandler _blogDetailshandler; 
+    private readonly CreateContentHandler _createContentHandler;
 
 
     // Handler Dependency Injection 
-    public BlogsController(GetAllBlogsHandler getAllBlogsHandler, GetBlogDetailsHandler blogDetailshandler)
+    public BlogsController(GetAllBlogsHandler getAllBlogsHandler, GetBlogDetailsHandler blogDetailshandler, CreateContentHandler createContentHandler)
     {
         _getAllBlogsHandler = getAllBlogsHandler;
         _blogDetailshandler = blogDetailshandler; 
+        _createContentHandler = createContentHandler;
     }
 
     [HttpGet]
@@ -35,12 +39,7 @@ public class BlogsController : ControllerBase
     public async Task<IActionResult> GetBlogDetails(int id)
     {
         // 1. Versuchen, den aktuellen User auszulesen (falls er einen Token hat)
-        Guid? userId = null;
-        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (!string.IsNullOrEmpty(userIdString))
-        {
-            userId = Guid.Parse(userIdString);
-        }
+        Guid? userId = GetCurrentUserId(); 
 
         // 2. Handler aufrufen
         var result = await _blogDetailshandler.Handle(id, userId);
@@ -52,6 +51,30 @@ public class BlogsController : ControllerBase
         }
 
         return Ok(result);
+    }
+
+    [HttpPost("create")]
+    [Authorize]  
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> CreateContent([FromBody] CreateBlogRequest request)
+    {
+        var userId = GetCurrentUserId();
+
+        if (!userId.HasValue)
+            return Unauthorized(new { message = "User nicht authentifiziert." });
+
+        var result = await _createContentHandler.Handle(request, userId.Value);
+        return CreatedAtAction(nameof(GetBlogDetails), new { id = result.Id }, result);
+    }
+
+    // ← Helper-Methode
+    private Guid? GetCurrentUserId()
+    {
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdString))
+            return null;
+
+        return Guid.TryParse(userIdString, out var userId) ? userId : null;
     }
 
 }

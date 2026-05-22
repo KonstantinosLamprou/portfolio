@@ -14,7 +14,8 @@ namespace Backend.Domain.Entities
         public DateTime DateOfCreation { get; set; } = DateTime.UtcNow;
 
         //TODO hier eine Relation aufbauen zu autor 
-        public string Author { get; set; }
+        public Guid AuthorId { get; set; }
+        public ApplicationUser Author { get; set; }
         public string ImgSrc { get; set; }
         public string Description { get; set; }
 

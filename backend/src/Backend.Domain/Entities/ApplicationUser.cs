@@ -18,6 +18,9 @@ namespace Backend.Domain.Entities
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime LastLoginAt { get; set; }
 
+        public ICollection<Blog> CreatedBlogs { get; set; } = new List<Blog>();
+        public ICollection<Project> CreatedProjects { get; set; } = new List<Project>();
+
         // Ein User kann mehrere Kommentare schreiben
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 

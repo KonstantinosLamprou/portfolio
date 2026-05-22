@@ -3,8 +3,18 @@
     <h1 class="text-3xl font-bold mb-8">Neuen Blogpost erstellen</h1>
 
     <!-- Metadaten -->
-    <!-- TODO: Click event überall hinzufügen  -->
+    <!--
+     TODO: 
+     Dann auch noch wie die Daten aussehen sollen
+     Es fehlt die Logik zum Speichern der Daten, sowie die Anbindung an die API.
+
+    
+    
+    
+    
+    -->
     <section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+      <!-- Sollte die Section hier nicht lieber eine Form sein?  -->
       <div>
         <label class="block text-sm font-medium">Titel</label>
         <input  type="text" class="mt-1 w-full rounded-md border p-2" />
@@ -35,7 +45,7 @@
             <div class="flex justify-between items-center mb-4">
         <h2 class="text-2xl font-semibold">Inhaltsblöcke</h2>
         <div class="flex gap-2">
-
+          <!-- Die hier sollten Blocktypen hinzufügen, ich könnte eine Blocktyp Komponente machen, die dann den Typ und die Daten als Props bekommt -->
           <button  class="px-3 py-1 bg-accent text-main rounded">+ Titel</button>
           <button class="px-3 py-1 bg-accent text-main rounded">+ Überschrift</button>
           <button class="px-3 py-1 bg-accent text-main rounded">+ Überschrift 2</button>
@@ -72,6 +82,7 @@
 </template>
 
 <script setup lang="ts">
+//Wichtig: Hier sollten die Blocktypen für einen Blog- oder Projektpost definiert werden´
 
 
 </script>

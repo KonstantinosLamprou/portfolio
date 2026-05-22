@@ -23,6 +23,7 @@ const router = createRouter({
        name: 'All Blogs',
        component: () => import('@/views/AllBlogView.vue')
     },
+    // Admin route deprecated
     {
     path: '/admin/login',
     name: 'Login Admin',

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -44,6 +45,8 @@ namespace Backend.Infrastructure.Persistence.Repositories
                 _context.Projects.Update(project);
             }
             await _context.SaveChangesAsync();
+
+            await _context.Entry(project).Reference(b => b.Author).LoadAsync();
             return project;
         }
 

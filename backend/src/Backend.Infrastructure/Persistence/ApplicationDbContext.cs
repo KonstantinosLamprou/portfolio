@@ -24,12 +24,26 @@ namespace Backend.Infrastructure.Persistence
         {
             base.OnModelCreating(builder);
 
+            // Blog-Konfiguration
+            builder.Entity<Blog>()
+                .HasOne(b => b.Author)                    // Ein Blog hat EINEN Author
+                .WithMany(b => b.CreatedBlogs)          // Ein User kann VIELE Blogs erstellen
+                .HasForeignKey(b => b.AuthorId)           // Foreign Key ist AuthorId
+                .OnDelete(DeleteBehavior.Restrict);       // Beim Löschen des Users: nicht löschen
+
+
             builder.Entity<Blog>()
                     .OwnsMany(b => b.Content, builder =>
                     {
                         // Speichert die komplette Liste als JSON in der Blog-Tabelle
                         builder.ToJson();
                     });
+
+            builder.Entity<Project>()
+                .HasOne(p => p.Author)
+                .WithMany(p => p.CreatedProjects)
+                .HasForeignKey(p => p.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Project>()
                     .OwnsMany(p => p.Content, builder =>

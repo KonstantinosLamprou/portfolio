@@ -1,4 +1,3 @@
-using Backend.Application.UseCases.GetContent;
 using Backend.Domain.Interfaces;
 using Backend.Infrastructure;
 using Backend.Infrastructure.Persistence.Repositories;
@@ -16,7 +15,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IBlogInterface, EfBlogRepository>();
 builder.Services.AddScoped<IProjectInterface, EfProjectRepository>();
 
-builder.Services.AddScoped<GetAllBlogsHandler>();
 
 var app = builder.Build();
 
