@@ -50,9 +50,7 @@ public class GetBlogDetailsHandler
             // HINWEIS zum Author: 
             // In ContentBase hast du aktuell 'public string Author'. Das DTO erwartet ein 'AuthorDto'.
             // Wenn du hier später eine echte Relation zum User aufbaust, machst du:
-            // Author: new AuthorDto(blogDetails.User.Id, blogDetails.User.Name, blogDetails.User.ProfilePictureUrl, blogDetails.User.Role)
-            // Für den Moment als Platzhalter (damit es kompiliert):
-            Author: new AuthorDto(Guid.Empty, blogDetails.Author, null, UserRole.Standard)
+            Author: new AuthorDto(blogDetails.Author.Id, blogDetails.Author.Name, blogDetails.Author.ProfilePictureUrl, blogDetails.Author.Role)
         );
 
     }
