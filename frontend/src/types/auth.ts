@@ -1,13 +1,13 @@
-export interface LoginCredentials {
-  email: string
-  password: string
+export interface UserProfile {
+  id: number;
+  name: string;
+  email: string;
+  role?: 'Admin' | 'User' ; 
+  avatarUrl?: string; 
+  authProvider?: 'github' | 'google'; 
 }
 
 export interface AuthResponse {
-  token: string
-  user: {
-    id: number
-    name: string
-    email: string
-  }
+  token: string;
+  user: UserProfile;
 }

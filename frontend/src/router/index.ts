@@ -25,9 +25,9 @@ const router = createRouter({
     },
     // Admin route deprecated
     {
-    path: '/admin/login',
-    name: 'Login Admin',
-    component: () => import('@/views/LoginView.vue'),
+    path: '/auth/callback',
+    name: 'Login Callback',
+    component: () => import('@/views/AuthCallbackView.vue'),
     },
     {
       path: '/admin/editor',
