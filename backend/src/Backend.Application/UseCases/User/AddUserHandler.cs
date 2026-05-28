@@ -1,21 +1,30 @@
 using Backend.Domain.Contracts;
 using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
+using Backend.Application.Options;
+using Microsoft.Extensions.Options;
 
 namespace Backend.Application.UseCases.User;
 
-public class UpsertOAuthUserHandler
+public class AddUserHandler
 {
     private readonly IApplicationUserRepository _repo;
+    private readonly HashSet<string> _adminEmails;
 
-    public UpsertOAuthUserHandler(IApplicationUserRepository repo)
+
+    public AddUserHandler(IApplicationUserRepository repo, IOptions<AdminOptions> adminOptions)
     {
         _repo = repo;
+        _adminEmails = adminOptions.Value.Emails
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
     }
 
-    public async Task<UpsertOAuthUserResult> Handle(UpsertOAuthUserCommand cmd, CancellationToken ct)
+    public async Task<AddUserResult> Handle(AddUserCommand cmd, CancellationToken ct)
     {
         var user = await _repo.FindByProviderAsync(cmd.Provider, cmd.ProviderSubjectId, ct);
+
+        var isAdmin = _adminEmails.Contains(cmd.Email);
+
 
         if (user == null)
         {
@@ -26,6 +35,7 @@ public class UpsertOAuthUserHandler
                 ProviderSubjectId = cmd.ProviderSubjectId,
                 Email = cmd.Email,
                 Name = cmd.Name,
+                Role = isAdmin ? UserRole.Admin : UserRole.Standard, 
                 ProfilePictureUrl = cmd.ProfilePictureUrl,
                 LastLoginAt = DateTime.UtcNow
             };
@@ -44,6 +54,6 @@ public class UpsertOAuthUserHandler
 
         await _repo.SaveChangesAsync(ct);
 
-        return new UpsertOAuthUserResult(user.Id, user.Email, user.Name, user.AuthProvider);
+        return new AddUserResult(user.Id, user.Email, user.Name, user.AuthProvider);
     }
 }

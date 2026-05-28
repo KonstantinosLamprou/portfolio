@@ -1,6 +1,6 @@
 namespace Backend.Domain.Contracts;
 
-public record UpsertOAuthUserCommand(
+public record AddUserCommand(
     string Provider,
     string ProviderSubjectId,
     string Email,
@@ -8,7 +8,7 @@ public record UpsertOAuthUserCommand(
     string? ProfilePictureUrl
 );
 
-public record UpsertOAuthUserResult(
+public record AddUserResult(
     Guid UserId,
     string Email,
     string Name,

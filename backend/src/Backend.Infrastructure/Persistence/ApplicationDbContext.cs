@@ -16,11 +16,8 @@ namespace Backend.Infrastructure.Persistence
         }
 
         public DbSet<Project> Projects { get; set; }
-
         public DbSet<Blog> Blogs { get; set; }
-
         public DbSet<ApplicationUser> Users { get; set; }
-
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -52,7 +49,6 @@ namespace Backend.Infrastructure.Persistence
                     {
                         builder.ToJson();
                     });
-
 
             builder.Entity<Like>()
                 .HasKey(cl => new { cl.ContentId, cl.UserId });

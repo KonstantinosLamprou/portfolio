@@ -11,24 +11,51 @@ namespace Backend.Api.Controllers;
 [Route("api/auth")]
 public class AuthController : ControllerBase
 {
-    private readonly UpsertOAuthUserHandler _handler;
+    private readonly AddUserHandler _handler;
 
-    public AuthController(UpsertOAuthUserHandler handler)
+    public AuthController(AddUserHandler handler)
     {
         _handler = handler;
+    }
+
+    private static readonly Dictionary<string, string> ProviderMap =
+    new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["google"] = "Google",
+        ["github"] = "GitHub"
+    };
+
+    private static bool TryMapProvider(string? raw, out string scheme)
+    {
+        scheme = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(raw))
+            return false;
+
+        if (ProviderMap.TryGetValue(raw, out var mapped) && !string.IsNullOrWhiteSpace(mapped))
+            {
+                // wenn true dann mapped in dem Fall "Google" oder "GitHub"
+                scheme = mapped;
+                return true;
+            }
+
+    return false;
     }
 
     // Endpunkt zum Starten des Logins (z.B. /api/auth/github/login)
     [HttpGet("{provider}/login")]
     public IActionResult Login([FromRoute] string provider)
     {
-        var properties = new AuthenticationProperties
-        {
-            RedirectUri = $"/api/auth/{provider}/callback"
-        };
+        // Provider-Mapping z.B. "google" -> "Google", "github" -> "GitHub"
+        if (!TryMapProvider(provider, out var scheme))
+                return BadRequest("Unknown provider.");
 
-        // Leitet den User zu Google oder GitHub weiter
-        return Challenge(properties, new[] { provider });
+        var properties = new AuthenticationProperties
+            {
+                RedirectUri = $"/api/auth/{provider}/callback"
+            };
+
+        return Challenge(properties, scheme);
     }
 
     // Endpunkt, der von Google/GitHub aufgerufen wird, nachdem der User zugestimmt hat
@@ -49,7 +76,7 @@ public class AuthController : ControllerBase
             return BadRequest();
         }
 
-        // Wichtige Daten extrahieren
+        // Provider-spezifische Claim-Typen auslesen (z.B. NameIdentifier, Email, Name)
         var providerSubjectId = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
         var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
@@ -61,7 +88,7 @@ public class AuthController : ControllerBase
         }
 
         // im Callback nach dem Claim-Check:
-        var cmd = new UpsertOAuthUserCommand(
+        var cmd = new AddUserCommand(
             Provider: provider,
             ProviderSubjectId: providerSubjectId,
             Email: email,
@@ -71,6 +98,6 @@ public class AuthController : ControllerBase
 
         await _handler.Handle(cmd, HttpContext.RequestAborted);
 
-        return Redirect("http://localhost:5173/auth/callback"); 
+        return Redirect("http://localhost:5173/api/auth/callback"); 
     }
 }

@@ -5,8 +5,14 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI; 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Backend.Application.Options;
+using DotNetEnv;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+Env.Load();
+builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -14,10 +20,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme; // Optionaler Fallback
 })
-.AddCookie(options =>
-{
-    options.LoginPath = "/login"; // Pfad anpassen? 
-})
+.AddCookie()
 .AddGoogle(options =>
 {
     options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
@@ -31,6 +34,10 @@ builder.Services.AddAuthentication(options =>
     // GitHub gibt E-Mails oft nur über die API zurück, dieser Scope hilft dabei:
     options.Scope.Add("user:email"); 
 });
+
+builder.Services.Configure<AdminOptions>(
+    builder.Configuration.GetSection("Admin")
+);
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
