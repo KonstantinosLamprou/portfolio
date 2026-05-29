@@ -1,6 +1,6 @@
 <template>
-  <Tabs v-model="currentTab">
-    <TabsList class="bg-[color:var(--tab-background)] rounded-full p-1">
+  <Tabs v-model="currentTab" class="flex flex-col w-full">
+    <TabsList class="self-start bg-[color:var(--tab-background)] rounded-full p-1">
       <TabsTrigger
         value="write"
         class="rounded-full text-[color:var(--muted-foreground)] data-[state=active]:bg-[color:var(--accent-background)] data-[state=active]:text-[color:var(--accent-foreground)]"
@@ -15,8 +15,8 @@
       </TabsTrigger>
     </TabsList>
 
-    <TabsContent value="write">
-      <div class="mt-2 space-y-2">
+    <TabsContent value="write" class="w-full">
+      <div class="w-full mt-2 space-y-2">
         <InputGroup
           class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-color)] shadow-[0_6px_20px_rgba(0,0,0,0.25)]"
         >
@@ -64,8 +64,8 @@
       </div>
     </TabsContent>
 
-    <TabsContent value="preview">
-      <div class="rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/50 px-3 py-2 min-h-[100px] prose dark:prose-invert max-w-none text-sm">
+    <TabsContent value="preview" class="w-full mt-2 space-y-2">
+      <div class="rounded-xl border border-[color:var(--border)] bg-gray-50 dark:bg-gray-800/50 px-4 pt-3 pb-12 min-h-[136px] prose dark:prose-invert max-w-none text-sm whitespace-pre-wrap break-words">
         <p v-if="!content" class="text-gray-400 italic">Nothing to preview...</p>
         <div v-else>{{ content }}</div> 
       </div>

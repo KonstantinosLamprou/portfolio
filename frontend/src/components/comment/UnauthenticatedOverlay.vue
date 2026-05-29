@@ -1,6 +1,6 @@
 <template>
-  <div class="absolute inset-0 flex items-center justify-center rounded-md bg-black/30 backdrop-blur-sm">
-    <Button size="sm" class="rounded-full bg-[color:var(--bright)] text-black px-4 py-2 shadow-sm" @click="openDialog">
+  <div class="absolute inset-0 flex items-center justify-center rounded-xl bg-main/20 backdrop-blur-[2px]">
+    <Button size="sm" class="rounded-full bg-heading text-main px-4 py-2 shadow-sm hover:bg-heading/80" @click="openDialog" >
         Sign in
     </Button>
   </div>

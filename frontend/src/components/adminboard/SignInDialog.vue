@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="dialogStore.open"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-main/40 backdrop-blur-sm"
     @click.self="dialogStore.closeDialog"
   >
     <div class="w-full max-w-md rounded-xl bg-neutral-900 p-6 text-white shadow-xl">
@@ -17,7 +17,7 @@
           @click="dialogStore.closeDialog"
           aria-label="Close"
         >
-          ×
+          X
         </button>
       </div>
 
@@ -58,6 +58,8 @@ const startOAuth = (provider: "github" | "google") => {
   
   // Im Browser zwischenspeichern
   sessionStorage.setItem('auth:returnUrl', returnUrl);
+
+  sessionStorage.setItem('auth:scrollY', window.scrollY.toString());
 
   // 2. Ab zum Backend-Login!
   window.location.href = `http://localhost:5132/api/auth/${provider}/login`;

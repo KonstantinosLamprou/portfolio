@@ -1,6 +1,6 @@
 <template>
   <div v-if="currentPost">
-    <BackButton class="hidden md:flex"/>
+    <BackButton v-show="!dialogStore.open" class="hidden md:flex"/>
 
     <!-- Headerkomponente -->
     <header class="text-center max-w-3xl mx-auto px-4 pt-16">
@@ -37,7 +37,7 @@
 
       <div class="space-y-6">
         <CommentPost />
-        <!-- <CommentSection /> -->
+        <CommentSection /> 
 
       </div>
 
@@ -59,12 +59,16 @@ import TableOfContents from '@/components/content/TableOfContents.vue';
 import LikeButton from '@/components/content/LikeButton.vue';
 import CommentPost from "@/components/comment/CommentPost.vue"
 import CommentSection from '@/components/comment/CommentSection.vue';
+import { useSignInDialogStore } from "@/stores/useSignInDialogStore"
 
 // Hole dir die aktuelle Route
 const route = useRoute();
 
 // Extrahiere den Slug aus der URL (z.B. "typescript-generics-einfuehrung")
 const slug = route.params.slug as string;
+
+// Store initialisieren
+const dialogStore = useSignInDialogStore();
 
 // Suche den passenden Artikel in den Mock-Daten
 const currentPost = computed(() => {
