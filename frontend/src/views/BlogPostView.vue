@@ -35,10 +35,9 @@
       </div>
 
 
-    <!-- Footerkomponente -->
       <div class="space-y-6">
-        <CommentEditor />
-        <CommentSection />
+        <CommentPost />
+        <!-- <CommentSection /> -->
 
       </div>
 
@@ -58,7 +57,7 @@ import BackButton from '@/components/ui/buttons/BackButton.vue';
 import { mockBlogData } from '@/data/mockBlogPostData';
 import TableOfContents from '@/components/content/TableOfContents.vue';
 import LikeButton from '@/components/content/LikeButton.vue';
-import CommentEditor from '@/components/comment/CommentEditor.vue';
+import CommentPost from "@/components/comment/CommentPost.vue"
 import CommentSection from '@/components/comment/CommentSection.vue';
 
 // Hole dir die aktuelle Route

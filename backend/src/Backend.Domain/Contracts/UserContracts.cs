@@ -14,3 +14,10 @@ public record AddUserResult(
     string Name,
     string Provider
 );
+
+public record UserDto(
+    Guid UserId,
+    string Email,
+    string Name,
+    string Provider
+);

@@ -8,11 +8,11 @@ namespace Backend.Application.UseCases.User;
 
 public class AddUserHandler
 {
-    private readonly IApplicationUserRepository _repo;
+    private readonly IApplicationUserInterface _repo;
     private readonly HashSet<string> _adminEmails;
 
 
-    public AddUserHandler(IApplicationUserRepository repo, IOptions<AdminOptions> adminOptions)
+    public AddUserHandler(IApplicationUserInterface repo, IOptions<AdminOptions> adminOptions)
     {
         _repo = repo;
         _adminEmails = adminOptions.Value.Emails

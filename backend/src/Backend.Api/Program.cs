@@ -6,6 +6,11 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Backend.Application.Options;
+using Backend.Application.UseCases.User;  
+using Backend.Application.UseCases.SaveContent;  
+using Backend.Application.UseCases.Interactions;
+using Backend.Application.UseCases.GetContent;
+
 using DotNetEnv;
 
 
@@ -45,9 +50,28 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Den Handler für die Dependency Injection registrieren
+builder.Services.AddScoped<AddUserHandler>();
+builder.Services.AddScoped<CreateContentHandler>();
+builder.Services.AddScoped<AddLikeHandler>();
+builder.Services.AddScoped<GetAllBlogsHandler>();
+builder.Services.AddScoped<GetAllProjectsHandler>();
+builder.Services.AddScoped<GetBlogDetailsHandler>();
 builder.Services.AddScoped<IBlogInterface, EfBlogRepository>();
 builder.Services.AddScoped<IProjectInterface, EfProjectRepository>();
+builder.Services.AddScoped<IApplicationUserInterface, EfApplicationUserRepository>();
+builder.Services.AddScoped<ILikeInterface, EfLikeRepository>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:5173") // Erlaube deinem Vue-Frontend den Zugriff
+              .AllowAnyHeader()                     // Erlaube alle Header (z.B. Content-Type)
+              .AllowAnyMethod()                     // Erlaube GET, POST, PUT, DELETE etc.
+              .AllowCredentials();                  // EXTREM WICHTIG: Erlaubt das Senden von Cookies!
+    });
+});
 
 var app = builder.Build();
 
@@ -57,6 +81,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

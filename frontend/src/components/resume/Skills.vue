@@ -45,14 +45,13 @@ interface Skill {
 
 const skillsList = shallowRef<Skill[]>([])
 
-// 1. Magie: Wir laden alle SVGs aus dem Ordner als Vue-Komponenten (Dank Vite!)
-// Das ?component am Ende ist wichtig, falls du vite-svg-loader nutzt.
-const svgModules = import.meta.glob('@/assets/skills/*.svg', { eager: true, as: 'component' })
+
+const svgModules = import.meta.glob('@/assets/skills/*.svg', { eager: true, query: '?component' })
 
 onMounted(() => {
   const loadedSkills: Skill[] = []
 
-  // 2. Wir iterieren über die gefundenen Dateien
+  // iterieren über die gefundenen Dateien
   for (const path in svgModules) {
     // Extrahieren den Dateinamen ohne .svg (z.B. 'vuejs' aus '/src/assets/skills/vuejs.svg')
     const match = path.match(/\/([^/]+)\.svg$/)
@@ -65,7 +64,7 @@ onMounted(() => {
     })
   }
 
-  // 3. Speichern die Liste
+  // Speichern die Liste
   skillsList.value = loadedSkills
 })
 

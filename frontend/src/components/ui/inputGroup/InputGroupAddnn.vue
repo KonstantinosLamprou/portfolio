@@ -18,7 +18,10 @@ function handleInputGroupAddonClick(e: MouseEvent) {
     return
   }
   if (currentTarget && currentTarget?.parentElement) {
-    currentTarget.parentElement?.querySelector("input")?.focus()
+    const focusTarget = currentTarget.parentElement?.querySelector<HTMLInputElement | HTMLTextAreaElement>(
+    "input, textarea",
+    )
+    focusTarget?.focus()  
   }
 }
 </script>

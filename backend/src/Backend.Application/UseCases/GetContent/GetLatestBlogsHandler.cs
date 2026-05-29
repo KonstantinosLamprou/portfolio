@@ -15,7 +15,7 @@ namespace Backend.Application.UseCases.GetContent
         {
             _repository = repository;
         }
-
+        // Fehlt hier das Mapping von Entity zu DTO? Oder soll hier direkt die Entity zurückgegeben werden?
         public async Task<IEnumerable<Blog>> Handle(int count = 3)
         {
             return await _repository.GetLatestBlogsAsync(count); 

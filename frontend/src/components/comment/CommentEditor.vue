@@ -1,22 +1,37 @@
 <template>
   <Tabs v-model="currentTab">
-    <TabsList class="dark:bg-gray-800/80">
-      <TabsTrigger value="write">Write</TabsTrigger>
-      <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsList class="bg-[color:var(--tab-background)] rounded-full p-1">
+      <TabsTrigger
+        value="write"
+        class="rounded-full text-[color:var(--muted-foreground)] data-[state=active]:bg-[color:var(--accent-background)] data-[state=active]:text-[color:var(--accent-foreground)]"
+      >
+        Write
+      </TabsTrigger>
+      <TabsTrigger
+        value="preview"
+        class="rounded-full text-[color:var(--muted-foreground)] data-[state=active]:bg-[color:var(--accent-background)] data-[state=active]:text-[color:var(--accent-foreground)]"
+      >
+        Preview
+      </TabsTrigger>
     </TabsList>
 
     <TabsContent value="write">
       <div class="mt-2 space-y-2">
-        <InputGroup>
+        <InputGroup
+          class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-color)] shadow-[0_6px_20px_rgba(0,0,0,0.25)]"
+        >
           <InputGroupTextarea
             ref="textareaRef"
             v-model="content"
-            class="min-h-10 resize-none"
+            class="min-h-24 resize-none px-4 py-3 text-[color:var(--color-body)] placeholder:text-[color:var(--muted-foreground)] leading-relaxed"
             :placeholder="placeholder"
             :disabled="disabled"
             @keydown="handleKeydown"
           />
-          <InputGroupAddon align="block-end">
+          <InputGroupAddon
+            align="block-end"
+            class="border-t border-[color:var(--border)] bg-[color:var(--tab-background)]"
+          >
             <InputGroupButton
               variant="ghost"
               size="icon-xs"

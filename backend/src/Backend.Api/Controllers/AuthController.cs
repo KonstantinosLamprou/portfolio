@@ -62,32 +62,22 @@ public class AuthController : ControllerBase
     [HttpGet("{provider}/callback")]
     public async Task<IActionResult> Callback([FromRoute] string provider)
     {
-        // Liest das temporaere Cookie aus, das von Google/GitHub gesetzt wurde
+        // 1. Gäste-Cookie von GitHub/Google auslesen
         var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-        if (!authenticateResult.Succeeded)
-        {
-            return Unauthorized();
-        }
+        if (!authenticateResult.Succeeded) return Unauthorized();
 
         var claims = authenticateResult.Principal?.Identities.FirstOrDefault()?.Claims;
-        if (claims == null)
-        {
-            return BadRequest();
-        }
+        if (claims == null) return BadRequest();
 
-        // Provider-spezifische Claim-Typen auslesen (z.B. NameIdentifier, Email, Name)
         var providerSubjectId = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
         var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
                    ?? claims.FirstOrDefault(c => c.Type == "urn:github:name")?.Value;
 
-        if (providerSubjectId == null || email == null)
-        {
-            return BadRequest("Unzureichende Daten vom Provider.");
-        }
+        if (providerSubjectId == null || email == null) return BadRequest("Unzureichende Daten vom Provider.");
 
-        // im Callback nach dem Claim-Check:
+        // 2. Command an deinen Handler schicken
         var cmd = new AddUserCommand(
             Provider: provider,
             ProviderSubjectId: providerSubjectId,
@@ -96,8 +86,61 @@ public class AuthController : ControllerBase
             ProfilePictureUrl: null
         );
 
-        await _handler.Handle(cmd, HttpContext.RequestAborted);
+        // HIER IST DIE MAGIE: Wir fangen dein AddUserResult auf!
+        var result = await _handler.Handle(cmd, HttpContext.RequestAborted);
 
-        return Redirect("http://localhost:5173/api/auth/callback"); 
+        // 3. Eigene Claims mit DEINER Guid erstellen
+        var internalClaims = new List<Claim>
+        {
+            // result.Id (bzw. wie auch immer die Property in deinem Record heißt) ist die Guid!
+            new Claim(ClaimTypes.NameIdentifier, result.UserId.ToString()), 
+            new Claim(ClaimTypes.Email, result.Email),
+            new Claim(ClaimTypes.Name, result.Name),
+            new Claim("Provider", result.Provider)
+        };
+
+        var internalIdentity = new ClaimsIdentity(internalClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+        // 4. Den User mit DEINEM Cookie neu anmelden
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(internalIdentity)
+        );
+
+        // 5. Zurück zum Vue-Frontend
+        return Redirect("http://localhost:5173/auth/callback"); 
+    }
+
+    [HttpGet("session")]
+    public IActionResult GetSession()
+    {
+        // Prüfen, ob das Cookie vorhanden und gültig ist
+        if (User.Identity?.IsAuthenticated != true)
+        {
+            return Unauthorized();
+        }
+
+        // Claims 
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var email = User.FindFirst(ClaimTypes.Email)?.Value ?? string.Empty;
+        var name = User.FindFirst(ClaimTypes.Name)?.Value ?? User.Identity?.Name ?? string.Empty;
+        
+        // Den Provider auslesen
+
+        var provider = User.FindFirst("Provider")?.Value ?? "Unknown";
+
+        // (Falls die ID aus dem Claim keine gültige Guid ist, wird eine leere Guid erzeugt)
+        Guid.TryParse(userIdString, out var userId);
+
+        // 3. Dein DTO instanziieren
+        var userDto = new UserDto(
+            UserId: userId,
+            Email: email,
+            Name: name,
+            Provider: provider
+        );
+
+        // TanStack Query es unter `data.user` direkt findet
+        return Ok(new { user = userDto });
     }
 }

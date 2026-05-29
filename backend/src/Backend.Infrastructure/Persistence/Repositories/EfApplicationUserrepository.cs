@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Infrastructure.Persistence.Repositories;
 
-public class EfApplicationUserRepository : IApplicationUserRepository
+public class EfApplicationUserRepository : IApplicationUserInterface
 {
     private readonly ApplicationDbContext _context;
 

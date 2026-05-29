@@ -43,6 +43,11 @@ const router = createRouter({
       path: '/projects/:slug',
       name: 'ProjectPost',
       component: () => import ('@/views/ProjectPostView.vue')
+    }, 
+    {
+      path: '/auth/callback',
+      name: 'AuthCallback',
+      component: () => import ('@/views/AuthCallbackView.vue')
     }
   ],
 
