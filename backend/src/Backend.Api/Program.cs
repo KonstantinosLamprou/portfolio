@@ -12,6 +12,12 @@ using Backend.Application.UseCases.Interactions;
 using Backend.Application.UseCases.GetContent;
 
 using DotNetEnv;
+using Microsoft.OpenApi;
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using System.Security.Claims;
+using Backend.Infrastructure.Persistence;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,19 +31,68 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme; // Optionaler Fallback
 })
-.AddCookie()
+.AddCookie(options =>
+{
+    // Verhindert den Redirect bei 401 (Nicht eingeloggt)
+        options.Events.OnRedirectToLogin = context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Task.CompletedTask;
+        };
+        
+        // Verhindert den Redirect bei 403 (Fehlende Rechte)
+        options.Events.OnRedirectToAccessDenied = context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            return Task.CompletedTask;
+        };
+})
 .AddGoogle(options =>
 {
     options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
-    options.SaveTokens = true; // Speichert Access Tokens (falls du später Google-APIs aufrufen willst)
+    options.SaveTokens = true; // Speichert Access Tokens 
+
+    // options.Events.OnCreatingTicket = async context =>
+    // {
+    //     var email = context.Identity?.FindFirst(ClaimTypes.Email)?.Value;
+
+    //     if (!string.IsNullOrEmpty(email))
+    //     {
+    //         var dbContext = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
+
+    //         var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+    //         if (user != null && user.Role == Backend.Domain.Entities.UserRole.Admin)
+    //         {
+    //             context.Identity?.AddClaim(new Claim(ClaimTypes.Role, "Admin"));
+    //         }
+    //     }
+    // };
 })
 .AddGitHub(options =>
 {
     options.ClientId = builder.Configuration["Authentication:GitHub:ClientId"]!;
     options.ClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"]!;
-    // GitHub gibt E-Mails oft nur über die API zurück, dieser Scope hilft dabei:
     options.Scope.Add("user:email"); 
+
+    // GitHub gibt E-Mails oft nur über die API zurück, dieser Scope hilft dabei:
+     options.Events.OnCreatingTicket = async context =>
+     {
+        var email = context.Identity?.FindFirst(ClaimTypes.Email)?.Value;
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            var dbContext = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
+
+            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user != null && user.Role == Backend.Domain.Entities.UserRole.Admin)
+            {
+                context.Identity?.AddClaim(new Claim(ClaimTypes.Role, "Admin"));
+            }
+        }
+    };
 });
 
 builder.Services.Configure<AdminOptions>(
@@ -48,7 +103,11 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Backend API", Version = "v1" });
+    options.MapType<JsonElement>(() => new OpenApiSchema { Type = Microsoft.OpenApi.JsonSchemaType.Object });
+});
 
 // Den Handler für die Dependency Injection registrieren
 builder.Services.AddScoped<AddUserHandler>();
@@ -80,6 +139,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    
 }
 
 app.UseCors();

@@ -4,6 +4,7 @@ using Backend.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 
 namespace Backend.Application.UseCases.GetContent;
 
@@ -36,7 +37,11 @@ public class GetBlogDetailsHandler
             Description: blogDetails.Description,
 
             // Die verschachtelten Content-Blöcke mappen
-            Content: blogDetails.Content.Select(c => new ContentBlockDto(c.Id, c.Type, c.Data)).ToList(),
+            Content: blogDetails.Content.Select(c => new ContentBlockDto(
+                c.Id, 
+                c.Type, 
+                JsonDocument.Parse(c.Data).RootElement                
+            )).ToList(),
 
             Views: blogDetails.Views,
             LikesCount: blogDetails.Likes?.Sum(l => l.Count) ?? 0,

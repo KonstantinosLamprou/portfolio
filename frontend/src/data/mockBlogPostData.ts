@@ -39,7 +39,7 @@ export type ContentBlock = HeadingBlock | TextBlock | ImageBlock | CodeBlock;
 
 export type BlogData = {
   id: string,
-  type: 'blog' | 'project';
+  contenttype: 'blog' | 'project';
   tags: string[];
   slug: string,
   title: string;
@@ -58,14 +58,14 @@ export type BlogData = {
 export const mockBlogData: BlogData[] = [
   {
     id: '762',
-    type: 'blog',
+    contenttype: 'blog',
     tags: ['typescript', 'generics', 'einfuehrung'],
     slug: "typescript-generics-einfuehrung",
     title: "Einführung in TypeScript Generics",
     author: "Max Mustermann",
     date: new Date("2024-03-15"),
     description: "Eine verständliche Einführung in die Welt der TypeScript Generics mit praktischen Beispielen.",
-    imgSrc: "http.svg",
+    imgSrc: "https://media.istockphoto.com/id/816752606/de/foto/tv-testkarte-oder-testmuster-generisch.jpg?s=612x612&w=0&k=20&c=Q4CCpLypL8bfmmlANGkfkpfnYrOSQV6zcLtmIbupVwQ=",
     likes: 42,
     views: 1234,
     CommentsCount: 5,
@@ -91,7 +91,7 @@ export const mockBlogData: BlogData[] = [
       id: "block-3",
       type: "image",
       data: {
-        src: "/http.svg",
+        src: "https://media.istockphoto.com/id/816752606/de/foto/tv-testkarte-oder-testmuster-generisch.jpg?s=612x612&w=0&k=20&c=Q4CCpLypL8bfmmlANGkfkpfnYrOSQV6zcLtmIbupVwQ=",
         alt: "Eine Box, die jeden Typ aufnehmen kann",
         caption: "" // Optional, falls du eine Bildunterschrift willst
       }

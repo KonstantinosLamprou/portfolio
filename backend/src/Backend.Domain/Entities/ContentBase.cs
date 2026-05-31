@@ -31,10 +31,7 @@ namespace Backend.Domain.Entities
     {
         public string Id { get; set; }
         public string Type { get; set; }
-
-        // JsonElement erlaubt es dir, jedes beliebige JSON-Objekt hier zu speichern,
-        // ohne dass C# wissen muss, ob es "level" und "text" oder "url" und "caption" enthält.
-        public JsonElement Data { get; set; }
+        public string Data { get; set; }
     }
 
     public class Blog : ContentBase { }

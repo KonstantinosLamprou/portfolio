@@ -36,4 +36,7 @@ const getComponentMap = (type: string) => {
   }
   return componentMap[type];
 };
+
+
+//Hier warscheinlich das GET für die Daten, aber da wir ja jetzt die Mock-Daten direkt über Props bekommen, brauchen wir das erstmal nicht.
 </script>

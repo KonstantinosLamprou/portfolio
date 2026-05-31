@@ -1,6 +1,7 @@
 import apiClient from '@/services/api'
 import { useQuery } from '@tanstack/vue-query'
 
+// TODO: Auslagern 
 // Definiere die Struktur deines Session/User-Objekts
 export interface UserSession {
   userId: string
@@ -9,7 +10,6 @@ export interface UserSession {
   provider?: string
 }
 
-// Mock-Funktion für den API-Call (Ersetze dies mit deinem echten API-Client/Axios/Fetch)
 const fetchSession = async (): Promise<UserSession | null> => {
   try {
     const response = await apiClient.get('/auth/session')

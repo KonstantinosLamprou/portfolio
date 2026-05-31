@@ -55,7 +55,6 @@ public class BlogsController : ControllerBase
 
     [HttpPost("create")]
     [Authorize]  
-    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateContent([FromBody] CreateBlogRequest request)
     {
         var userId = GetCurrentUserId();

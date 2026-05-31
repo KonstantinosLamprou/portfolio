@@ -11,7 +11,7 @@ public class AddUserHandler
     private readonly IApplicationUserInterface _repo;
     private readonly HashSet<string> _adminEmails;
 
-
+    // TODO: Debuggen um zu sehen, ob die Admin-Emails korrekt geladen werden
     public AddUserHandler(IApplicationUserInterface repo, IOptions<AdminOptions> adminOptions)
     {
         _repo = repo;

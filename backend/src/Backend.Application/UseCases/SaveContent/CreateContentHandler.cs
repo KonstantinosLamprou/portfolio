@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Backend.Domain.Contracts;
 using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
@@ -31,7 +32,7 @@ public class CreateContentHandler
                     { 
                         Id = c.Id,
                         Type = c.Type,
-                        Data = c.Data
+                        Data = c.Data.GetRawText() 
                     })
                     .ToList(),
                 AuthorId = authorId
@@ -47,7 +48,7 @@ public class CreateContentHandler
                     { 
                         Id = c.Id,
                         Type = c.Type,
-                        Data = c.Data
+                        Data = c.Data.GetRawText() 
                     })
                     .ToList(),
                 AuthorId = authorId
@@ -73,7 +74,11 @@ public class CreateContentHandler
             ImgSrc: savedContent.ImgSrc,
             Description: savedContent.Description,
             Content: savedContent.Content
-                .Select(c => new ContentBlockDto(c.Id, c.Type, c.Data))
+                .Select(c => new ContentBlockDto(
+                    c.Id, 
+                    c.Type, 
+                    JsonDocument.Parse(c.Data).RootElement                
+                ))
                 .ToList(),
             Views: savedContent.Views,
             LikesCount: savedContent.Likes?.Sum(l => l.Count) ?? 0,
