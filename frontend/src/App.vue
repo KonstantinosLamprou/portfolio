@@ -14,10 +14,10 @@
 
     <Toaster position="bottom-right" />
 
+
 </template>
 
 <script setup lang="ts">
-
 import DefaultLayout from './layouts/DefaultLayout.vue';
 import { onMounted } from 'vue'
 import { useTheme } from './composables/useTheme'

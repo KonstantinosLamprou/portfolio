@@ -10,7 +10,6 @@ using Backend.Application.UseCases.User;
 using Backend.Application.UseCases.SaveContent;  
 using Backend.Application.UseCases.Interactions;
 using Backend.Application.UseCases.GetContent;
-
 using DotNetEnv;
 using Microsoft.OpenApi;
 using System.Text.Json;
@@ -18,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
 using Backend.Infrastructure.Persistence;
+using Backend.Presentation.Workers; 
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -120,6 +120,8 @@ builder.Services.AddScoped<IBlogInterface, EfBlogRepository>();
 builder.Services.AddScoped<IProjectInterface, EfProjectRepository>();
 builder.Services.AddScoped<IApplicationUserInterface, EfApplicationUserRepository>();
 builder.Services.AddScoped<ILikeInterface, EfLikeRepository>();
+builder.Services.AddHostedService<ImageCleanupService>();
+
 
 builder.Services.AddCors(options =>
 {
@@ -145,6 +147,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

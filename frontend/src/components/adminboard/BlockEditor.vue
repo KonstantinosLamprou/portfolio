@@ -35,18 +35,40 @@
     </div>
 
     <div v-else-if="type === 'image'" class="space-y-3">
-      <div>
-        <label class="block text-xs font-medium text-gray-500 uppercase">Bild URL (src)</label>
-        <input v-model="model.src" type="text" placeholder="https://..." class="mt-1 w-full rounded border p-2 bg-white" />
+      
+      <div class="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Bild hochladen</label>
+        
+        <input 
+          v-if="!model.src"
+          type="file" 
+          accept="image/*" 
+          @change="handleImageUpload" 
+          class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+        />
+
+        <div v-else class="flex flex-col items-center gap-2">
+          <img :src="model.src" class="h-32 object-contain rounded" />
+          <div class="flex gap-2">
+            <input v-model="model.src" type="text" class="text-xs rounded border p-1 w-full bg-gray-50" readonly />
+            <button 
+              type="button" 
+              @click="removeImage" 
+              class="text-red-500 text-sm">
+              Bild löschen
+            </button>
+          </div>
+          </div>
       </div>
+
       <div class="flex gap-4">
         <div class="w-1/2">
-          <label class="block text-xs font-medium text-gray-500 uppercase">Alt-Text (für SEO/Barrierefreiheit)</label>
-          <input v-model="model.alt" type="text" placeholder="Beschreibung des Bildes..." class="mt-1 w-full rounded border p-2 bg-white" />
+          <label class="block text-xs font-medium text-gray-500 uppercase">Alt-Text</label>
+          <input v-model="model.alt" type="text" class="mt-1 w-full rounded border p-2 bg-white" />
         </div>
         <div class="w-1/2">
-          <label class="block text-xs font-medium text-gray-500 uppercase">Bildunterschrift (Optional)</label>
-          <input v-model="model.caption" type="text" placeholder="z.B. Foto von..." class="mt-1 w-full rounded border p-2 bg-white" />
+          <label class="block text-xs font-medium text-gray-500 uppercase">Bildunterschrift</label>
+          <input v-model="model.caption" type="text" class="mt-1 w-full rounded border p-2 bg-white" />
         </div>
       </div>
     </div>
@@ -75,6 +97,8 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import apiClient from '@/services/api'
+import { toast } from 'vue-sonner'
 
 const props = defineProps<{
   type: string
@@ -104,4 +128,62 @@ onMounted(() => {
     }
   }
 })
+
+const handleImageUpload = async (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  
+  if (!file) return
+
+  // Wir verpacken die Datei in ein FormData-Objekt
+  const formData = new FormData()
+  formData.append('file', file)
+
+  // Lade-Toast anzeigen
+  const toastId = toast.loading('Bild wird hochgeladen...')
+
+  try {
+    // Schickt das Bild an deinen C# FilesController
+    const response = await apiClient.post('/files/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }, 
+      withCredentials: true 
+    })
+
+    // Der Controller schickt { url: "https://..." } zurück
+    model.value.src = response.data.url
+    
+    toast.success('Bild erfolgreich hochgeladen!', { id: toastId })
+    
+  } catch (error) {
+    console.error(error)
+    toast.error('Fehler beim Bild-Upload', { id: toastId })
+    // Input-Feld wieder zurücksetzen
+    target.value = '' 
+  }
+}
+
+
+
+const removeImage = async () => {
+  if (!model.value.src) return
+
+  try {
+    // Sende die URL, die du beim Upload vom Server bekommen hast, zurück an den neuen Endpunkt
+    await apiClient.delete('/files/delete', {
+      params: { fileUrl: model.value.src }, // Hängt die URL als ?fileUrl=... an
+      withCredentials: true
+    })
+
+    // Bild aus dem Frontend-State entfernen
+    model.value.src = ''
+    toast.success('Bild entfernt')
+    
+  } catch (error) {
+    console.error('Fehler beim Löschen des Bildes:', error)
+    toast.error('Bild konnte auf dem Server nicht gelöscht werden.')
+  }
+}
+
 </script>

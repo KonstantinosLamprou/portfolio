@@ -38,12 +38,36 @@
           />
         </div>
         <div class="md:col-span-2">
-          <label class="block text-sm font-medium">Vorschaubild URL</label>
-          <input 
-            v-model="post.imgSrc" 
-            type="text" 
-            class="mt-1 w-full rounded-md border p-2 bg-surface" 
-          />
+          <label class="block text-sm font-medium mb-2">Vorschaubild (Cover-Bild)</label>
+          
+          <div class="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center bg-surface/50">
+            <input 
+              v-if="!post.imgSrc"
+              type="file" 
+              accept="image/*" 
+              @change="handleCoverImageUpload" 
+              class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
+            />
+
+            <div v-else class="flex flex-col items-center gap-3">
+              <img 
+                :src="post.imgSrc" 
+                class="object-contain object-center p-4  rounded-lg shadow-md w-full max-w-md" 
+                alt="Cover Vorschau"
+
+                 />
+              
+              <div class="flex gap-2 w-full max-w-md">
+                <input v-model="post.imgSrc" type="text" class="text-xs rounded border p-2 w-full bg-gray-50 text-gray-500" readonly />
+                <button 
+                  type="button" 
+                  @click="removeImage" 
+                  class="px-4 py-1 bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors text-sm font-medium">
+                  Bild löschen
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="md:col-span-2">
           <label class="block text-sm font-medium">Kurzbeschreibung (für Karte)</label>
@@ -77,7 +101,14 @@
             class="border rounded-lg p-4 bg-surface relative"
           >
             <div class="absolute top-2 right-2 flex gap-2">
-              <button type="button" @click="removeBlock(index)" class="text-red-500 text-sm">Entfernen</button>
+              <!-- Maybe hier noch Buttons für "Nach oben"/"Nach unten" hinzufügen? -->
+               <!-- maybe beim löschen aufpassen bei Bildern, dass die auch vom Server gelöscht werden? Oder einfach in der Warnung sagen "Vergiss nicht, ungenutzte Bilder im Medienmanager zu löschen" oder so -->
+              <button 
+                type="button" 
+                @click="removeBlock(index)" 
+                class="text-red-500 text-sm">
+                  Entfernen
+                </button>
             </div>
             
             <div class="mb-4 font-semibold text-sm text-gray-400 border-b pb-2">
@@ -107,6 +138,7 @@ import BlockEditor from './BlockEditor.vue'
 import { type ContentBlockDto, type CreateBlogRequest } from '@/types/blogTypes.ts'
 import { useCreateContentblogs, useCreateContentprojects } from '@/composables/content/useCreateContent.ts'
 import { toast } from 'vue-sonner'
+import apiClient from '@/services/api.ts'
 
 const { 
   mutate: mutateBlog, 
@@ -183,6 +215,67 @@ const handleSubmit = () => {
     mutateBlog(post.value, callbacks)
   } else if (post.value.contentType === 'project') {
     mutateProject(post.value, callbacks)
+  }
+}
+
+
+const handleCoverImageUpload = async (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  
+  if (!file) return
+
+  const formData = new FormData()
+  formData.append('file', file)
+
+  const toastId = toast.loading('Vorschaubild wird hochgeladen...')
+
+  try {
+    const response = await apiClient.post('/files/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }, 
+      withCredentials: true 
+    })
+
+    // URL in dein post-Objekt speichern
+    post.value.imgSrc = response.data.url
+    
+    toast.success('Vorschaubild erfolgreich hochgeladen!', { id: toastId })
+    
+} catch (error: any) { // <-- error als 'any' typisieren (oder AxiosError)
+    // 1. Genaue Backend-Antwort in der Konsole loggen
+    console.error('Detail-Fehler vom Server:', error.response?.data)
+    
+    // 2. Die Fehlermeldung des Backends auslesen (falls vorhanden)
+    const backendMessage = typeof error.response?.data === 'string' 
+      ? error.response.data 
+      : (error.response?.data?.title || 'Unbekannter Fehler beim Bild-Upload')
+
+    // 3. Fehlermeldung im Toast anzeigen
+    toast.error(backendMessage, { id: toastId })
+    
+    target.value = ''
+  } 
+}
+
+const removeImage = async () => {
+  if (!post.value.imgSrc) return
+
+  try {
+    // Sende die URL, die du beim Upload vom Server bekommen hast, zurück an den neuen Endpunkt
+    await apiClient.delete('/files/delete', {
+      params: { fileUrl: post.value.imgSrc }, // Hängt die URL als ?fileUrl=... an
+      withCredentials: true
+    })
+
+    // Bild aus dem Frontend-State entfernen
+    post.value.imgSrc = ''
+    toast.success('Bild entfernt')
+    
+  } catch (error) {
+    console.error('Fehler beim Löschen des Bildes:', error)
+    toast.error('Bild konnte auf dem Server nicht gelöscht werden.')
   }
 }
 

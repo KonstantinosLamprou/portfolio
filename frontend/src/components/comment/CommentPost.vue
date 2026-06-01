@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!isMounted" class="flex h-32.5 items-center justify-center">
+  <div v-if="isSessionLoading" class="flex h-32.5 items-center justify-center">
     <Spinner />
   </div>
 
@@ -28,24 +28,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue' // onMounted entfernt
 import { SendIcon } from 'lucide-vue-next'
 import { Button } from '@/components/ui/buttons/'
 import Spinner from '../ui/loaders/SpinnerLoader.vue'
 import CommentEditor from './CommentEditor.vue'
 import UnauthenticatedOverlay from './UnauthenticatedOverlay.vue'
-import { useSession } from '@/composables/useSession' // Dein neuer TanStack Hook
+import { useSession } from '@/composables/useSession'
 
 // --- State & Composables ---
 const content = ref('')
 const tabsValue = ref<'write' | 'preview'>('write')
 const { data: session, isPending: isSessionLoading } = useSession()
-
-// Hydration Handling
-const isMounted = ref(false)
-onMounted(() => {
-  isMounted.value = true
-})
 
 // --- Computed Properties ---
 // !! wandelt das Objekt/null/undefined sicher in true oder false um
@@ -54,6 +48,7 @@ const isAuthenticated = computed(() => !!session.value && !isSessionLoading.valu
 // --- Methods ---
 const submitComment = () => {
   if (!isAuthenticated.value) return;
+  
   // Hier dann später deine Logik: useCreatePostComment.mutate(...)
   console.log('Kommentar wird gesendet:', content.value)
 }

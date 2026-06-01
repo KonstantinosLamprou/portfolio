@@ -2,7 +2,7 @@
 using Backend.Application.UseCases.GetContent;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Backend.Api.Controllers.GetContentController;
+namespace Backend.Presentation.Controllers;
 
 [ApiController]
 [Route("api/projects")] // /api/blogs

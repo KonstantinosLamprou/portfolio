@@ -23,8 +23,11 @@ export function useScrollspy(ids: string[], options: IntersectionObserverInit = 
 
     // 2. Alle HTML-Elemente auf der Seite suchen, die zu den IDs passen, und sie beobachten
     ids.forEach((id) => {
-      // document.querySelector erwartet einen gültigen CSS-Selektor (inklusive dem #)
-      const element = document.querySelector(id)
+    // Wir entfernen das '#' am Anfang, um die reine ID zu bekommen
+      const cleanId = id.startsWith('#') ? id.substring(1) : id;
+      
+      // getElementById ist extrem robust und ignoriert CSS-Syntax-Regeln
+      const element = document.getElementById(cleanId)
       if (element) {
         observer!.observe(element)
       } else {

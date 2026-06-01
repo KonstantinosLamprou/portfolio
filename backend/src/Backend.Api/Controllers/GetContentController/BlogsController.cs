@@ -33,16 +33,16 @@ public class BlogsController : ControllerBase
         return Ok(result); 
     }
 
-    [HttpGet("{id}")] // /api/blogs/123
+    [HttpGet("{slug}")] // /api/blogs/123
     [ProducesResponseType(typeof(ContentDetailResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetBlogDetails(int id)
+    public async Task<IActionResult> GetBlogDetails(string slug)
     {
         // 1. Versuchen, den aktuellen User auszulesen (falls er einen Token hat)
         Guid? userId = GetCurrentUserId(); 
 
         // 2. Handler aufrufen
-        var result = await _blogDetailshandler.Handle(id, userId);
+        var result = await _blogDetailshandler.Handle(slug, userId);
 
         // 3. Wenn null zurückkommt, existiert der Blog nicht
         if (result == null)
@@ -63,7 +63,7 @@ public class BlogsController : ControllerBase
             return Unauthorized(new { message = "User nicht authentifiziert." });
 
         var result = await _createContentHandler.Handle(request, userId.Value);
-        return CreatedAtAction(nameof(GetBlogDetails), new { id = result.Id }, result);
+        return CreatedAtAction(nameof(GetBlogDetails), new { slug = result.Slug }, result);
     }
 
     // ← Helper-Methode

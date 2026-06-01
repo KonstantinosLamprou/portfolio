@@ -17,10 +17,10 @@ public class GetBlogDetailsHandler
         _repository = repository;
     }
 
-    public async Task<ContentDetailResponse?> Handle(int ContentId, Guid? currentUserId)
+    public async Task<ContentDetailResponse?> Handle(string slug, Guid? currentUserId)
     {
-        var blogDetails = await _repository.GetBlogWithDetailsAsync(ContentId);
-
+        var blogDetails = await _repository.GetBlogWithDetailsBySlugAsync(slug);
+        
         if (blogDetails == null)
         {
             return null;
@@ -36,12 +36,12 @@ public class GetBlogDetailsHandler
             ImgSrc: blogDetails.ImgSrc,
             Description: blogDetails.Description,
 
-            // Die verschachtelten Content-Blöcke mappen
-            Content: blogDetails.Content.Select(c => new ContentBlockDto(
+            // Die verschachtelten Content-Blöcke mappen und Sicherheitsnetz: Falls Content null ist, gib eine leere Liste zurück
+            Content: blogDetails.Content?.Select(c => new ContentBlockDto(
                 c.Id, 
                 c.Type, 
                 JsonDocument.Parse(c.Data).RootElement                
-            )).ToList(),
+            )).ToList() ?? new List<ContentBlockDto>(),
 
             Views: blogDetails.Views,
             LikesCount: blogDetails.Likes?.Sum(l => l.Count) ?? 0,

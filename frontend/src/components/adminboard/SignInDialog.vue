@@ -1,8 +1,8 @@
 <template>
   <div
-    v-if="dialogStore.open"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-main/40 backdrop-blur-sm"
-    @click.self="dialogStore.closeDialog"
+    v-if="dialogState.open"
+    class="fixed inset-0 z-[9999] flex items-center justify-center bg-main/40 backdrop-blur-sm"
+    @click.self="dialogState.closeDialog"
   >
     <div class="w-full max-w-md rounded-xl bg-neutral-900 p-6 text-white shadow-xl">
       <div class="flex items-start justify-between">
@@ -14,7 +14,7 @@
         <button
           type="button"
           class="text-white/60 hover:text-white"
-          @click="dialogStore.closeDialog"
+          @click="dialogState.closeDialog"
           aria-label="Close"
         >
           X
@@ -49,8 +49,8 @@
 <script setup lang="ts">
 import { useSignInDialogStore } from "@/stores/useSignInDialogStore"
 
-// Store als Ganzes laden, um die Reaktivität von 'open' zu behalten
-const dialogStore = useSignInDialogStore()
+const dialogState  = useSignInDialogStore()
+
 
 const startOAuth = (provider: "github" | "google") => {
   // 1. Merken, wo der User gerade ist (Pfad + Parameter + Anker)
@@ -64,4 +64,5 @@ const startOAuth = (provider: "github" | "google") => {
   // 2. Ab zum Backend-Login!
   window.location.href = `http://localhost:5132/api/auth/${provider}/login`;
 }
+
 </script>

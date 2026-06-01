@@ -26,12 +26,14 @@ namespace Backend.Infrastructure.Persistence.Repositories
         {
             return await _context.Blogs.SingleOrDefaultAsync(blog => blog.Id == id); 
         }
-        public async Task<Blog?> GetBlogWithDetailsAsync(int id)
+        public async Task<Blog?> GetBlogWithDetailsBySlugAsync(string slug)
         {
             return await _context.Blogs
+                .Include(b => b.Author) 
+                .Include(b => b.Content)
                 .Include(b => b.Likes)      
                 .Include(b => b.Comments)   
-                .SingleOrDefaultAsync(blog => blog.Id == id);
+                .SingleOrDefaultAsync(blog => blog.Slug == slug);
         }
         public async Task<Blog> SaveBlogAsync(Blog blog)
         {

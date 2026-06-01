@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.Application.UseCases.User;
 using Backend.Domain.Contracts; 
 
-namespace Backend.Api.Controllers;
+namespace Backend.Presentation.Controllers;
 
 [ApiController]
 [Route("api/auth")]
@@ -126,7 +126,6 @@ public class AuthController : ControllerBase
         var name = User.FindFirst(ClaimTypes.Name)?.Value ?? User.Identity?.Name ?? string.Empty;
         
         // Den Provider auslesen
-
         var provider = User.FindFirst("Provider")?.Value ?? "Unknown";
 
         // (Falls die ID aus dem Claim keine gültige Guid ist, wird eine leere Guid erzeugt)
