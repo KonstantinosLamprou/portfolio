@@ -13,7 +13,7 @@
       </RouterLink>
 
       <div class="flex items-center justify-between gap-2 px-2 pt-4 text-sm text-muted-foreground">
-          {{ formattedDate }}
+          {{ date }}
         <div class="flex gap-2">
           <div>{{ likes }} likes</div>
           <div>&</div>
@@ -55,7 +55,7 @@ const props = defineProps<{
   title: string;
   slug: string;
   author: string;
-  date: Date;
+  date: string;
   description: string;
   content: object;
   imgSrc: string;
@@ -75,13 +75,13 @@ const targetRoute = computed(() => {
   return { name: 'BlogPost', params: { slug: props.slug } };
 });
 
-const formattedDate = computed(() => {
+// const formattedDate = computed(() => {
 
-  const months = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
-  const month = months[props.date.getMonth()];
-  const day = String(props.date.getDate()).padStart(2, '0');
-  const year = props.date.getFullYear();
+//   const months = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+//   const month = months[props.date.getMonth()];
+//   const day = String(props.date.getDate()).padStart(2, '0');
+//   const year = props.date.getFullYear();
 
-  return `${month} ${day}.${year}`; // Ergebnis: "Apr 02.2024"
-});
+//   return `${month} ${day}.${year}`; // Ergebnis: "Apr 02.2024"
+// });
 </script>

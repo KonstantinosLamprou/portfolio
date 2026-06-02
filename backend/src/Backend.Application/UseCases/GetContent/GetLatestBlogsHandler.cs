@@ -1,4 +1,5 @@
-﻿using Backend.Domain.Entities;
+﻿using Backend.Domain.Contracts;
+using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,22 @@ namespace Backend.Application.UseCases.GetContent
         {
             _repository = repository;
         }
-        // Fehlt hier das Mapping von Entity zu DTO? Oder soll hier direkt die Entity zurückgegeben werden?
-        public async Task<IEnumerable<Blog>> Handle(int count = 3)
+        public async Task<IEnumerable<ContentListResponse>> Handle(int count = 3)
         {
-            return await _repository.GetLatestBlogsAsync(count); 
+            var blogs = await _repository.GetLatestBlogsAsync(count); 
+
+            //Mapping Entity -> DTO
+            return blogs.Select(b => new ContentListResponse(
+                Id: b.Id,
+                Title: b.Title,
+                Slug: b.Slug,
+                DateOfCreation: b.DateOfCreation,
+                ImgSrc: b.ImgSrc,
+                Description: b.Description,
+                Views: b.Views,
+                LikesCount: b.Likes?.Sum(l => l.Count) ?? 0,
+                CommentsCount: b.Comments?.Count ?? 0
+            ));
         }
     }
 }

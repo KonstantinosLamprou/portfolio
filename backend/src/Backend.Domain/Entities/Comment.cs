@@ -21,8 +21,8 @@ namespace Backend.Domain.Entities
         public Comment? ParentComment { get; set; }
 
         // Welcher User hat den Kommentar geschrieben?
-        public Guid UserId { get; set; }
-        public ApplicationUser User { get; set; }
+        public Guid AuthorId { get; set; }
+        public ApplicationUser Author { get; set; }
 
         public ICollection<Comment> Replies { get; set; } = new List<Comment>();
         public ICollection<CommentVote> Votes { get; set; } = new List<CommentVote>();

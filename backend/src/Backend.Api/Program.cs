@@ -1,23 +1,23 @@
 using Backend.Domain.Interfaces;
 using Backend.Infrastructure;
 using Backend.Infrastructure.Persistence.Repositories;
-using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerUI; 
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
-using Backend.Application.Options;
+using Backend.Infrastructure.Persistence;
 using Backend.Application.UseCases.User;  
 using Backend.Application.UseCases.SaveContent;  
 using Backend.Application.UseCases.Interactions;
 using Backend.Application.UseCases.GetContent;
-using DotNetEnv;
-using Microsoft.OpenApi;
-using System.Text.Json;
+using Backend.Application.Options;
+using Backend.Presentation.Workers; 
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI; 
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi;
+using System.Text.Json;
 using System.Security.Claims;
-using Backend.Infrastructure.Persistence;
-using Backend.Presentation.Workers; 
+using DotNetEnv;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -53,22 +53,22 @@ builder.Services.AddAuthentication(options =>
     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
     options.SaveTokens = true; // Speichert Access Tokens 
 
-    // options.Events.OnCreatingTicket = async context =>
-    // {
-    //     var email = context.Identity?.FindFirst(ClaimTypes.Email)?.Value;
+    options.Events.OnCreatingTicket = async context =>
+    {
+        var email = context.Identity?.FindFirst(ClaimTypes.Email)?.Value;
 
-    //     if (!string.IsNullOrEmpty(email))
-    //     {
-    //         var dbContext = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
+        if (!string.IsNullOrEmpty(email))
+        {
+            var dbContext = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
 
-    //         var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
 
-    //         if (user != null && user.Role == Backend.Domain.Entities.UserRole.Admin)
-    //         {
-    //             context.Identity?.AddClaim(new Claim(ClaimTypes.Role, "Admin"));
-    //         }
-    //     }
-    // };
+            if (user != null && user.Role == Backend.Domain.Entities.UserRole.Admin)
+            {
+               context.Identity?.AddClaim(new Claim(ClaimTypes.Role, "Admin"));
+            }
+        }
+    };
 })
 .AddGitHub(options =>
 {
@@ -116,6 +116,8 @@ builder.Services.AddScoped<AddLikeHandler>();
 builder.Services.AddScoped<GetAllBlogsHandler>();
 builder.Services.AddScoped<GetAllProjectsHandler>();
 builder.Services.AddScoped<GetBlogDetailsHandler>();
+builder.Services.AddScoped<GetProjectDetailsHandler>();
+builder.Services.AddScoped<GetLatestBlogsHandler>();
 builder.Services.AddScoped<IBlogInterface, EfBlogRepository>();
 builder.Services.AddScoped<IProjectInterface, EfProjectRepository>();
 builder.Services.AddScoped<IApplicationUserInterface, EfApplicationUserRepository>();

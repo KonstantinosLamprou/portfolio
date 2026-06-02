@@ -8,6 +8,8 @@ namespace Backend.Domain.Interfaces
     public interface IProjectInterface
     {
         Task<Project?> GetProjectByIdAsync(int id);
+
+        Task<Project?> GetProjectBySlugAsync(string slug);
         Task<Project?> GetProjectWithDetailsAsync(int id);
 
         Task<Project> SaveProjectAsync(Project project);

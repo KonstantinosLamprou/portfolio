@@ -43,7 +43,7 @@ const handleValueChange = (payload: any) => {
         v-for="item in props.toc"
         :key="item.url"
         :value="`#${item.url}`"
-        :style="{ marginLeft: `${(item.depth - 1) * 12}px` }"
+        :style="{ marginLeft: `${(item.depth ) * 12}px` }"
       >
         {{ item.title }}
       </SegmentGroupItem>

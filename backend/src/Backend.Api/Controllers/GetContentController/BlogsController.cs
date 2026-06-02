@@ -14,14 +14,21 @@ public class BlogsController : ControllerBase
     private readonly GetAllBlogsHandler _getAllBlogsHandler;
     private readonly GetBlogDetailsHandler _blogDetailshandler; 
     private readonly CreateContentHandler _createContentHandler;
+    private readonly GetLatestBlogsHandler _latestBlogsHandler;
 
 
     // Handler Dependency Injection 
-    public BlogsController(GetAllBlogsHandler getAllBlogsHandler, GetBlogDetailsHandler blogDetailshandler, CreateContentHandler createContentHandler)
+    public BlogsController(
+        GetAllBlogsHandler getAllBlogsHandler,
+        GetBlogDetailsHandler blogDetailshandler,
+        CreateContentHandler createContentHandler,
+        GetLatestBlogsHandler latestBlogsHandler
+          )
     {
         _getAllBlogsHandler = getAllBlogsHandler;
         _blogDetailshandler = blogDetailshandler; 
         _createContentHandler = createContentHandler;
+        _latestBlogsHandler = latestBlogsHandler;
     }
 
     [HttpGet]
@@ -50,6 +57,14 @@ public class BlogsController : ControllerBase
             return NotFound(new { message = "Blog nicht gefunden." });
         }
 
+        return Ok(result);
+    }
+
+    [HttpGet("latest")] // /api/blogs/latest?count=5 wegen FromQuery kann man es anpassen 
+    [ProducesResponseType(typeof(IEnumerable<ContentListResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetLatestBlogs([FromQuery] int count = 3)
+    {
+        var result = await _latestBlogsHandler.Handle(count);
         return Ok(result);
     }
 

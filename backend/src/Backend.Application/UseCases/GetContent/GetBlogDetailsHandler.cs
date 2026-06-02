@@ -1,10 +1,9 @@
-﻿using Backend.Domain.Contracts;
-using Backend.Domain.Entities;
-using Backend.Domain.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
+using Backend.Domain.Contracts;
+using Backend.Domain.Interfaces;
 
 namespace Backend.Application.UseCases.GetContent;
 
@@ -52,9 +51,6 @@ public class GetBlogDetailsHandler
                 ? blogDetails.Likes?.SingleOrDefault(l => l.UserId == currentUserId.Value)?.Count ?? 0
                 : 0,
 
-            // HINWEIS zum Author: 
-            // In ContentBase hast du aktuell 'public string Author'. Das DTO erwartet ein 'AuthorDto'.
-            // Wenn du hier später eine echte Relation zum User aufbaust, machst du:
             Author: new AuthorDto(blogDetails.Author.Id, blogDetails.Author.Name, blogDetails.Author.ProfilePictureUrl, blogDetails.Author.Role)
         );
 

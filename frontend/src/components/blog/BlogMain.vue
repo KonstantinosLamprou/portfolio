@@ -13,9 +13,8 @@
 
     <div class="pt-8 container">
       <div v-if="isPending" class="text-center text-lg text-muted-foreground">
-        Lade Blogs...
+        <Spinner />
       </div>
-
       <div v-else-if="isError" class="text-center text-red-500">
         Blogs konnten leider nicht geladen werden.
       </div>
@@ -27,11 +26,11 @@
           :title="data.title"
           :author="data.author"
           :slug="data.slug"
-          :date="data.date" 
+          :date="formatDate(data.dateOfCreation)" 
           :description="data.description"
           :content="data.content"
           :imgSrc="data.imgSrc"
-          :likes="data.likes"
+          :likes="data.likesCount"
           :views="data.views"
           :comments="data.commentsCount" 
           :comment="data.comment"
@@ -49,6 +48,7 @@ import { useQuery } from '@tanstack/vue-query';
 import { toast } from 'vue-sonner'
 import ContentCard from '../content/ContentCard.vue';
 import apiClient from '@/services/api.ts';
+import Spinner from '@/components/ui/loaders/SpinnerLoader.vue';
 
 
 // 1. Typ für die rohen Daten, die vom C# Backend kommen
@@ -58,11 +58,11 @@ interface BlogApiResponse {
   title: string;
   author: string;
   slug: string;
-  date: string; // Von der API kommt es immer als String (ISO-Format)
+  dateOfCreation: string; // Von der API kommt es immer als String (ISO-Format)
   description: string;
   content: object;
   imgSrc: string;
-  likes?: number; // likes ist keine Num
+  likesCount?: number; // likes ist keine Num
   views?: number;
   commentsCount?: number; //deprecated? 
   comment?: string; // deprecated?
@@ -71,8 +71,8 @@ interface BlogApiResponse {
 // 2. Typ für unser lokales Frontend (nach unserer Transformation)
 // Omit kopiert das API-Interface, aber wirft das alte 'date' raus, 
 // damit wir es mit dem echten Date-Objekt überschreiben können.
-interface BlogData extends Omit<BlogApiResponse, 'date'> {
-  date: Date; // Hier ist es jetzt garantiert ein Date!
+interface BlogData extends Omit<BlogApiResponse, 'dateOfCreation'> {
+  dateOfCreation: Date; // Hier ist es jetzt garantiert ein Date!
 }
 
 // 1. Definiere die Fetch-Funktion mit Axios
@@ -84,7 +84,7 @@ const fetchBlogs = async (): Promise<BlogData[]> => {
   // Datums-Mapping
   return data.map(blog => ({
     ...blog,
-    date: new Date(blog.date) 
+    dateOfCreation: new Date(blog.dateOfCreation) 
   }));
 };
 
@@ -108,5 +108,9 @@ watch(isError, (hasError) => {
     toast.error(`Fehler beim Laden: ${error.value.message || 'Server nicht erreichbar'}`);
   }
 });
+
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('de-DE');
+};
 
 </script>

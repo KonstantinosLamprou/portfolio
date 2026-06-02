@@ -18,6 +18,10 @@ namespace Backend.Infrastructure.Persistence
         public DbSet<Project> Projects { get; set; }
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<ApplicationUser> Users { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+
+        public DbSet<Like> Likes { get; set; }
+        public DbSet<CommentVote> CommentVotes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

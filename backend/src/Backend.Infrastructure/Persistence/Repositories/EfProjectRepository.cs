@@ -34,6 +34,16 @@ namespace Backend.Infrastructure.Persistence.Repositories
 
         }
 
+        public async Task<Project?> GetProjectBySlugAsync(string slug)
+        {
+            return await _context.Projects
+                .Include(p => p.Author) 
+                .Include(p => p.Content)
+                .Include(p => p.Likes)      
+                .Include(p => p.Comments)   
+                .SingleOrDefaultAsync(project => project.Slug == slug);
+        }
+
         public async Task<Project> SaveProjectAsync(Project project)
         {
             if (project.Id == 0)

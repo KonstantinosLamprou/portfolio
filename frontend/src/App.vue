@@ -14,11 +14,12 @@
 
     <Toaster position="bottom-right" />
 
-
+  <VueQueryDevtools />
 </template>
 
 <script setup lang="ts">
 import DefaultLayout from './layouts/DefaultLayout.vue';
+import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 import { onMounted } from 'vue'
 import { useTheme } from './composables/useTheme'
 import SplashScreen from './components/ui/SplashScreen.vue';
