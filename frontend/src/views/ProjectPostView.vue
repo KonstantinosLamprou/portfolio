@@ -7,7 +7,7 @@
     <BackButton v-show="!dialogState.open" class="hidden md:flex"/>
 
     <header class="text-center max-w-3xl mx-auto px-4 pt-16">
-      <h1 class="text-4xl font-extrabold text-slate-600 mb-4">{{ currentPost.title }}</h1>
+      <h1 class="text-5xl font-extrabold text-slate-600 mb-12">{{ currentPost.title }}</h1>
       <div class="grid grid-cols-2 text-sm max-md:gap-4 md:grid-cols-4">
         <div class='space-y-1 md:mx-auto'>
           <div class="text-muted-foreground">geschrieben von</div>
@@ -32,10 +32,18 @@
       </div>
     </header>
 
+    <div>
+      <img 
+        :src="currentPost.imgSrc" 
+        :alt="currentPost.title" 
+        class="w-full h-auto object-cover mt-8 rounded-lg shadow-md"
+      />
+    </div>
+
     <div class="mt-8 flex flex-col justify-between lg:flex-row items-start">
       <ContentRenderer class="w-full lg:max-w-2xl" :blocks="currentPost.content" />
       
-      <aside class="w-full lg:w-68 px-4 py-10 sticky top-34">
+      <aside class="w-full lg:w-68 px-4 lg:py-10 sticky top-34">
         <TableOfContents :toc="tableOfContents" />
         <LikeButton :slug="currentPost.slug" :initial-likes="currentPost.likesCount" :user-liked="currentPost.currentUserLikeCount" />
       </aside>

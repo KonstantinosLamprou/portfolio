@@ -39,7 +39,7 @@
         </div>
         <div class="md:col-span-2">
           <label class="block text-sm font-medium mb-2">Vorschaubild (Cover-Bild)</label>
-          
+          <!-- Bilder -->
           <div class="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center bg-surface/50">
             <input 
               v-if="!post.imgSrc"
@@ -52,7 +52,7 @@
             <div v-else class="flex flex-col items-center gap-3">
               <img 
                 :src="post.imgSrc" 
-                class="object-contain object-center p-4  rounded-lg shadow-md w-full max-w-md" 
+                class="object-contain object-center p-4 rounded-lg shadow-md w-full max-w-md" 
                 alt="Cover Vorschau"
 
                  />
@@ -77,6 +77,15 @@
             class="mt-1 w-full rounded-md border p-2 bg-surface"
           ></textarea>
         </div>
+        <!-- <div class="md:col-span-2">
+          <label class="block text-sm font-medium">Tags</label>
+          <input 
+            v-model="post.tags" 
+            type="text" 
+            placeholder="Schlagwörter (durch Komma getrennt)"
+            class="mt-1 w-full rounded-md border p-2 bg-surface"
+          />
+        </div> -->
       </section>
 
       <section class="mb-10">

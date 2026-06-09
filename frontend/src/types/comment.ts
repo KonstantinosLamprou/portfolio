@@ -15,7 +15,17 @@ export interface CommentResponseDto {
   downvotes: number;
   currentUserVote: boolean | null;
   parentCommentId: string | null; // true = up, false = down, null = kein Vote
-  replies: CommentResponseDto[];
+  replies: CommentReplyDto[];
+}
+export interface CommentReplyDto {
+  id: string;
+  text: string;
+  createdAt: string; 
+  author: AuthorDto;
+  upvotes: number;
+  downvotes: number;
+  currentUserVote: boolean | null;
+  parentCommentId: string; 
 }
 
 export interface CreateCommentRequest {

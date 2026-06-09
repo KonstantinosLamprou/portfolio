@@ -1,5 +1,6 @@
 <template>
-  <div class="max-w-3xl mx-auto p-4 bg-[#0a0a0a] min-h-screen"> <div class="mt-8">
+  <div class="w-full mx-auto p-4 bg-main"> 
+    <div>
       <CommentHeader 
         :totalComments="comments.length" 
         :totalReplies="totalReplies" 
@@ -25,6 +26,8 @@ import CommentSection from './CommentSection.vue';
 import { mockComments } from '@/data/mockCommentData.ts';
 import type { CommentResponseDto } from '@/types/comment.ts';
 
+
+// TODO: Comments von API fetchen
 const comments = ref<CommentResponseDto[]>(mockComments);
 
 // Berechnet alle Replies aus der ersten Ebene für den Header

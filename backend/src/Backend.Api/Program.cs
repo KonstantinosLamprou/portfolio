@@ -18,6 +18,7 @@ using Microsoft.OpenApi;
 using System.Text.Json;
 using System.Security.Claims;
 using DotNetEnv;
+using Backend.Application.UseCases.Comments;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -118,10 +119,12 @@ builder.Services.AddScoped<GetAllProjectsHandler>();
 builder.Services.AddScoped<GetBlogDetailsHandler>();
 builder.Services.AddScoped<GetProjectDetailsHandler>();
 builder.Services.AddScoped<GetLatestBlogsHandler>();
+builder.Services.AddScoped<CreateCommentHandler>();
 builder.Services.AddScoped<IBlogInterface, EfBlogRepository>();
 builder.Services.AddScoped<IProjectInterface, EfProjectRepository>();
 builder.Services.AddScoped<IApplicationUserInterface, EfApplicationUserRepository>();
 builder.Services.AddScoped<ILikeInterface, EfLikeRepository>();
+builder.Services.AddScoped<ICommentInterface, EfCommentRepository>();
 builder.Services.AddHostedService<ImageCleanupService>();
 
 

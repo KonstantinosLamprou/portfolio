@@ -29,7 +29,6 @@ export const mockComments: CommentResponseDto[] = [
         upvotes: 3,
         downvotes: 0,
         currentUserVote: true,
-        replies: []
       }
     ]
   },

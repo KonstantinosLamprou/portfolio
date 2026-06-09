@@ -23,18 +23,21 @@
           <InputGroupTextarea
             ref="textareaRef"
             v-model="content"
-            class="min-h-24 resize-none px-4 py-3 text-[color:var(--color-body)] placeholder:text-[color:var(--muted-foreground)] leading-relaxed"
+            class="min-h-24 resize-none px-4 py-2 lg:text-base text-sm  text-[color:var(--color-body)] placeholder:text-[color:var(--muted-foreground)] leading-relaxed"
             :placeholder="placeholder"
             :disabled="disabled"
             @keydown="handleKeydown"
+            @blur="handleBlur"
+
           />
           <InputGroupAddon
             align="block-end"
-            class="border-t border-[color:var(--border)] bg-[color:var(--tab-background)]"
+            class="border-t rounded-b-xl border-[color:var(--border)] bg-[color:var(--tab-background)]"
           >
             <InputGroupButton
               variant="ghost"
               size="icon-xs"
+              class="cursor-pointer"
               :disabled="disabled"
               aria-label="Bold"
               @click.prevent="decorate('bold')"
@@ -44,6 +47,7 @@
             <InputGroupButton
               variant="ghost"
               size="icon-xs"
+              class="cursor-pointer"
               :disabled="disabled"
               aria-label="Italic"
               @click.prevent="decorate('italic')"
@@ -53,6 +57,7 @@
             <InputGroupButton
               variant="ghost"
               size="icon-xs"
+              class="cursor-pointer"
               :disabled="disabled"
               aria-label="Strikethrough"
               @click.prevent="decorate('strikethrough')"
@@ -66,7 +71,7 @@
 
     <TabsContent value="preview" class="w-full mt-2 space-y-2">
       <div class="rounded-xl border border-[color:var(--border)] bg-gray-50 dark:bg-gray-800/50 px-4 pt-3 pb-12 min-h-[136px] prose dark:prose-invert max-w-none text-sm whitespace-pre-wrap break-words">
-        <p v-if="!content" class="text-gray-400 italic">Nothing to preview...</p>
+        <p v-if="!content.trim()" class="text-gray-400 italic">Nothing to preview...</p>
         <div v-else>{{ content }}</div> 
       </div>
     </TabsContent>
@@ -135,7 +140,14 @@ function handleKeydown(e: KeyboardEvent) {
     emit('modEnter')
   }
   if (e.key === 'Escape') {
+    content.value = content.value.trim();   
     emit('escape')
   }
 }
+
+function handleBlur() {
+  content.value = content.value.trim()
+}
+
+
 </script>

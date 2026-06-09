@@ -4,7 +4,7 @@
     class="fixed inset-0 z-[9999] flex items-center justify-center bg-main/40 backdrop-blur-sm"
     @click.self="dialogState.closeDialog"
   >
-    <div class="w-full max-w-md rounded-xl bg-neutral-900 p-6 text-white shadow-xl">
+    <div class="w-full m-4 max-w-md rounded-xl bg-neutral-900 p-6 text-white shadow-xl">
       <div class="flex items-start justify-between">
         <div>
           <div class="text-xl font-semibold">Sign in</div>

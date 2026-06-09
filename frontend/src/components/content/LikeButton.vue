@@ -1,8 +1,8 @@
 <template>
-  <div class="mt-6 mb-4 flex justify-center">
+  <div class="lg:mt-6 lg:mb-4 flex justify-center ">
     <button
       ref="buttonRef"
-      class="flex items-center gap-3 rounded-4xl bg-primary px-4 py-2 text-lg text-body dark:bg-primary/5 transition-transform duration-200 active:scale-95"
+      class="flex items-center gap-3 rounded-4xl bg-gray-900 px-4 py-2 text-lg text-body  transition-transform duration-200 active:scale-95"
       @click="handleLikeButtonClick"
       aria-label="Like this post"
       type="button"

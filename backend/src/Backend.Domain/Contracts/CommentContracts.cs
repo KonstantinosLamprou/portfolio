@@ -14,7 +14,6 @@ public record AuthorDto(
     UserRole Role // "Admin"-Badge bei eigenen kommentaren 
 );
 
-
 public record CommentResponseDto(
     Guid Id,
     string Text,
@@ -30,9 +29,40 @@ public record CommentResponseDto(
     List<CommentResponseDto> Replies
 );
 
+public record ReplyCommentResponseDto(
+    Guid Id,
+    string Text,
+    DateTime CreatedAt,
+    AuthorDto Author,
+    // Votes
+    int Upvotes,
+    int Downvotes,
+    // downvoted (false) oder gar nicht gevotet (null)?
+    bool? CurrentUserVote,
+    Guid ParentCommentId
+);
+
+public record UpdateCommentRequest(
+    Guid Id,
+    string Text
+);
+
+public record DeleteCommentRequest(
+    Guid Id
+);
+
+public record VoteCommentRequest(
+    Guid CommentId,
+    bool IsUpvote
+);
+
+public record RemoveVoteCommentRequest(
+    Guid CommentId
+);
 
 public record CreateCommentRequest(
     string Text,
+    string ContentType,
     int ContentId, 
     Guid? ParentCommentId
     ); 

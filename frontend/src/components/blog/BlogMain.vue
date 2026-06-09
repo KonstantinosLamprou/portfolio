@@ -12,7 +12,8 @@
     </div>
 
     <div class="pt-8 container">
-      <div v-if="isPending" class="text-center text-lg text-muted-foreground">
+      <div v-if="isPending" class="flex gap-2 items-center justify-center text-center text-lg text-muted-foreground">
+        <label>Lade Blogs...</label>
         <Spinner />
       </div>
       <div v-else-if="isError" class="text-center text-red-500">
@@ -80,7 +81,7 @@ const fetchBlogs = async (): Promise<BlogData[]> => {
   // Axios wirft automatisch einen Fehler bei Status-Codes wie 404 oder 500,
   // wir brauchen also kein manuelles "if (!response.ok)" mehr.
   const { data } = await apiClient.get<BlogApiResponse[]>('blogs');
-  
+
   // Datums-Mapping
   return data.map(blog => ({
     ...blog,

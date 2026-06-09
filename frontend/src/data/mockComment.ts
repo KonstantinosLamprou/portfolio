@@ -43,10 +43,10 @@ export const mockComments: Comment[] = [
   },
   {
     id: 5,
-    content: 'Antwort auf Bobs Kommentar (2 Ebenen tief).',
+    content: 'Antwort auf Bobs Kommentar.',
     createdAt: '2026-05-11T12:20:00Z',
     author: 'Alice',
-    parentId: 2,
+    parentId: 4,
     postId: 42
   }
 ]

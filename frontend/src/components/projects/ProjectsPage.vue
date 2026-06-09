@@ -13,9 +13,9 @@
 
     <div class="pt-8 container">
         
-        <div v-if="isPending" class="text-center text-lg text-muted-foreground">
+        <div v-if="isPending" class="flex gap-2 items-center justify-center text-center text-lg text-muted-foreground">
+          <label>Lade Projekte...</label>
           <Spinner />
-          Lade Projekte...
         </div>
 
         <div v-else-if="isError" class="text-center text-red-500">

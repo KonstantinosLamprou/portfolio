@@ -29,33 +29,21 @@ public class EfCommentRepository : ICommentInterface
             .ToListAsync();
     }
 
-    public async Task<Comment> SaveCommentAsync(Comment comment)
+    public async Task AddCommentAsync(Comment comment)
     {
         if (comment.Id == Guid.Empty)
         {
             comment.Id = Guid.NewGuid();
-            _context.Comments.Add(comment);
-            await _context.SaveChangesAsync();
-            await _context.Entry(comment).Reference(c => c.Author).LoadAsync();
-            return comment;
         }
-        else
-        {
-            var existing = await _context.Comments
-                .Include(c => c.Author)
-                .FirstOrDefaultAsync(c => c.Id == comment.Id);
-            
-            if (existing == null)
-                throw new InvalidOperationException("Kommentar nicht gefunden");
+        _context.Comments.Add(comment);
+        await _context.SaveChangesAsync();
+        await _context.Entry(comment).Reference(c => c.Author).LoadAsync();
+    }
 
-            // Nur erlaubte Felder übernehmen (Text, ggf. ParentCommentId ...)
-            existing.Text = comment.Text;
-            // AuthorId sollte sich nie ändern – also nicht überschreiben!
-            // existing.ParentCommentId = comment.ParentCommentId; (bei Bedarf)
-            
-            await _context.SaveChangesAsync();
-            return existing; // Autor ist bereits durch Include gefüllt
-        }
+    public async Task UpdateCommentAsync(Comment comment)
+    {
+        _context.Comments.Update(comment);
+        await _context.SaveChangesAsync();
     }
 
     public async Task<bool> DeleteCommentAsync(Guid id)

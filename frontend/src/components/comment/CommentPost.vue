@@ -8,18 +8,19 @@
       <CommentEditor
         v-model="content"
         v-model:tabsValue="tabsValue"
+        :placeholder="'Lass ein Kommentar da'"
         data-testid="comment-textarea-post"
       />
       
       <Button
         variant="ghost"
         size="sm"
-        class="absolute right-3 bottom-3"
+        class="absolute right-3 bottom-1.5 cursor-pointer"
         type="submit"
         data-testid="comment-submit-button"
         :disabled="!isAuthenticated || content.trim() === ''"
       >
-        <SendIcon class="size-4" />
+        <SendIcon class="size-4 " />
       </Button>
 
       <UnauthenticatedOverlay v-if="!isAuthenticated" />

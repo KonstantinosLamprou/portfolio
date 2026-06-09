@@ -24,7 +24,7 @@
               :loop="false"
               :variableSpeed="{ min: 40, max: 90 }"
             />
-<!--
+          <!--
           <span v-else class="inline transition-all duration-500">
               {{ tagline }}
           </span> -->

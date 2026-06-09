@@ -1,29 +1,33 @@
 <template>
   <div class="mt-4 flex flex-col gap-3">
-    <div class="border border-gray-700 rounded-xl bg-gray-900 p-2 focus-within:border-gray-500 transition">
-      <div class="flex gap-2 mb-2 px-2 text-sm text-gray-400">
-        <button class="hover:text-white">Write</button>
-        <button class="hover:text-white">Preview</button>
+    <form class="w-full" @submit.prevent="submitReply">
+      <div class="relative">
+        <CommentEditor
+          v-model="content"
+          v-model:tabsValue="tabsValue"
+          :placeholder="'Antworte auf diesen Kommentar'"
+          data-testid="reply-textarea-post"
+        />
+        <Button
+          variant="ghost"
+          size="sm"
+          class="absolute right-3 bottom-1.5 cursor-pointer"
+          type="submit"
+          data-testid="reply-submit-button"
+          :disabled="!isAuthenticated || content.trim() === ''"
+        >
+          <SendIcon class="size-4 " />
+        </Button>
+        
+        <UnauthenticatedOverlay v-if="!isAuthenticated" />
       </div>
-      <textarea 
-        v-model="replyText"
-        placeholder="Reply to comment"
-        class="w-full bg-transparent text-gray-200 outline-none resize-none px-2 py-1 placeholder-gray-500"
-        rows="3"
-      ></textarea>
-      
-      <div class="flex gap-3 px-2 pt-2 border-t border-gray-800 text-gray-400">
-        <button class="font-bold hover:text-white">B</button>
-        <button class="line-through hover:text-white">S</button>
-        <button class="italic hover:text-white">I</button>
-      </div>
-    </div>
+    </form>
 
     <div class="flex gap-2">
       <button 
         @click="submitReply"
         class="px-4 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded-full text-sm font-medium transition"
-        :disabled="!replyText.trim()"
+        :disabled="!content.trim()"
       >
         Reply
       </button>
@@ -38,15 +42,35 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import CommentEditor from './CommentEditor.vue';
+import UnauthenticatedOverlay from '@/components/comment/UnauthenticatedOverlay.vue';
+import { SendIcon } from 'lucide-vue-next';
+import { useSession } from '@/composables/useSession'
+import { Button } from '@/components/ui/buttons/'
+
 
 const emit = defineEmits(['cancel', 'submit']);
-const replyText = ref('');
+const content = ref('')
+const tabsValue = ref<'write' | 'preview'>('write')
 
+// TODO: Hier der reply fetch? 
 const submitReply = () => {
-  if (replyText.value.trim()) {
-    emit('submit', replyText.value);
-    replyText.value = ''; // Reset nach Submit
+  if (!isAuthenticated.value) return;
+
+
+  // Hier dann später deine Logik: useCreatePostComment.mutate(...)
+  // Wird die Logik hier weiter zum Parent durchgereicht?
+  if (content.value.trim()) {
+    emit('submit', content.value);
+    content.value = ''; // Reset nach Submit
   }
 };
+
+const { data: session, isPending: isSessionLoading } = useSession()
+// --- Computed Properties ---
+// !! wandelt das Objekt/null/undefined sicher in true oder false um
+const isAuthenticated = computed(() => !!session.value && !isSessionLoading.value)
+
+
 </script>

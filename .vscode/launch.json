@@ -24,12 +24,26 @@
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
-            }
+            }, 
+            
         },
         {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"
+        }, 
+        {
+            "type": "chrome", 
+            "request": "launch",
+            "name": "Launch Vue Frontend (Chrome)",
+            "url": "http://localhost:5173", 
+            "webRoot": "${workspaceFolder}/frontend", 
+            "sourceMapPathOverrides": {
+                "webpack:///./src/*": "${webRoot}/src/*",
+                "webpack:///src/*": "${webRoot}/src/*",
+                "webpack:///*": "*",
+                "webpack:///./~/*": "${webRoot}/node_modules/*"
+            }
         }
     ]
 }

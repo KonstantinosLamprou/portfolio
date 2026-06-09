@@ -1,10 +1,10 @@
 
 
 <template>
-  <div class="mx-auto flex flex-col max-w-3xl px-4 sm:px-6 xl:max-w-5xl xl:px-0 min-h-screen">
+  <div class="mx-auto flex flex-col max-w-3xl sm:px-6 xl:max-w-5xl xl:px-0 min-h-screen">
     <Navbar />
 
-    <main class="mb-auto mx-5">
+    <main class="mb-auto mx-4">
       <slot />
     </main>
 
