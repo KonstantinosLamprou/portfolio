@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.Application.UseCases.User;
 using Backend.Domain.Contracts; 
 
-namespace Backend.Presentation.Controllers;
+namespace Backend.Api.Controllers;
 
 [ApiController]
 [Route("api/auth")]

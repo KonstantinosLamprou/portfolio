@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace Backend.Presentation.Controllers;
+namespace Backend.Api.Controllers;
 
 [ApiController]
 [Route("api/blogs")] // /api/blogs

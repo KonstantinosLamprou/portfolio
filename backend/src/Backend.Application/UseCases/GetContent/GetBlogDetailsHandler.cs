@@ -25,8 +25,6 @@ public class GetBlogDetailsHandler
             return null;
         }
 
-
-
         return new ContentDetailResponse(
             Id: blogDetails.Id,
             Title: blogDetails.Title,

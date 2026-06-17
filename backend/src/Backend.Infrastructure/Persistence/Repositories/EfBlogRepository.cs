@@ -21,10 +21,14 @@ namespace Backend.Infrastructure.Persistence.Repositories
             _context = context; 
         }
         
-
         public async Task<Blog?> GetBlogByIdAsync(int id)
         {
             return await _context.Blogs.SingleOrDefaultAsync(blog => blog.Id == id); 
+        }
+
+        public async Task<Blog?> GetBlogBySlugAsync(string slug)
+        {
+            return await _context.Blogs.SingleOrDefaultAsync(blog => blog.Slug == slug);
         }
         public async Task<Blog?> GetBlogWithDetailsBySlugAsync(string slug)
         {

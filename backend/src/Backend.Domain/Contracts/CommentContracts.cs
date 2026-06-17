@@ -23,35 +23,18 @@ public record CommentResponseDto(
     int Upvotes,
     int Downvotes,
     // downvoted (false) oder gar nicht gevotet (null)?
-    bool? CurrentUserVote,
     Guid? ParentCommentId,
     // Die Replies sind einfach wieder eine Liste von CommentResponseDto
-    List<CommentResponseDto> Replies
-);
-
-public record ReplyCommentResponseDto(
-    Guid Id,
-    string Text,
-    DateTime CreatedAt,
-    AuthorDto Author,
-    // Votes
-    int Upvotes,
-    int Downvotes,
-    // downvoted (false) oder gar nicht gevotet (null)?
-    bool? CurrentUserVote,
-    Guid ParentCommentId
+    List<CommentResponseDto>? Replies
 );
 
 public record UpdateCommentRequest(
-    Guid Id,
+    Guid CommentId,
     string Text
 );
 
-public record DeleteCommentRequest(
-    Guid Id
-);
-
 public record VoteCommentRequest(
+    AuthorDto User,
     Guid CommentId,
     bool IsUpvote
 );
@@ -65,4 +48,31 @@ public record CreateCommentRequest(
     string ContentType,
     int ContentId, 
     Guid? ParentCommentId
-    ); 
+); 
+
+// public record CreateReplyCommentRequest(
+//     string Text,
+//     string ContentType,
+//     int ContentId, 
+//     Guid ParentCommentId
+// ); 
+
+
+// public record DeleteCommentRequest(
+//     Guid CommentId
+// );
+
+
+// public record ReplyCommentResponseDto(
+//     Guid Id,
+//     string Text,
+//     DateTime CreatedAt,
+//     AuthorDto Author,
+//     // Votes
+//     int Upvotes,
+//     int Downvotes,
+//     // downvoted (false) oder gar nicht gevotet (null)?
+//     bool? CurrentUserVote,
+//     Guid ParentCommentId,
+//     List<ReplyCommentResponseDto>? Replies
+// );

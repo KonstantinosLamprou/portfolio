@@ -9,9 +9,17 @@ public record UserGuestbookEntryResponse(
     string Message,
     DateTime CreatedAt,
     AuthorDto Author
-    );
+);
 
+public record CreateGuestbookEntryRequest(
+    string Message
+);
 
-public record CreateGuestbookentryRequest(
-      string Message
-    ); 
+public record UpdateGuestbookEntryRequest(
+    string Message
+);
+
+public record GuestbookentryRequest(
+    Guid Id,
+    string Message
+); 

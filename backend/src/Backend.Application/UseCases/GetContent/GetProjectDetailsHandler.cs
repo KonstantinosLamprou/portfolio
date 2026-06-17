@@ -18,7 +18,7 @@ public class GetProjectDetailsHandler
 
     public async Task<ContentDetailResponse?> Handle(string slug, Guid? currentUserId)
     {
-        var projectDetails = await _repository.GetProjectBySlugAsync(slug);
+        var projectDetails = await _repository.GetProjectDetailsBySlugAsync(slug);
         
         if (projectDetails == null)
         {

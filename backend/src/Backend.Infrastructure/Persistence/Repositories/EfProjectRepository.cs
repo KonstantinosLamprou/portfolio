@@ -25,16 +25,12 @@ namespace Backend.Infrastructure.Persistence.Repositories
             return await _context.Projects.SingleOrDefaultAsync(project => project.Id == id);
         }
 
-        public async Task<Project?> GetProjectWithDetailsAsync(int id)
+        public async Task<Project?> GetProjectBySlugAsync(string slug)
         {
-            return await _context.Projects
-                .Include(p => p.Likes)
-                .Include(p => p.Comments)
-                .SingleOrDefaultAsync(project => project.Id == id); 
-
+            return await _context.Projects.SingleOrDefaultAsync(project => project.Slug == slug);
         }
 
-        public async Task<Project?> GetProjectBySlugAsync(string slug)
+        public async Task<Project?> GetProjectDetailsBySlugAsync(string slug)
         {
             return await _context.Projects
                 .Include(p => p.Author) 

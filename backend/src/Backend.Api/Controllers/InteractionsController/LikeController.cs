@@ -2,35 +2,34 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Backend.Application.UseCases.Interactions;
+using Backend.Api.Helpers;  
 
-namespace Backend.Presentation.Controllers;
+namespace Backend.Api.Controllers;
 
 [ApiController]
-[Route("api/addlike")]
-public class AddLikeController : ControllerBase
+[Route("api/like")]
+public class LikeController : ControllerBase
 {
     private readonly AddLikeHandler _addLikeHandler;
 
-    public AddLikeController(AddLikeHandler addLikeHandler)
+    public LikeController(AddLikeHandler addLikeHandler)
     {
         _addLikeHandler = addLikeHandler;
     }
 
-    [HttpPost("{contentId}/like")]
+    [HttpPost("{contentId}")]
     [Authorize] // Wichtig: Nur eingeloggte User dürfen liken!
     public async Task<IActionResult> LikeContent(int contentId)
     {
         try
         {
-            // Sichere User-ID aus dem Token auslesen
-            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var userId = Guid.Parse(userIdString!);
+            var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
 
-            // Handler feuern
-            var newLikeCount = await _addLikeHandler.Handle(contentId, userId);
+            if (userId == Guid.Empty || userId == null)
+                return Unauthorized();
 
-            // Wir geben die NEUE Anzahl an das Frontend zurück (z.B. "2"), 
-            // damit Vue das sofort anzeigen kann.
+            var newLikeCount = await _addLikeHandler.Handle(contentId, userId.Value);
+
             return Ok(new { currentLikeCount = newLikeCount });
         }
         catch (InvalidOperationException ex)
@@ -39,4 +38,6 @@ public class AddLikeController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
+
+    
 }

@@ -5,7 +5,12 @@ using System.Text;
 namespace Backend.Domain.Contracts;
 
 
-public record CreateVote(
+public record CreateVoteDto(
      bool IsUpvote,
      Guid CommentId
-    ); 
+);
+
+public record UpdateVoteDto(
+     bool IsUpvote,
+     Guid CommentId
+);

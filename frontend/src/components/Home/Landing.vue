@@ -111,6 +111,30 @@
 
           </button>
 
+          <button 
+              @click="dialogState.openDialog"
+              class="glass3d rounded-full text-center text-nowrap overflow-hidden inline-block"
+              aria-label="Sign-In"
+            >
+              <GlareHover
+                glareColor="#ffffff"
+                :glareOpacity="0.3"
+                :glareAngle="-30"
+                :glareSize="300"
+                :transitionDuration="800"
+                :playOnce="false"
+                width="100%"
+                height="100%"
+                background="transparent"
+                borderRadius="9999px"
+                borderColor="transparent"
+                className="px-7 py-3"
+              
+              >
+                Sign In     
+              </GlareHover>
+            </button>
+
         </div>
 
         <div class="mt-4 flex w-full flex-col items-center justify-center">
@@ -136,6 +160,11 @@ import { RouterLink } from 'vue-router'
 import GlareHover from '@/components/ui/GlareHover.vue'
 import SpinnerLoader from '@/components/ui/loaders/SpinnerLoader.vue'
 import TextType from '@/components/ui/TextType.vue'
+import { Button } from "@/components/ui/buttons"
+import { useSignInDialogStore } from "@/stores/useSignInDialogStore"
+
+const  dialogState  = useSignInDialogStore()
+
 
 // 1. Die reaktiven Variablen
 const tagline = ref('Ich baue Dinge für das Web. Manchmal funktionieren sie sogar.')

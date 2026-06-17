@@ -25,7 +25,7 @@ services:
     container_name: portfolio_workspace
     command: /bin/sh -c "while sleep 1000; do :; done"
     volumes:
-      - ../:/workspace:cached
+      - ../:/workspace
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=db;Database=portfoliodb;Username=${DB_USER:-devuser};Password=${DB_PASSWORD:-devpass}

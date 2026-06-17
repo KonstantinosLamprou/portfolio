@@ -12,5 +12,7 @@ namespace Backend.Domain.Entities
         public Comment Comment { get; set; }
         // true = Daumen hoch (Upvote), false = Daumen runter (Downvote)
         public bool IsUpvote { get; set; }
+
+        public DateTime VotedAt { get; set; }
     }
 }

@@ -14,9 +14,17 @@ namespace Backend.Application.UseCases.DeleteContent
             _repository = repository;
         }
 
-        public async Task<bool> Handle(int ProjectId)
+        public async Task<bool> Handle(string slug, Guid currentUserId)
         {
-            return await _repository.DeleteProjectAsync(ProjectId); 
+            var project = await _repository.GetProjectBySlugAsync(slug);
+
+            if (project == null)
+                throw new KeyNotFoundException($"Projekt mit Slug {slug} nicht gefunden.");
+
+            if (project.AuthorId != currentUserId /* && !IsCurrentUserAdmin() */)
+                throw new UnauthorizedAccessException("Sie haben keine Berechtigung, dieses Projekt zu löschen.");
+
+            return await _repository.DeleteProjectAsync(project.Id);
         }
     }
 }

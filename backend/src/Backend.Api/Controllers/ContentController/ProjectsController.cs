@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Backend.Application.UseCases.SaveContent;
 
-namespace Backend.Presentation.Controllers;
+namespace Backend.Api.Controllers;
 
 [ApiController]
 [Route("api/projects")] // /api/projects

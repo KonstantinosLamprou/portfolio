@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Backend.Presentation.Controllers;
+namespace Backend.Api.Controllers;
 
 [ApiController]
 [Route("api/files")]

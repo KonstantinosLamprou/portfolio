@@ -14,7 +14,7 @@ public class AddLikeHandler
 
     public async Task<int> Handle(int contentId, Guid userId)
     {
-        // Gibt es den Like schon? 
+        // Gibt es Likes schon? 
         var existingLike = await _repository.GetLikeAsync(contentId, userId);
 
         // Noch nie geliked

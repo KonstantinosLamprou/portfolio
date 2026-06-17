@@ -13,3 +13,31 @@ export interface CreateBlogRequest {
   description: string;
   content: ContentBlockDto[];
 }
+
+export interface BlogApiResponse {
+  id: string;
+  contenttype?: 'blog' | 'project';
+  title: string;
+  author: string;
+  slug: string;
+  dateOfCreation: string; 
+  description: string;
+  content: object;
+  imgSrc: string;
+  likesCount?: number; // likes ist keine Num
+  views?: number;
+  commentsCount?: number; //deprecated? 
+  comment?: string; // deprecated?
+}
+
+export interface BlogLatestApiResponse {
+  id: string;
+  title: string;
+  slug: string;
+  dateOfCreation: string; 
+  imgSrc: string;
+  description: string;
+  views?: number;
+  likesCount?: number;
+  commentsCount?: number;
+}

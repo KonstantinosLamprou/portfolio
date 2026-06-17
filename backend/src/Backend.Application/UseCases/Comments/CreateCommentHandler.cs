@@ -30,6 +30,7 @@ public class CreateCommentHandler
 
         if (content == null)
             throw new KeyNotFoundException($"Content mit ID {request.ContentId} nicht gefunden.");
+
         // Kommentar erstellen
         Comment comment = new Comment
         {
@@ -57,7 +58,6 @@ public class CreateCommentHandler
             Author: authorDto,
             Upvotes: 0,    
             Downvotes: 0,
-            CurrentUserVote: null, 
             ParentCommentId: comment.ParentCommentId,
             Replies: new List<CommentResponseDto>()
         );

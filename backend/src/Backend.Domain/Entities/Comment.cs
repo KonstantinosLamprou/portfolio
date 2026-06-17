@@ -26,5 +26,8 @@ namespace Backend.Domain.Entities
 
         public ICollection<Comment> Replies { get; set; } = new List<Comment>();
         public ICollection<CommentVote> Votes { get; set; } = new List<CommentVote>();
+
+        public int Upvotes => Votes.Count(v => v.IsUpvote);
+        public int Downvotes => Votes.Count(v => !v.IsUpvote);
     }
 }

@@ -10,8 +10,8 @@ namespace Backend.Domain.Interfaces
         Task<Project?> GetProjectByIdAsync(int id);
 
         Task<Project?> GetProjectBySlugAsync(string slug);
-        Task<Project?> GetProjectWithDetailsAsync(int id);
 
+        Task<Project?> GetProjectDetailsBySlugAsync(string slug);
         Task<Project> SaveProjectAsync(Project project);
         Task<bool> DeleteProjectAsync(int id);
         Task<IEnumerable<Project>> GetAllProjectsAsync();

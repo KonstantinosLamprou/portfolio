@@ -19,10 +19,10 @@ namespace Backend.Infrastructure.Persistence
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<ApplicationUser> Users { get; set; }
         public DbSet<Comment> Comments { get; set; }
-
         public DbSet<Like> Likes { get; set; }
         public DbSet<CommentVote> CommentVotes { get; set; }
 
+        public DbSet<GuestbookEntry> GuestbookEntries { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -67,6 +67,11 @@ namespace Backend.Infrastructure.Persistence
             builder.Entity<CommentVote>()
                 // Die Kombination aus UserId und CommentId ist einzigartig.
                 .HasKey(cv => new { cv.UserId, cv.CommentId });
+            
+            builder.Entity<GuestbookEntry>()
+                .HasOne(g => g.User)
+                .WithMany(u => u.GuestbookEntries)
+                .HasForeignKey(g => g.UserId); 
 
         }
 

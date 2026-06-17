@@ -20,7 +20,7 @@
         Blogs konnten leider nicht geladen werden.
       </div>
 
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div v-else-if="blogs && blogs.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <ContentCard v-for="data in blogs" :key="data.id"
           :id="data.id"
           :type="data.contenttype"
@@ -37,43 +37,38 @@
           :comment="data.comment"
         />
       </div>
+      <div v-else class="text-center text-lg text-muted-foreground">
+        
+            Keine Blog gefunden.
+      </div>
+          
     </div>
+
 
   </div>
 </template>
 
 <script setup lang="ts">
 import { watch } from 'vue';
-import { RouterLink } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import { toast } from 'vue-sonner'
+import { RouterLink } from 'vue-router';
 import ContentCard from '../content/ContentCard.vue';
 import apiClient from '@/services/api.ts';
 import Spinner from '@/components/ui/loaders/SpinnerLoader.vue';
+import type { BlogApiResponse } from '@/types/blogTypes.ts';
 
+//TODO:
+// Code aufräumen sowie die Types und die tanstack querys verbessern 
+// neue ladeanimation 
+// wenn keine Blogs vorhanden sind, was cooles anzeigen 
 
-// 1. Typ für die rohen Daten, die vom C# Backend kommen
-interface BlogApiResponse {
-  id: string;
-  contenttype?: 'blog' | 'project';
-  title: string;
-  author: string;
-  slug: string;
-  dateOfCreation: string; // Von der API kommt es immer als String (ISO-Format)
-  description: string;
-  content: object;
-  imgSrc: string;
-  likesCount?: number; // likes ist keine Num
-  views?: number;
-  commentsCount?: number; //deprecated? 
-  comment?: string; // deprecated?
-}
 
 // 2. Typ für unser lokales Frontend (nach unserer Transformation)
 // Omit kopiert das API-Interface, aber wirft das alte 'date' raus, 
 // damit wir es mit dem echten Date-Objekt überschreiben können.
 interface BlogData extends Omit<BlogApiResponse, 'dateOfCreation'> {
-  dateOfCreation: Date; // Hier ist es jetzt garantiert ein Date!
+  dateOfCreation: Date; 
 }
 
 // 1. Definiere die Fetch-Funktion mit Axios

@@ -11,14 +11,18 @@
 
     <ul class="divide-surface divide-y">
 
-      <li v-if="mockBlogData.length === 0" class="py-12 text-gray-500">
+      <li v-if="isError" class="py-12 text-gray-500">
         Zurzeit gibt es noch keine Beiträge. Schau später wieder vorbei!
+      </li>
+
+      <li v-else-if="isPending" class="py-12 text-gray-500">
+        Lade Beiträge...
       </li>
 
       <li
         v-else
-        v-for="post in mockBlogData"
-        :key="post.slug"
+        v-for="blog in blogs"
+        :key="blog.slug"
         class="py-12"
       >
         <article>
@@ -27,7 +31,7 @@
             <dl>
               <dt class="sr-only">Veröffentlicht am</dt>
               <dd class="text-base leading-6 font-medium">
-                <time :datetime="post.date.toISOString()">{{ formatDate(post.date) }}</time>
+                <time :datetime="blog.dateOfCreation.toISOString()">{{ formatDate(blog.dateOfCreation) }}</time>
               </dd>
             </dl>
 
@@ -35,12 +39,12 @@
               <div class="space-y-6">
                 <div>
                   <h3 class="text-2xl leading-8 font-medium tracking-tight transition-transform duration-300 hover:scale-101">
-                    <RouterLink :to="`/blog/${post.slug}`" class="text-heading ">
-                      {{ post.title }}
+                    <RouterLink :to="`/blog/${blog.slug}`" class="text-heading ">
+                      {{ blog.title }}
                     </RouterLink>
                   </h3>
 
-                  <div class="flex flex-wrap gap-3 mt-2">
+                  <!-- <div class="flex flex-wrap gap-3 mt-2">
                     <span
                       v-for="tag in post.tags"
                       :key="tag"
@@ -48,16 +52,16 @@
                     >
                       {{ tag }}
                     </span>
-                  </div>
+                  </div> -->
                 </div>
 
                 <div class="prose max-w-none text-body opacity-80">
-                  {{ post.description }}
+                  {{ blog.description }}
                 </div>
               </div>
 
               <div class="text-base leading-6 font-medium">
-                <RouterLink :to="`/blog/${post.slug}`" class="text-link hover:text-sky transition-colors">
+                <RouterLink :to="`/blog/${blog.slug}`" class="text-link hover:text-sky transition-colors">
                   Mehr lesen &rarr;
                 </RouterLink>
               </div>
@@ -81,8 +85,47 @@
 
 
 <script setup lang="ts">
+import { watch } from 'vue';
+import { useQuery } from '@tanstack/vue-query';
+import { toast } from 'vue-sonner'
 import { RouterLink } from 'vue-router';
-import { mockBlogData } from '@/data/mockBlogPostData';
+import type { BlogLatestApiResponse } from '@/types/blogTypes.ts';
+import apiClient from '@/services/api.ts';
+
+
+interface BlogData extends Omit<BlogLatestApiResponse, 'dateOfCreation'> {
+  dateOfCreation: Date; 
+}
+
+const fetchLatestBlogs = async (): Promise<BlogData[]> => {
+    const { data } = await apiClient.get<BlogLatestApiResponse[]>('blogs/latest');
+    
+    return data.map(blog => ({
+    ...blog,
+    dateOfCreation: new Date(blog.dateOfCreation) 
+  }));
+    
+}
+
+const { 
+  data: blogs, // Wir benennen 'data' in 'blogs' um für eine bessere Lesbarkeit im Template
+  isPending,   // isPending ist true, während der erste Fetch läuft (Vue Query v5)
+  isError, 
+  error 
+} = useQuery({
+  queryKey: ['latest-blogs'], // Eindeutiger Key für den Cache
+  queryFn: fetchLatestBlogs,
+  retry: 1 // Optional: Versucht es bei einem Fehler noch 1x erneut
+});
+
+// 3. Fehlerbehandlung mit Toast
+// Wir überwachen isError. Sobald es auf true springt, triggern wir den Toast.
+watch(isError, (hasError) => {
+  if (hasError && error.value) {
+    // Gibt die genaue Axios-Fehlermeldung im Toast aus (oder eine generische Message)
+    toast.error(`Fehler beim Laden: ${error.value.message || 'Server nicht erreichbar'}`);
+  }
+});
 
 // Hilfsfunktion, um das Datum schön zu formatieren
 const formatDate = (date: Date) => {
