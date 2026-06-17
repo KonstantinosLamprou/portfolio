@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Backend.Application.UseCases.SaveContent;
+using Backend.Application.UseCases.Interactions;
+using Backend.Api.Helpers;
 
 namespace Backend.Api.Controllers;
 
@@ -14,12 +16,18 @@ public class ProjectsController : ControllerBase
     private readonly GetAllProjectsHandler _getAllProjectsHandler; 
     private readonly GetProjectDetailsHandler _projectDetailshandler;
     private readonly CreateContentHandler _createContentHandler;
+    private readonly UpdateViewsProjectHandler _updateViewsProjectHandler;
 
-    public ProjectsController(GetAllProjectsHandler getAllProjectsHandler, GetProjectDetailsHandler projectDetailshandler, CreateContentHandler createContentHandler)
+    public ProjectsController(
+        GetAllProjectsHandler getAllProjectsHandler, 
+        GetProjectDetailsHandler projectDetailshandler, 
+        CreateContentHandler createContentHandler,
+        UpdateViewsProjectHandler updateViewsProjectHandler)
     {
         _getAllProjectsHandler = getAllProjectsHandler; 
         _projectDetailshandler = projectDetailshandler;
         _createContentHandler = createContentHandler;
+        _updateViewsProjectHandler = updateViewsProjectHandler;
     }
 
 
@@ -38,7 +46,7 @@ public class ProjectsController : ControllerBase
     public async Task<IActionResult> GetProjectDetails(string slug)
     {
         // Versuchen, den aktuellen User auszulesen (falls er einen Token hat)
-        Guid? userId = GetCurrentUserId(); 
+        Guid? userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User); 
 
         // Handler aufrufen
         var result = await _projectDetailshandler.Handle(slug, userId);
@@ -56,7 +64,7 @@ public class ProjectsController : ControllerBase
     [Authorize]  
     public async Task<IActionResult> CreateContent([FromBody] CreateBlogRequest request)
     {
-        var userId = GetCurrentUserId();
+        var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
 
         if (!userId.HasValue)
             return Unauthorized(new { message = "User nicht authentifiziert." });
@@ -65,17 +73,13 @@ public class ProjectsController : ControllerBase
         return CreatedAtAction(nameof(GetProjectDetails), new { slug = result.Slug }, result);
     }
 
-    // TODO: Auslagern
-    // Helper-Methode
-    private Guid? GetCurrentUserId()
-    {
-        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userIdString))
-            return null;
-
-        return Guid.TryParse(userIdString, out var userId) ? userId : null;
+    [HttpPatch("{projectId}/view")]
+    [ProducesResponseType(typeof(UpdateViewsContentResponse), StatusCodes.Status200OK)]
+    public async Task<IActionResult> IncrementProjectViews(int projectId)
+    {        
+        var result = await _updateViewsProjectHandler.Handle(projectId);
+        return Ok(result);  
     }
-
 
 
 }

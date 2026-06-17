@@ -63,7 +63,7 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { useQuery } from '@tanstack/vue-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import apiClient from '@/services/api.ts';
 import { toast } from 'vue-sonner';
 import { isAxiosError } from 'axios';
@@ -76,10 +76,13 @@ import LikeButton from '@/components/content/LikeButton.vue';
 import CommentPost from "@/components/comment/CommentPost.vue"
 import CommentWrapper from "@/components/comment/Commentwrapper.vue"
 
+const queryClient = useQueryClient();
 const route = useRoute();
 const slug = route.params.slug as string;
 const dialogState = useSignInDialogStore(); 
-// Typisierung basierend auf deinem C# ContentDetailResponse DTO
+
+//Auslagern 
+
 interface AuthorDto {
   id: string | number;
   name: string;
@@ -129,14 +132,14 @@ const {
   data: currentPost, 
   isPending, 
   isError, 
+  isSuccess,
   error 
 } = useQuery({
-  queryKey: ['projects', slug], // Der Slug macht den Cache-Key eindeutig
+  queryKey: ['projects', slug],
   queryFn: fetchProjectDetails,
-  retry: false // Bei einem 404 wollen wir nicht sofort 3x neu versuchen
+  retry: false 
 });
 
-// Fehler-Toast
 watch(isError, (hasError) => {
   if (hasError && error.value) {
    if (isAxiosError(error.value) && error.value.response?.status === 404) {
@@ -147,12 +150,11 @@ watch(isError, (hasError) => {
   }
 });
 
-// Hilfsfunktion für ein schöneres Datum
+// Auslagern 
 const formatDate = (date: Date) => {
   return date.toLocaleDateString('de-DE');
 };
 
-// Table of Contents Logik
 const tableOfContents = computed(() => {
   if (!currentPost.value) return [];
   
@@ -164,4 +166,45 @@ const tableOfContents = computed(() => {
       depth: heading.data.level
     }));
 });
+
+// Views
+
+interface UpdateViewsContentResponse {
+  id: number;
+  views: number;
+}
+
+const { mutate: incrementView } = useMutation({
+  mutationFn: async (contentId: number): Promise<UpdateViewsContentResponse> => {
+    const { data } = await apiClient.patch(`/blogs/${contentId}/view`);
+
+    return data;
+  }, 
+
+  onSuccess: (data) => {
+    queryClient.setQueryData(['blog', slug], (old: any) => {
+
+      if (!old) return old;
+
+      return {
+        ...old,
+        views: data.views
+      }
+    });
+  }
+
+});
+
+watch(isSuccess, (success) => {
+  if (success && currentPost.value) {
+    const contentId = currentPost.value.id;
+    const storageKey = `viewed_post_${contentId}`;
+
+    if (!sessionStorage.getItem(storageKey)) {
+      incrementView(contentId);
+      sessionStorage.setItem(storageKey, 'true');
+    }
+  }
+});
+
 </script>

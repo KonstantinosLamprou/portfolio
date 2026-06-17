@@ -84,6 +84,13 @@ namespace Backend.Infrastructure.Persistence.Repositories
                 .ToListAsync();
         }
 
+        public async Task<Blog> UpdateBlogViewsAsync(Blog blog)
+        {
+            _context.Blogs.Update(blog);
+            await _context.SaveChangesAsync();
+            return blog;
+        }
+
 
     }
 }

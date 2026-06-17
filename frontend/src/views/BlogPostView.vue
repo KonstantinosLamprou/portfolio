@@ -45,13 +45,21 @@
       
       <aside class="w-full lg:w-68 px-4 lg:py-10 sticky top-34">
         <TableOfContents :toc="tableOfContents" />
-        <LikeButton :slug="currentPost.slug" :initial-likes="currentPost.likesCount" :user-liked="currentPost.currentUserLikeCount" />
+        <LikeButton 
+          :ContentId = "currentPost.id"
+          :slug="currentPost.slug" 
+          :initialLikes="currentPost.likesCount" 
+          :currentUserLikes="currentPost.currentUserLikeCount" />
       </aside>
     </div>
 
     <div class="space-y-6 mt-12">
-      <CommentPost />
-      <CommentWrapper /> 
+      <CommentPost
+        :blogId="currentPost.id"
+      />
+      <CommentWrapper 
+        :blogId="currentPost.id"
+      /> 
     </div>
   </div>
 
@@ -63,12 +71,12 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { useQuery } from '@tanstack/vue-query';
-import apiClient from '@/services/api.ts';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import { toast } from 'vue-sonner';
 import { isAxiosError } from 'axios';
-import { useSignInDialogStore } from "@/stores/useSignInDialogStore"
 
+import apiClient from '@/services/api.ts';
+import { useSignInDialogStore } from "@/stores/useSignInDialogStore"
 import ContentRenderer from '@/components/content/ContentRenderer.vue';
 import BackButton from '@/components/ui/buttons/BackButton.vue';
 import TableOfContents from '@/components/content/TableOfContents.vue';
@@ -76,10 +84,16 @@ import LikeButton from '@/components/content/LikeButton.vue';
 import CommentPost from "@/components/comment/CommentPost.vue"
 import CommentWrapper from "@/components/comment/Commentwrapper.vue"
 
+
+const queryClient = useQueryClient();
 const route = useRoute();
 const slug = route.params.slug as string;
 const dialogState = useSignInDialogStore(); 
+
 // Typisierung basierend auf deinem C# ContentDetailResponse DTO
+// TODO: Auslagern 
+
+
 interface AuthorDto {
   id: string | number;
   name: string;
@@ -129,6 +143,7 @@ const {
   data: currentPost, 
   isPending, 
   isError, 
+  isSuccess,
   error 
 } = useQuery({
   queryKey: ['blog', slug], // Der Slug macht den Cache-Key eindeutig
@@ -147,12 +162,12 @@ watch(isError, (hasError) => {
   }
 });
 
+// TODO: auslagern
 // Hilfsfunktion für ein schöneres Datum
 const formatDate = (date: Date) => {
   return date.toLocaleDateString('de-DE');
 };
 
-// Table of Contents Logik
 const tableOfContents = computed(() => {
   if (!currentPost.value) return [];
   
@@ -164,4 +179,45 @@ const tableOfContents = computed(() => {
       depth: heading.data.level
     }));
 });
+
+// Views 
+// TODO: Auslagern 
+interface UpdateViewsContentResponse {
+  id: number;
+  views: number;
+}
+
+const { mutate: incrementView } = useMutation({
+  mutationFn: async (contentId: number): Promise<UpdateViewsContentResponse> => {
+    const { data } = await apiClient.patch(`/blogs/${contentId}/view`);
+
+    return data;
+  }, 
+
+  onSuccess: (data) => {
+    queryClient.setQueryData(['blog', slug], (old: any) => {
+
+      if (!old) return old;
+
+      return {
+        ...old,
+        views: data.views
+      }
+    });
+  }
+
+});
+
+watch(isSuccess, (success) => {
+  if (success && currentPost.value) {
+    const contentId = currentPost.value.id;
+    const storageKey = `viewed_post_${contentId}`;
+
+    if (!sessionStorage.getItem(storageKey)) {
+      incrementView(contentId);
+      sessionStorage.setItem(storageKey, 'true');
+    }
+  }
+});
+
 </script>

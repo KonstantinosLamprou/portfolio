@@ -59,9 +59,11 @@ public class CommentsController : ControllerBase
     
     }
 
-    [HttpGet()]
+    [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<CommentResponseDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetComments(int contentId, string contentType)
+    public async Task<IActionResult> GetComments(
+        [FromQuery] int contentId, 
+        [FromQuery] string contentType)
     {
 
         Guid userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User) ?? Guid.Empty;

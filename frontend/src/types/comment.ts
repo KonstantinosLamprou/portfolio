@@ -4,7 +4,10 @@ export interface AuthorDto {
   id: string;
   name: string;
   profilePictureUrl: string | null;
+  UserRole: string;
 }
+
+// User Role ist ein Enum im Backend, wie handle ich das hier? 
 
 export interface CommentResponseDto {
   id: string;
@@ -13,10 +16,10 @@ export interface CommentResponseDto {
   author: AuthorDto;
   upvotes: number;
   downvotes: number;
-  currentUserVote: boolean | null;
-  parentCommentId: string | null; // true = up, false = down, null = kein Vote
-  replies: CommentReplyDto[];
+  parentCommentId?: string;
+  replies?: CommentResponseDto[];
 }
+
 export interface CommentReplyDto {
   id: string;
   text: string;
@@ -29,10 +32,12 @@ export interface CommentReplyDto {
 }
 
 export interface CreateCommentRequest {
-  text: string;
-  contentId: number;
-  parentCommentId: string | null;
+  Text: string;
+  ContentType: string;
+  ContentId: number;
+  ParentCommentId?: string;
 }
+
 
 export interface CreateVoteRequest {
   isUpvote: boolean;

@@ -20,6 +20,7 @@
         data-testid="comment-submit-button"
         :disabled="!isAuthenticated || content.trim() === ''"
       >
+        <Spinner v-if="isPending" class="size-4" />
         <SendIcon class="size-4 " />
       </Button>
 
@@ -29,13 +30,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue' // onMounted entfernt
+import { ref, computed } from 'vue' 
+import { toast } from 'vue-sonner'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { isAxiosError } from 'axios'
+
+import type { CreateCommentRequest } from '@/types/comment'
+import apiClient from '@/services/api.ts'
+import { useSession } from '@/composables/useSession'
 import { SendIcon } from 'lucide-vue-next'
 import { Button } from '@/components/ui/buttons/'
 import Spinner from '../ui/loaders/SpinnerLoader.vue'
 import CommentEditor from './CommentEditor.vue'
 import UnauthenticatedOverlay from './UnauthenticatedOverlay.vue'
-import { useSession } from '@/composables/useSession'
+
+const queryClient = useQueryClient(); 
+
+const props = defineProps<{
+  blogId: number
+}>()
 
 // --- State & Composables ---
 const content = ref('')
@@ -46,11 +59,41 @@ const { data: session, isPending: isSessionLoading } = useSession()
 // !! wandelt das Objekt/null/undefined sicher in true oder false um
 const isAuthenticated = computed(() => !!session.value && !isSessionLoading.value)
 
-// --- Methods ---
+
+const { mutate: createComment, isPending } = useMutation({
+  mutationFn: async (newComment: CreateCommentRequest) => {
+    const { data } = await apiClient.post('/comments', newComment);
+    return data;
+  },
+  onSuccess: () => {
+    toast.success('Kommentar erfolgreich erstellt!');
+    content.value = ''; 
+    tabsValue.value = 'write';
+
+    // TanStack Query wird gesagt das die kommentare für diesen Blogpost veraltet sind und neu gefetcht werden müssen.
+    // Dadurch triggert TanStack im CommentWrapper automatisch einen neuen GET-Request
+    queryClient.invalidateQueries({ queryKey: ['comments', props.blogId] })    
+  },
+  onError: (error) => {
+    if (isAxiosError(error)) {
+      toast.error(`Fehler beim Erstellen des Kommentars: ${error.response?.data?.message || error.message}`);
+    } else {
+      toast.error('Ein unerwarteter Fehler ist aufgetreten.');
+    }
+  },
+});
+
 const submitComment = () => {
-  if (!isAuthenticated.value) return;
+  if (content.value.trim() === '') return;
+
+  const payload: CreateCommentRequest = {
+    Text: content.value.trim(),
+    ContentType: 'blog', 
+    ContentId: props.blogId, 
+    // ParentCommentId lassen wir weg für Top-Level
+  };
   
-  // Hier dann später deine Logik: useCreatePostComment.mutate(...)
-  console.log('Kommentar wird gesendet:', content.value)
+  createComment(payload);
 }
+
 </script>

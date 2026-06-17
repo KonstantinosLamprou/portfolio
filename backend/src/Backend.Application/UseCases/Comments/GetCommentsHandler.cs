@@ -28,12 +28,12 @@ public class GetCommentsHandler
         };
 
         if (content == null)
-            throw new KeyNotFoundException($"Content mit ID {contentType} nicht gefunden.");
+            throw new KeyNotFoundException($"Content mit ID {contentId} nicht gefunden.");
 
 
-        var comments = await _commentRepository.GetCommentsByContentIdAsync(content.Id);
+        var allComments = await _commentRepository.GetCommentsByContentIdAsync(content.Id);
 
-        return comments.Select(c => new CommentResponseDto(
+        var flatDtos = allComments.Select(c => new CommentResponseDto(
             Id: c.Id,
             Text: c.Text,
             CreatedAt: c.CreatedAt,
@@ -48,6 +48,29 @@ public class GetCommentsHandler
             ParentCommentId: c.ParentCommentId,
             Replies: new List<CommentResponseDto>()
         )).ToList();
+
+        var topLevelComments = new List<CommentResponseDto>();
+
+        var commentLookup = flatDtos.ToDictionary(c => c.Id);
+
+        foreach (var comment in flatDtos)
+        {
+            if (comment.ParentCommentId == null)
+            {
+                // Es ist ein Hauptkommentar -> kommt in die oberste Liste
+                topLevelComments.Add(comment);
+            }
+            else
+            {
+                // Wenn es ein Reply ist -> suchen wir den Parent und fügen ihn dort in die Liste ein
+                if (commentLookup.TryGetValue(comment.ParentCommentId.Value, out var parent))
+                {
+                    parent.Replies!.Add(comment);
+                }
+            }
+        }   
+
+        return topLevelComments;
     }
 
 }

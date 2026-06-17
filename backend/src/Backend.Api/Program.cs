@@ -123,11 +123,14 @@ builder.Services.AddScoped<GetAllProjectsHandler>();
 builder.Services.AddScoped<GetBlogDetailsHandler>();
 builder.Services.AddScoped<GetProjectDetailsHandler>();
 builder.Services.AddScoped<GetLatestBlogsHandler>();
+builder.Services.AddScoped<UpdateViewsBlogHandler>();
+builder.Services.AddScoped<UpdateViewsProjectHandler>();
 
 builder.Services.AddScoped<CreateCommentHandler>();
 builder.Services.AddScoped<GetCommentsHandler>();
 builder.Services.AddScoped<UpdateCommentHandler>();
 builder.Services.AddScoped<DeleteCommentHandler>();
+builder.Services.AddScoped<GetCommentByIdHandler>();
 
 builder.Services.AddScoped<CreateGuestbookEntryHandler>();
 builder.Services.AddScoped<GetGuestbookEntriesHandler>();

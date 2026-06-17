@@ -1,9 +1,11 @@
 ﻿using Backend.Application.UseCases.GetContent;
+using Backend.Application.UseCases.Interactions;
 using Backend.Application.UseCases.SaveContent;
 using Backend.Domain.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Backend.Api.Helpers; 
 
 namespace Backend.Api.Controllers;
 
@@ -16,19 +18,23 @@ public class BlogsController : ControllerBase
     private readonly CreateContentHandler _createContentHandler;
     private readonly GetLatestBlogsHandler _latestBlogsHandler;
 
+    private readonly UpdateViewsBlogHandler _updateViewsBlogHandler;
+
 
     // Handler Dependency Injection 
     public BlogsController(
         GetAllBlogsHandler getAllBlogsHandler,
         GetBlogDetailsHandler blogDetailshandler,
         CreateContentHandler createContentHandler,
-        GetLatestBlogsHandler latestBlogsHandler
+        GetLatestBlogsHandler latestBlogsHandler, 
+        UpdateViewsBlogHandler updateViewsBlogHandler
           )
     {
         _getAllBlogsHandler = getAllBlogsHandler;
         _blogDetailshandler = blogDetailshandler; 
         _createContentHandler = createContentHandler;
         _latestBlogsHandler = latestBlogsHandler;
+        _updateViewsBlogHandler = updateViewsBlogHandler;
     }
 
     [HttpGet]
@@ -45,13 +51,10 @@ public class BlogsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetBlogDetails(string slug)
     {
-        // 1. Versuchen, den aktuellen User auszulesen (falls er einen Token hat)
-        Guid? userId = GetCurrentUserId(); 
+        Guid userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User) ?? Guid.Empty;
 
-        // 2. Handler aufrufen
         var result = await _blogDetailshandler.Handle(slug, userId);
 
-        // 3. Wenn null zurückkommt, existiert der Blog nicht
         if (result == null)
         {
             return NotFound(new { message = "Blog nicht gefunden." });
@@ -72,7 +75,8 @@ public class BlogsController : ControllerBase
     [Authorize]  
     public async Task<IActionResult> CreateContent([FromBody] CreateBlogRequest request)
     {
-        var userId = GetCurrentUserId();
+        Guid? userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User) ?? Guid.Empty;
+
 
         if (!userId.HasValue)
             return Unauthorized(new { message = "User nicht authentifiziert." });
@@ -81,14 +85,12 @@ public class BlogsController : ControllerBase
         return CreatedAtAction(nameof(GetBlogDetails), new { slug = result.Slug }, result);
     }
 
-    // ← Helper-Methode
-    private Guid? GetCurrentUserId()
+    [HttpPatch("{blogId}/view")]
+    [ProducesResponseType(typeof(UpdateViewsContentResponse), StatusCodes.Status200OK)]
+    public async Task<IActionResult> IncrementBlogViews(int blogId)
     {
-        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userIdString))
-            return null;
-
-        return Guid.TryParse(userIdString, out var userId) ? userId : null;
+        var result = await _updateViewsBlogHandler.Handle(blogId);
+        return Ok(result);
     }
 
 }

@@ -2,8 +2,9 @@
   <div class="lg:mt-6 lg:mb-4 flex justify-center ">
     <button
       ref="buttonRef"
-      class="flex items-center gap-3 rounded-4xl bg-gray-900 px-4 py-2 text-lg text-body  transition-transform duration-200 active:scale-95"
+      class="flex items-center gap-3 rounded-4xl bg-gray-900 px-4 py-2 text-lg text-body transition-transform duration-200 active:scale-95"
       @click="handleLikeButtonClick"
+      :disabled="isPending"
       aria-label="Like this post"
       type="button"
       data-testid="like-button"
@@ -42,11 +43,9 @@
       Like
 
       <Separator orientation="vertical" class="bg-body h-5" />
-      <span v-if="isSuccess" data-testid="like-count">
-        {{ data.totalLikes + cacheCount }}
+      <span data-testid="like-count">
+        {{ props.initialLikes }}
       </span>
-      <div v-else-if="isLoading">--</div>
-      <div v-else-if="isError">Error</div>
     </button>
   </div>
 </template>
@@ -54,48 +53,88 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { toast } from 'vue-sonner'
-import { useDebounceFn } from '@vueuse/core'
-import { useCountLike, useIncrementLike } from '@/composables/likeQuery'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import apiClient from '@/services/api.ts'
+import { isAxiosError } from 'axios';
 import Separator from '../ui/Separator.vue';
 
+
 const props = defineProps<{
+  ContentId: number
   slug: string
+  initialLikes: number
+  currentUserLikes: number
 }>()
 
-const cacheCount = ref(0)
+const queryClient = useQueryClient()
 const buttonRef = ref<HTMLButtonElement | null>(null)
 
-// Annahme: Du nutzt Vue Query oder ähnliches, die Refs zurückgeben
-const { data, isSuccess, isLoading, isError } = useCountLike({ slug: props.slug })
-const { mutate: likePost } = useIncrementLike()
+const { mutate: likePost, isPending } = useMutation({
+  mutationFn: async () => {
 
-// useDebounceFn aus @vueuse/core ersetzt use-debounce
-const onLikeSaving = useDebounceFn((value: number) => {
-  likePost({ slug: props.slug, value })
-  cacheCount.value = 0
-}, 1000)
+    const { data } = await apiClient.post(`/like/${props.ContentId}`)
+    return data
+  },
+  // Optimistic Update: Bevor die Response da ist, updaten wir das UI
+  onMutate: async () => {
+    // Laufende Fetches für diesen Blogpost abbrechen, damit sie unser Update nicht überschreiben
+    await queryClient.cancelQueries({ queryKey: ['blog', props.slug] })
+
+    // Vorherigen Zustand zwischenspeichern (für einen möglichen Rollback)
+    const previousBlogData = queryClient.getQueryData(['blog', props.slug])
+
+    // Den Cache direkt manipulieren. Das ändert sofort die Props in der Elternkomponente!
+    queryClient.setQueryData(['blog', props.slug], (old: any) => {
+      if (!old) return old
+      return {
+        ...old,
+        likesCount: old.likesCount + 1,
+        currentUserLikeCount: old.currentUserLikeCount + 1
+      }
+    })
+
+    return { previousBlogData }
+  },
+
+  // Bei einem Fehler (z.B. User nicht eingeloggt, Server down, oder Limit überschritten)
+  onError: (err, variables, context) => {
+    // UI auf den Stand vor dem Klick zurücksetzen
+    if (context?.previousBlogData) {
+      queryClient.setQueryData(['blog', props.slug], context.previousBlogData)
+    }
+
+    if (isAxiosError(err)) {
+      if (err.response?.status === 404) {
+        toast.error('Dieser Beitrag existiert nicht.');
+      } else if (err.response?.status === 400) {
+        toast.error(err.response.data?.message || 'Limit erreicht.');
+      } else if (err.response?.status === 401) {
+        toast.error('Du musst angemeldet sein, um zu liken.');
+      } else {
+        toast.error('Fehler beim Vergeben des Likes.');
+      }
+    } else {
+      toast.error('Ein unerwarteter Fehler ist aufgetreten.');
+    }
+  },
+  // im Hintergrund nochmal frische Daten vom Server holen
+  onSettled: () => {
+    queryClient.invalidateQueries({ queryKey: ['blog', props.slug] })
+  }
+})
 
 const handleLikeButtonClick = () => {
-  if (isLoading.value || !data.value) return
-
-  // Prüfen, ob das Limit von 3 Likes erreicht ist
-  if (data.value.currentUserLikes + cacheCount.value >= 3) {
+  if (props.currentUserLikes >= 3) {
     toast.error('Du kannst einen Beitrag maximal 3 Mal liken!')
     return
   }
 
-  const value = cacheCount.value === 3 ? cacheCount.value : cacheCount.value + 1
-  cacheCount.value = value
-
-  onLikeSaving(value)
+  // Mutation auslösen
+  likePost()
 }
 
-// Berechnet den Y-Wert für das SVG-Rechteck, das das Herz ausfüllt (33% Schritte)
 const fillPercentage = computed(() => {
-  if (!data.value) return '100%'
-  const totalLikes = data.value.currentUserLikes + cacheCount.value
-  const percentage = 100 - totalLikes * 33.33
-  // Stellt sicher, dass der Wert nicht unter 0 fällt
+  const percentage = 100 - props.currentUserLikes * 33.33
   return `${Math.max(0, percentage)}%`
 })
 </script>

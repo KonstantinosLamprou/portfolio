@@ -15,5 +15,7 @@ namespace Backend.Domain.Interfaces
         Task<Project> SaveProjectAsync(Project project);
         Task<bool> DeleteProjectAsync(int id);
         Task<IEnumerable<Project>> GetAllProjectsAsync();
+        Task<Project> UpdateProjectViewsAsync(Project project);
+
     }
 }

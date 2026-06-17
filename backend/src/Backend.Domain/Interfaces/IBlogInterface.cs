@@ -16,5 +16,7 @@ namespace Backend.Domain.Interfaces
         Task<IEnumerable<Blog>> GetAllBlogsAsync();
         Task<IEnumerable<Blog>> GetLatestBlogsAsync(int count = 3);
 
+        Task<Blog> UpdateBlogViewsAsync(Blog blog);
+
     }
 }

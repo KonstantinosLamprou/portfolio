@@ -32,21 +32,15 @@ public record ContentDetailResponse(
     int LikesCount,
     int CommentsCount,
     AuthorDto Author,
-
     // für: ob der aktuelle User noch liken darf
     int CurrentUserLikeCount
 );
-
-
-
 
 public record ContentBlockDto(
     string Id,
     string Type,
     JsonElement Data
 );
-
-
 
 // Admin Dashboard DTO 
 public record CreateBlogRequest(
@@ -57,4 +51,9 @@ public record CreateBlogRequest(
     string Description,
     // Die Blöcke kommen aus deinem Vue-Editor 
     List<ContentBlockDto> Content
+);
+
+public record UpdateViewsContentResponse(
+    int Id,
+    int Views
 );

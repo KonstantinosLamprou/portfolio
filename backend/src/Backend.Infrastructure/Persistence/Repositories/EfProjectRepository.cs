@@ -76,6 +76,14 @@ namespace Backend.Infrastructure.Persistence.Repositories
                 .OrderByDescending(project => project.DateOfCreation)
                 .ToListAsync();
         }
+        
+        public async Task<Project> UpdateProjectViewsAsync(Project project)
+        {
+            _context.Projects.Update(project);
+            await _context.SaveChangesAsync();
+            return project;
+        }
+
 
 
     }

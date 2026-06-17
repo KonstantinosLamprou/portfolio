@@ -10,7 +10,7 @@
       <div class="flex-1">
         <div class="flex items-center gap-2 mb-1">
           <span class="font-medium text-sm lg:text-base text-white">{{ comment.author.name }}</span>
-          <span class="text-xs lg:text-sm text-gray-500">{{ formatDate(comment.createdAt) }}</span>
+          <time :datetime="comment.createdAt.toISOString()" class="text-xs lg:text-sm text-gray-500">{{ formatDate(comment.createdAt) }}</time>
           <button class="ml-auto bg-main-800 text-gray-400 hover:text-gray-200 hover:bg-gray-900 p-1 rounded-full transition cursor-pointer">
             <EllipsisIcon class="w-4 h-4"/>
           </button>
@@ -80,6 +80,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { CommentResponseDto } from '@/types/comment.ts';
+import type { CommentResponseDtoExtended } from './Commentwrapper.vue';
 import CommentReply from './CommentReply.vue';
 import ThumbsUpIcon  from '@/assets/thumb-up.svg';
 import ThumbsDownIcon  from '@/assets/thumb-down.svg';
@@ -89,7 +90,7 @@ import ChevronDownIcon from '@/assets/chevron-down.svg';
 import EllipsisIcon from '@/assets/ellipsis.svg';
 
 const props = defineProps<{
-  comment: CommentResponseDto;
+  comment: CommentResponseDtoExtended;
 }>();
 
 const emit = defineEmits(['reply-added']);
@@ -97,19 +98,15 @@ const emit = defineEmits(['reply-added']);
 const isReplying = ref(false);
 const showReplies = ref(false);
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-};
-
-
-
-
 // TODO: Antwort verschicken
 const handleReplySubmit = (text: string) => {
   // Hier würdest du das Event nach oben durchreichen oder direkt den API-Call machen
   emit('reply-added', { parentId: props.comment.id, text });
   isReplying.value = false;
   showReplies.value = true; // Replies direkt aufklappen, wenn man selbst geantwortet hat
+};
+
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('de-DE');
 };
 </script>
