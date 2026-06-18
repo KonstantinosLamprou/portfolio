@@ -59,6 +59,7 @@ public class CreateCommentHandler
             Upvotes: 0,    
             Downvotes: 0,
             ParentCommentId: comment.ParentCommentId,
+            IsDeleted: false,
             Replies: new List<CommentResponseDto>()
         );
 

@@ -21,6 +21,7 @@ using System.Text.Json;
 using System.Security.Claims;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication;
+using Backend.Api.Middlewares;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -150,6 +151,9 @@ builder.Services.AddScoped<IGuestbookEntry, EfGuestbookEntryRepository>();
 builder.Services.AddHostedService<ImageCleanupService>();
 
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -174,6 +178,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 
 app.UseHttpsRedirection();
+app.UseExceptionHandler(); 
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();

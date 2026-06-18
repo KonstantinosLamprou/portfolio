@@ -23,16 +23,24 @@ public class GetCommentByIdHandler
         return new CommentResponseDto
         (
             Id: comment.Id,
-            Text: comment.Text,
+            Text: comment.IsDeleted ? "[Kommentar gelöscht]" : comment.Text,
             CreatedAt: comment.CreatedAt,
-            Author: new AuthorDto(
-                Id: comment.Author.Id,
-                Name: comment.Author.Name,
-                ProfilePictureUrl: comment.Author.ProfilePictureUrl,
-                Role: comment.Author.Role
-            ),
-            Upvotes: comment.Upvotes,
-            Downvotes: comment.Downvotes,
+            Author: comment.IsDeleted ? 
+                new AuthorDto(
+                    Id: Guid.Empty,
+                    Name: "[Gelöschter Benutzer]",
+                    ProfilePictureUrl: null,
+                    Role: UserRole.Standard
+            ) :
+                new AuthorDto(
+                    Id: comment.Author.Id,
+                    Name: comment.Author.Name,
+                    ProfilePictureUrl: comment.Author.ProfilePictureUrl,
+                    Role: comment.Author.Role
+                ),
+            IsDeleted: comment.IsDeleted,
+            Upvotes: comment.IsDeleted ? 0 : comment.Upvotes,
+            Downvotes: comment.IsDeleted ? 0 : comment.Downvotes,
             ParentCommentId: comment.ParentCommentId,
             Replies: new List<CommentResponseDto>()
         );

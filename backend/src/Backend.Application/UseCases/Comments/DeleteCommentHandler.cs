@@ -1,6 +1,8 @@
 using Backend.Domain.Interfaces;
 using Backend.Domain.Contracts;
-
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Backend.Application.UseCases.Comments;
 
@@ -20,10 +22,13 @@ public class DeleteCommentHandler
         if (comment == null)
             throw new KeyNotFoundException($"Kommentar mit ID {commentId} nicht gefunden.");
 
-        // Berechtigungsprüfung: Nur der Autor oder ein Admin darf löschen
         if (comment.AuthorId != currentUserId /* && !IsCurrentUserAdmin() */) 
             throw new UnauthorizedAccessException("Sie haben keine Berechtigung, diesen Kommentar zu löschen.");
 
-        return await _commentRepository.DeleteCommentAsync(comment.Id);
+        comment.IsDeleted = true;
+        
+        await _commentRepository.UpdateCommentAsync(comment);
+
+        return true;
     }
 }

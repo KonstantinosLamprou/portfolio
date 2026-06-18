@@ -1,5 +1,6 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');  
+/* ---break---             */
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -33,7 +34,7 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -44,7 +45,7 @@
   --color-chat-text: var(--chat-text);
   --color-chat-text-strong: var(--chat-text-strong);
   --color-chat-border: var(--chat-border);
-  
+
   --animate-blink: blink 3s linear infinite;
   @keyframes blink {
     0%, 100% { opacity: 1; }
@@ -57,34 +58,33 @@
     --background: oklch(1 0 0);         
     --foreground: #0a0a0a;  
     /* --foreground-strong: #0a0a0a;             */
-    
+
     --card: #1c1c1c;                    
     --card-foreground: #0a0a0a;
-    
+
     --popover: oklch(1 0 0);
     --popover-foreground: #0a0a0a;
-    
+
     --primary: #82c0fa;                 
     --primary-foreground: oklch(0.985 0 0);
-    
+
     --secondary: oklch(0.97 0 0);
     --secondary-foreground: oklch(0.205 0 0);
-    
+
     --muted: oklch(0.7 0 0);
     --muted-foreground: oklch(0.556 0 0);
-    
+
     --accent: oklch(0.97 0 0);
     --accent-foreground: oklch(0.205 0 0);
-    
+
     --destructive: oklch(0.577 0.245 27.325);
-    
+
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
     --ring: oklch(0.708 0 0);
-    
+
     --radius: 0.625rem;
 
-    
     --heading-color: #1c1c1c;
     --matcha-color: #21241d;
     --koi-color: #ce5a57;
@@ -101,36 +101,35 @@
   }
 
   .dark {
-    
+
     --background: oklch(0.141 0.005 285.823);
     --foreground: #fafafa;  
     /* --foreground-strong: #fafafa;                   */
-    
+
     --card: #1f1f1f;                        
     --card-foreground: #fafafa;
-    
+
     --popover: #1f1f1f;
     --popover-foreground: #fafafa;
-    
+
     --primary: rgb(243 243 243);              
     --primary-foreground: oklch(0.205 0 0);
-    
+
     --secondary: oklch(0.269 0 0);
     --secondary-foreground: oklch(0.985 0 0);
-    
+
     --muted: oklch(0.269 0 0);
     --muted-foreground: oklch(0.708 0 0);
-    
+
     --accent: rgb(243 243 243);
     --accent-foreground: oklch(0.205 0 0);
-    
+
     --destructive: oklch(0.704 0.191 22.216);
-    
+
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
     --ring: oklch(0.556 0 0);
 
-    
     --heading-color: #e7dfd1;
     --matcha-color: #90a955;
     --koi-color: #e46f68;

@@ -17,6 +17,7 @@ export interface CommentResponseDto {
   upvotes: number;
   downvotes: number;
   parentCommentId?: string;
+  IsDeleted: boolean;
   replies?: CommentResponseDto[];
 }
 

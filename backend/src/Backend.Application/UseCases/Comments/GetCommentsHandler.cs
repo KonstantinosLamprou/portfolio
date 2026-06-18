@@ -35,16 +35,23 @@ public class GetCommentsHandler
 
         var flatDtos = allComments.Select(c => new CommentResponseDto(
             Id: c.Id,
-            Text: c.Text,
+            Text: c.IsDeleted ? "[Kommentar gelöscht]" : c.Text, 
             CreatedAt: c.CreatedAt,
-            Author: new AuthorDto(
+            Author: c.IsDeleted ? new AuthorDto(
+                Id: Guid.Empty,
+                Name: "[Gelöschter Benutzer]",
+                ProfilePictureUrl: null,
+                Role: UserRole.Standard 
+            ) :
+                new AuthorDto(
                 Id: c.Author.Id,
                 Name: c.Author.Name,
                 ProfilePictureUrl: c.Author.ProfilePictureUrl,
                 Role: c.Author.Role
             ),
-            Upvotes: c.Upvotes,
-            Downvotes: c.Downvotes,
+            IsDeleted: c.IsDeleted,
+            Upvotes: c.IsDeleted ? 0 : c.Upvotes,
+            Downvotes: c.IsDeleted ? 0 : c.Downvotes,
             ParentCommentId: c.ParentCommentId,
             Replies: new List<CommentResponseDto>()
         )).ToList();

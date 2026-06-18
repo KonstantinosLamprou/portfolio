@@ -2,7 +2,7 @@
   <Transition name="fade">
     <div
       v-if="showOverlay"
-      class="fixed inset-0 z-100 flex flex-col items-center justify-center bg-main text-body transition-colors duration-300"
+      class="fixed inset-0 z-100 flex flex-col items-center justify-center bg-background text-body transition-colors duration-300"
       @click="handleScreenClick"
       :class="{ 'cursor-pointer': phase === 'welcome' }"
     >

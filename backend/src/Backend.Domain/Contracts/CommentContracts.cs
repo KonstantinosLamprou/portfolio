@@ -19,6 +19,7 @@ public record CommentResponseDto(
     string Text,
     DateTime CreatedAt,
     AuthorDto Author,
+    bool IsDeleted, 
     // Votes
     int Upvotes,
     int Downvotes,

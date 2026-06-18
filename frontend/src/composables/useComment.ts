@@ -1,0 +1,48 @@
+import { useMutation, useQueryClient } from '@tanstack/vue-query';
+import apiClient from '@/services/api';
+
+export function useUpdateCommentMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ commentId, text }: { commentId: string, text: string }) => {
+      const response = await apiClient.patch(`/comments/${commentId}`, { 
+        commentId: commentId, 
+        text: text 
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['comments'] });
+
+    },
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        console.error("Keine Berechtigung zum Bearbeiten!");
+      } else {
+        console.error("Fehler beim Aktualisieren", error);
+      }
+    }
+  });
+}
+
+export function useDeleteCommentMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (commentId: string) => {
+      await apiClient.delete(`/comments/${commentId}`);
+
+    },
+    onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['comments'] });
+    },
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        console.error("Keine Berechtigung zum Löschen!");
+      } else {
+        console.error("Fehler beim Löschen", error);
+      }
+    }
+  });
+}

@@ -29,5 +29,7 @@ namespace Backend.Domain.Entities
 
         public int Upvotes => Votes.Count(v => v.IsUpvote);
         public int Downvotes => Votes.Count(v => !v.IsUpvote);
+
+        public bool IsDeleted { get; set; } = false;
     }
 }
