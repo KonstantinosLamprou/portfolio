@@ -1,15 +1,15 @@
 <template>
   <Tabs v-model="currentTab" class="flex flex-col w-full">
-    <TabsList class="self-start bg-[color:var(--tab-background)] rounded-full p-1">
+    <TabsList class="self-start bg-[color:var(--muted)] rounded-full p-1">
       <TabsTrigger
         value="write"
-        class="rounded-full text-[color:var(--muted-foreground)] data-[state=active]:bg-[color:var(--accent-background)] data-[state=active]:text-[color:var(--accent-foreground)]"
+        class="rounded-full text-[color:var(--muted-foreground)] data-[state=active]:bg-[color:var(--accent-background)] data-[state=active]:text-[color:var(--foreground)]"
       >
         Write
       </TabsTrigger>
       <TabsTrigger
         value="preview"
-        class="rounded-full text-[color:var(--muted-foreground)] data-[state=active]:bg-[color:var(--accent-background)] data-[state=active]:text-[color:var(--accent-foreground)]"
+        class="rounded-full text-[color:var(--muted-foreground)] data-[state=active]:bg-[color:var(--accent-background)] data-[state=active]:text-[color:var(--foreground)]"
       >
         Preview
       </TabsTrigger>

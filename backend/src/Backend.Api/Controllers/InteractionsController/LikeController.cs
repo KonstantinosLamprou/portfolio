@@ -19,6 +19,9 @@ public class LikeController : ControllerBase
 
     [HttpPost("{contentId}")]
     [Authorize] // Wichtig: Nur eingeloggte User dürfen liken!
+    [ProducesResponseType(StatusCodes.Status200OK)
+    , ProducesResponseType(StatusCodes.Status400BadRequest)
+    , ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> LikeContent(int contentId)
     {
         try

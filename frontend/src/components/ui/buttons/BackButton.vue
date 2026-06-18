@@ -1,7 +1,7 @@
 <template>
   <button
     @click="goBack"
-    class="sticky top-32 z-52 mt-2 w-fit flex items-center gap-2 px-4 py-2 mb-6 text-sm bg-main/80 backdrop-blur-md rounded-full border-transparent text-body hover:text-sky transition-all group cursor-pointer shadow-sm"
+    class="sticky top-32 z-52 mt-2 w-fit flex items-center gap-2 px-4 py-2 mb-6 text-sm rounded-full shadow-xs backdrop-blur-md bg-black/30 transform-gpu hover:opacity-50 transition-all group cursor-pointer z-50"
   >
     <Backward
       viewBox="0 0 24 24"

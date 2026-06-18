@@ -2,7 +2,7 @@
   <div class="lg:mt-6 lg:mb-4 flex justify-center ">
     <button
       ref="buttonRef"
-      class="flex items-center gap-3 rounded-4xl bg-gray-900 px-4 py-2 text-lg text-body transition-transform duration-200 active:scale-95"
+      class="flex items-center gap-2 rounded-4xl bg-transparent border border-[color:var(--border)] px-4 py-2 text-lg text-body transition-transform duration-200 active:scale-95"
       @click="handleLikeButtonClick"
       :disabled="isPending"
       aria-label="Like this post"

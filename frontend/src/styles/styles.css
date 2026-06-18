@@ -1,132 +1,150 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
+@import "tw-animate-css";
 
-@theme {
+@custom-variant dark (&:is(.dark *));
 
-  --font-sans:
-    'Space Grotesk', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
-    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+@theme inline {
+  --font-sans: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-sans);
 
-  /* Dadurch entstehen Klassen wie: bg-main, text-main, text-matcha */
-  --color-main: var(--bg-color);
-  --color-surface: var(--surface-color);
-  --color-body: var(--text-color);
-  --color-heading: var(--heading-color);
   --color-matcha: var(--matcha-color);
   --color-koi: var(--koi-color);
   --color-picture: var(--picture-color);
-  --animate-blink: blink 3s linear infinite;
-  --color-link: var(--link-color);
   --color-sky: var(--sky-color);
-  --color-gray: var(--gray-color);
-  --color-onlydarkmatcha: var(--only-darkmatcha);
-  --color-accent: var(--accent-color);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent-background: var(--accent-background);
-  --color-tertiary: var(--tertiary-color);
-  --color-foreground: var(--foreground);
-  --color-muted-foreground: var(--muted-foreground);
+  --color-link: var(--link-color);
 
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 
-  --color-destructive: var(--destructive);
-
-
-  --color-bright: var(--bright);
-
-  --color-tab: var(--tab-background);
-
+  --color-chat-bg: var(--chat-bg);
+  --color-chat-hover: var(--chat-hover);
+  --color-chat-text: var(--chat-text);
+  --color-chat-text-strong: var(--chat-text-strong);
+  --color-chat-border: var(--chat-border);
+  
+  --animate-blink: blink 3s linear infinite;
   @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
   }
-
 }
 
-/* 2. Die echten Farbwerte definieren (Hell und Dunkel) */
 @layer base {
-  body {
-    font-family: var(--font-sans);
-  }
-
-  /* :root ist dein Standard (Helles Theme) */
   :root {
-    --bg-color: oklch(1 0 0);
-    --surface-color: #1c1c1c;
-    --text-color: #3c3c3c;
-    --heading-color: #1c1c1c;
-    --matcha-color: #21241d;
-    --koi-color: #ce5a57;
-    --text-font: var(--font-sans);
-    --picture-color: #e5e7eb;
-    --sky-color: #82c0fa;
-    --link-color:  #6ab0f3;
-    --gray-color: #e5e7eb;
-    --only-darkmatcha: #90a955;
-      /* noch ändern */
-    --accent-color: #82c0fa;
-    --accent-background: oklch(0.145 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-
-    --tertiary-color: #222222;
-    --foreground: oklch(0.145 0 0);
-
-    --muted: oklch(0.97 0 0);
+    --background: oklch(1 0 0);         
+    --foreground: #0a0a0a;  
+    /* --foreground-strong: #0a0a0a;             */
+    
+    --card: #1c1c1c;                    
+    --card-foreground: #0a0a0a;
+    
+    --popover: oklch(1 0 0);
+    --popover-foreground: #0a0a0a;
+    
+    --primary: #82c0fa;                 
+    --primary-foreground: oklch(0.985 0 0);
+    
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    
+    --muted: oklch(0.7 0 0);
     --muted-foreground: oklch(0.556 0 0);
-
+    
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    
+    --destructive: oklch(0.577 0.245 27.325);
+    
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
     --ring: oklch(0.708 0 0);
-    --destructive: oklch(0.58 0.22 27);
+    
+    --radius: 0.625rem;
 
-    --bright: rgb(243 243 243);
+    
+    --heading-color: #1c1c1c;
+    --matcha-color: #21241d;
+    --koi-color: #ce5a57;
+    --picture-color: #1c1e21;
+    --sky-color: #82c0fa;
+    --link-color: #6ab0f3;
 
-    --tab-background: oklch(1 0 0 / 15%);
-
+    /* Kommentare: */
+    --chat-bg: #f3f4f6;          /* Buttons */
+    --chat-hover: #e5e7eb;       /* Hovern */
+    --chat-text: #6b7280;        /* Icons/Datum */
+    --chat-text-strong: #0a0a0a; /* Autorenname */
+    --chat-border: #e5e7eb;
   }
 
-  /* .dark überschreibt die Farben, wenn der Darkmode aktiv ist */
   .dark {
-    --bg-color:  oklch(0.141 0.005 285.823);
-    --surface-color: #1f1f1f;
-    --text-color: #cfc5b8;
-    --heading-color: #e7dfd1;
-    --matcha-color: #90a955;
-    /* Etwas heller für besseren Kontrast im Dunkeln */
-    --koi-color: #e46f68;
-    --text-font: var(--font-sans);
-    --picture-color: #1c1e21;
-    --link-color: #6ab0f3;
-    --sky-color: #82c0fa;
-    --gray-color:  #1e2939;
-    --only-darkmatcha: #90a955;
-
-    --accent-color: rgb(243 243 243);
-    --accent-background:  rgb(243 243 243);
-    --accent-foreground: oklch(0.205 0 0);
-
+    
+    --background: oklch(0.141 0.005 285.823);
+    --foreground: #fafafa;  
+    /* --foreground-strong: #fafafa;                   */
+    
+    --card: #1f1f1f;                        
+    --card-foreground: #fafafa;
+    
+    --popover: #1f1f1f;
+    --popover-foreground: #fafafa;
+    
+    --primary: rgb(243 243 243);              
+    --primary-foreground: oklch(0.205 0 0);
+    
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    
     --muted: oklch(0.269 0 0);
     --muted-foreground: oklch(0.708 0 0);
-
-    --tertiary-color: #222222;
-
-    --foreground: oklch(0.985 0 0);
-
-
+    
+    --accent: rgb(243 243 243);
+    --accent-foreground: oklch(0.205 0 0);
+    
     --destructive: oklch(0.704 0.191 22.216);
-
+    
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
     --ring: oklch(0.556 0 0);
 
-    --bright: rgb(243 243 243);
+    
+    --heading-color: #e7dfd1;
+    --matcha-color: #90a955;
+    --koi-color: #e46f68;
+    --picture-color: #e5e7eb;
+    --sky-color: #82c0fa;
+    --link-color: #6ab0f3;
 
-    --tab-background: oklch(1 0 0 / 15%);
+    --chat-bg: #27272a;         
+    --chat-hover: #3f3f46;       
+    --chat-text: #a1a1aa;        
+    --chat-text-strong: #fafafa; 
+    --chat-border: #3f3f46;      
   }
 }
-
 
 @layer components {
   .glass3d {
@@ -185,5 +203,16 @@
     z-index: 6;
   }
 
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+
+  }
+  body {
+    @apply bg-background text-foreground;
+
+  }
 
 }

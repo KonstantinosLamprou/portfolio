@@ -20,6 +20,7 @@ using Microsoft.OpenApi;
 using System.Text.Json;
 using System.Security.Claims;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,7 +32,7 @@ builder.Services.AddAuthentication(options =>
 {
     // Standard-Scheme ist Cookie (wir vertrauen unserem eigenen Cookie)
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme; // Optionaler Fallback
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
 .AddCookie(options =>
 {
@@ -54,6 +55,7 @@ builder.Services.AddAuthentication(options =>
     options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
     options.SaveTokens = true; // Speichert Access Tokens 
+    options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
 
     options.Events.OnCreatingTicket = async context =>
     {
@@ -77,6 +79,7 @@ builder.Services.AddAuthentication(options =>
     options.ClientId = builder.Configuration["Authentication:GitHub:ClientId"]!;
     options.ClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"]!;
     options.Scope.Add("user:email"); 
+    options.ClaimActions.MapJsonKey("urn:github:avatar_url", "avatar_url", "url");
 
     // GitHub gibt E-Mails oft nur über die API zurück, dieser Scope hilft dabei:
      options.Events.OnCreatingTicket = async context =>

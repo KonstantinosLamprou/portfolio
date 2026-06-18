@@ -74,6 +74,9 @@ public class AuthController : ControllerBase
         var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
         var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
                    ?? claims.FirstOrDefault(c => c.Type == "urn:github:name")?.Value;
+        var profilePictureUrl = claims.FirstOrDefault(c => c.Type == "urn:google:picture")?.Value
+                     ?? claims.FirstOrDefault(c => c.Type == "urn:github:avatar_url")?.Value
+                     ?? claims.FirstOrDefault(c => c.Type == "picture")?.Value;
 
         if (providerSubjectId == null || email == null) return BadRequest("Unzureichende Daten vom Provider.");
 
@@ -83,7 +86,7 @@ public class AuthController : ControllerBase
             ProviderSubjectId: providerSubjectId,
             Email: email,
             Name: name ?? email.Split('@')[0],
-            ProfilePictureUrl: null
+            ProfilePictureUrl: profilePictureUrl
         );
 
         // HIER IST DIE MAGIE: Wir fangen dein AddUserResult auf!

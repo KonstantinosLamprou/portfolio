@@ -12,6 +12,8 @@
         <CommentHeader 
           :totalComments="comments?.length || 0" 
           :totalReplies="totalReplies" 
+          :sort-order="currentSort"
+          @update-sort="currentSort = $event"
         />
   
         <div class="mt-6">
@@ -20,7 +22,7 @@
           </div>
           <CommentSection 
             v-else
-            v-for="comment in comments" 
+            v-for="comment in sortedComments" 
             :key="comment.id" 
             :comment="comment"
             @reply-added="onReplyAdded"
@@ -32,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 
 import apiClient from '@/services/api.ts';
@@ -47,6 +49,8 @@ const props = defineProps<{
 export interface CommentResponseDtoExtended extends Omit<CommentResponseDto, 'createdAt'> {
   createdAt: Date; 
 }
+
+const currentSort = ref<'newest' | 'oldest'>('newest');
 
 const fetchAllTopLevelComments = async (): Promise<CommentResponseDtoExtended[]> => {
 
@@ -68,6 +72,23 @@ const {
   // Die contentId MUSS in den Query-Key, damit verschiedene Blogposts eigene Caches haben
   queryKey: ['comments', props.blogId], 
   queryFn: fetchAllTopLevelComments 
+});
+
+const sortedComments = computed(() => {
+  if (!comments.value) return [];
+
+  // [...comments.value] erstellt eine flache Kopie, damit der TanStack Cache heile bleibt
+  return [...comments.value].sort((a, b) => {
+    // Da wir vorhin echte Date-Objekte daraus gemacht haben, können wir getTime() nutzen
+    const timeA = a.createdAt.getTime();
+    const timeB = b.createdAt.getTime();
+
+    if (currentSort.value === 'newest') {
+      return timeB - timeA; // Descending (Neueste zuerst)
+    } else {
+      return timeA - timeB; // Ascending (Älteste zuerst)
+    }
+  });
 });
 
 // Berechnet alle Replies aus der ersten Ebene für den Header
