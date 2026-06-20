@@ -13,14 +13,18 @@ public class EfGuestbookEntryRepository : IGuestbookEntry
         _context = context;
     }
 
-    public async Task<IEnumerable<GuestbookEntry>> GetAllEntriesAsync()
+    public async Task<IEnumerable<GuestbookEntry>?> GetAllEntriesAsync()
     {
-        return await _context.GuestbookEntries.ToListAsync();
+        return await _context.GuestbookEntries
+            .Include(e => e.User)
+            .ToListAsync();
     }
 
     public async Task<GuestbookEntry?> GetEntryByIdAsync(Guid id)
     {
-        return await _context.GuestbookEntries.SingleOrDefaultAsync(entry => entry.Id == id); 
+        return await _context.GuestbookEntries
+            .Include(e => e.User) 
+            .SingleOrDefaultAsync(entry => entry.Id == id); 
     }
 
     public async Task<GuestbookEntry> SaveEntryAsync(GuestbookEntry entry)

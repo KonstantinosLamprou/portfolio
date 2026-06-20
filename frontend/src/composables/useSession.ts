@@ -8,6 +8,7 @@ export interface UserSession {
   name: string
   email: string
   provider?: string
+  profilePictureUrl?: string
 }
 
 const fetchSession = async (): Promise<UserSession | null> => {

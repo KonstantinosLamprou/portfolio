@@ -19,5 +19,7 @@ public record UserDto(
     Guid UserId,
     string Email,
     string Name,
-    string Provider
+    string Provider, 
+    string? ProfilePictureUrl
+
 );

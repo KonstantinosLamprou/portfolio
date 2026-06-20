@@ -1,39 +1,66 @@
 <template>
-<div class="mb-6">
+<div class="flex flex-col items-center mt-6">
+  <div 
+    v-for="entry in entries"
+    :key="entry.id" 
+    class="mb-4 rounded-xl border w-2/3 border-[color:var(--border)] p-4">
+    
     <div class="flex gap-4">
       <img 
-        :src="DefaultAvatar" 
+        :src="entry.author.profilePictureUrl || DefaultAvatar" 
         alt="Avatar" 
-        class="w-6 h-6 rounded-full bg-chat-bg object-cover shrink-0"
+        class="w-10 h-10 rounded-full bg-chat-bg object-cover shrink-0"
         referrerpolicy="no-referrer"
       />
       
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2 mb-1">
-        <!-- <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <span class="font-medium truncate text-sm lg:text-base text-chat-text-strong cursor-default">{{ comment.isDeleted ? 'Gelöschter Benutzer' : comment.author.name }}</span>
-            </TooltipTrigger>
-            <TooltipContent>
-              {{ comment.isDeleted ? 'Gelöschter Benutzer' : comment.author.name }}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>         -->
-        <!-- <time :datetime="String()" class="text-xs lg:text-sm text-chat-text">
-          {{ formatDate() }}
-        </time> -->
-        <p class="text-foreground lg:text-base text-sm mb-3 whitespace-pre-wrap break-words"></p>
+      <div class="flex-1 min-w-0 flex flex-col justify-start">
+        
+        <div class="flex flex-col mb-1">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <span class="font-medium truncate text-sm lg:text-base text-chat-text-strong cursor-default">
+                  {{ entry.author.name }}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{{ entry.author.name }}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>         
+          <time :datetime="String(entry.createdAt)" class="text-xs font-light text-chat-text/70">
+            {{ formatDate(entry.createdAt) }}
+          </time> 
+        </div>
+
+        <p class="text-foreground lg:text-base text-sm whitespace-pre-wrap break-words mt-1">
+          {{ entry.message }}
+        </p>
+        
       </div>
     </div>
-  </div>
+  </div>    
 </div>
-
 </template>
 
 <script setup lang="ts">
 import DefaultAvatar from '@/assets/default-avatar.svg?url';
+import { useGetGuestbookEntries } from '@/composables/useGuestbook';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 
+const { data: entries } = useGetGuestbookEntries();
 
+// Helper für das Datum
+const formatDate = (date: Date | string) => {
+  const value = typeof date === 'string' ? new Date(date) : date;
 
-</script>   
+  return value.toLocaleString('de-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+};
+</script>

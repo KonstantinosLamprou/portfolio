@@ -32,9 +32,14 @@ public class GuestbookController : ControllerBase
 
     [HttpGet()]
     [ProducesResponseType(typeof(IEnumerable<UserGuestbookEntryResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> GetGuestbookEntries()
     {
         var entries = await _getGuestbookEntriesHandler.Handle();
+
+        if (entries == null || !entries.Any())
+            return NoContent();
+            
         return Ok(entries);
     }
 

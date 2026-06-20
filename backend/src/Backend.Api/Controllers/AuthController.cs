@@ -127,7 +127,7 @@ public class AuthController : ControllerBase
         var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         var email = User.FindFirst(ClaimTypes.Email)?.Value ?? string.Empty;
         var name = User.FindFirst(ClaimTypes.Name)?.Value ?? User.Identity?.Name ?? string.Empty;
-        
+        var profilePictureUrl = User.FindFirst("ProfilePictureUrl")?.Value ?? string.Empty;
         // Den Provider auslesen
         var provider = User.FindFirst("Provider")?.Value ?? "Unknown";
 
@@ -139,7 +139,8 @@ public class AuthController : ControllerBase
             UserId: userId,
             Email: email,
             Name: name,
-            Provider: provider
+            Provider: provider,
+            ProfilePictureUrl: profilePictureUrl
         );
 
         // TanStack Query es unter `data.user` direkt findet

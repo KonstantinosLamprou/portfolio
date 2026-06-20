@@ -138,6 +138,7 @@ builder.Services.AddScoped<GetCommentByIdHandler>();
 
 builder.Services.AddScoped<CreateGuestbookEntryHandler>();
 builder.Services.AddScoped<GetGuestbookEntriesHandler>();
+builder.Services.AddScoped<GetGuestbookEntryHandler>();
 builder.Services.AddScoped<UpdateGuestbookEntryHandler>();
 builder.Services.AddScoped<DeleteGuestbookEntryHandler>();
 

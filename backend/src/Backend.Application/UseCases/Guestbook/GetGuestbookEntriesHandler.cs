@@ -12,9 +12,12 @@ public class GetGuestbookEntriesHandler
         _guestbookEntriesRepository = guestbookEntriesRepository;
     }
 
-    public async Task<IEnumerable<UserGuestbookEntryResponse>> Handle()
+    public async Task<IEnumerable<UserGuestbookEntryResponse>?> Handle()
     {
         var entries = await _guestbookEntriesRepository.GetAllEntriesAsync();
+
+        if (entries == null || !entries.Any())
+            return null;
 
         return entries.Select(entry => new UserGuestbookEntryResponse
         (

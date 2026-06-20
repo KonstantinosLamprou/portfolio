@@ -1,10 +1,9 @@
 <template>
     <div class="flex justify-center w-full">
-        <div class="flex w-full items-center flex-col mt-10 space-y-2">
-            
+        <form class="flex w-full items-center flex-col mt-10 space-y-2" @submit.prevent="submitEntry">
             <div class="flex w-2/3 gap-3">
                 <div class="shrink-0 pt-1"> <img 
-                        :src="DefaultAvatar"
+                        :src="session?.profilePictureUrl || DefaultAvatar"
                         alt="Avatar" 
                         class="w-8 h-8 rounded-full bg-chat-bg object-cover"
                         referrerpolicy="no-referrer"
@@ -42,13 +41,14 @@
                 </Button>
                 <Button 
                     variant="none"
+                    type="submit"
                     class="self-end mb-1 rounded-xl border"
                     :disabled="!isAuthenticated || content.trim() === ''"
                 >
                     Absenden
                 </Button>
-            </div>               
-        </div>
+            </div> 
+        </form>              
     </div>
 </template>
 
@@ -60,6 +60,11 @@ import { computed } from 'vue';
 import DefaultAvatar from '@/assets/default-avatar.svg?url';
 import Button from '../ui/buttons/Button.vue';
 import SignInicon from '@/assets/login.svg';
+import { useCreateGuestbookEntry } from '@/composables/useGuestbook';
+import type { CreateGuestbookEntryRequest } from '@/types/GuestbookTypes';
+import { toast } from 'vue-sonner';
+
+
 
 const placeholder = "Hinterlasse hier einen netten Gruß oder Feedback! :)";
 const content = ref('');
@@ -67,7 +72,27 @@ const content = ref('');
 const { data: session, isPending: isSessionLoading } = useSession(); 
 const isAuthenticated = computed(() => !!session.value && !isSessionLoading.value); 
 
+const { mutate: createEntry } = useCreateGuestbookEntry();
 
+const submitEntry = () => {
+    if (content.value.trim() === '' || !isAuthenticated.value) {
+        toast.error('Bitte melde dich an und gib eine Nachricht ein, bevor du absendest.');
+        return;
+    }
 
+    const payload: CreateGuestbookEntryRequest = {
+        message: content.value.trim()
+    };
 
+    createEntry(payload, {
+        onSuccess: () => {
+            toast.success('Dein Eintrag wurde erfolgreich hinzugefügt!');
+            content.value = '';
+        },
+        onError: (error) => {
+            toast.error('Beim Hinzufügen deines Eintrags ist ein Fehler aufgetreten. Bitte versuche es später erneut.');
+            console.error('Fehler beim Einreichen des Gästebucheintrags:', error);
+        },
+    });
+};
 </script>   

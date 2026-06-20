@@ -2,13 +2,12 @@
     <div class="container mt-25 divide-surface divide-y">
         <GuestbookHeader />
         <div>
-        <GuestbookLanding /> 
-        <GuestbookEditor 
-        
-        />
-        </div>
+            <GuestbookLanding /> 
 
-        <GuestbookEntries />
+            <GuestbookEditor /> 
+
+             <GuestbookEntries />
+        </div>
     </div>
 </template>
 
