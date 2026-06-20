@@ -58,6 +58,7 @@ public class CreateCommentHandler
             Author: authorDto,
             Upvotes: 0,    
             Downvotes: 0,
+            CurrentUserVote: null,
             ParentCommentId: comment.ParentCommentId,
             IsDeleted: false,
             Replies: new List<CommentResponseDto>()

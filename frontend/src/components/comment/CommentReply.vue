@@ -66,9 +66,9 @@ const props = defineProps<{
   commentId: string;
   contentId: number;
   contentType: string;
+  isDeleted: boolean;
 }>();
 
-// TODO: Hier der reply fetch? 
 
 const { data: session, isPending: isSessionLoading } = useSession()
 // --- Computed Properties ---
@@ -106,6 +106,11 @@ const { mutate: createComment, isPending } = useMutation({
 const submitReply = () => {
   if (!isAuthenticated.value) {
     toast.error('Bitte melde dich an, um einen Kommentar zu erstellen.');
+    return;
+  }
+
+  if (props.isDeleted === true) {
+    toast.error('Auf gelöschte Kommentare kann nicht geantwortet werden.');
     return;
   }
 

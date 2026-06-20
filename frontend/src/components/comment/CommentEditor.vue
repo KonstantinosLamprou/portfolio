@@ -112,5 +112,4 @@ function handleBlur() {
   content.value = content.value.trim()
 }
 
-
 </script>

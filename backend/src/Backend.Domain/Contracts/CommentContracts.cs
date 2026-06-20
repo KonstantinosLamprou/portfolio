@@ -24,6 +24,7 @@ public record CommentResponseDto(
     int Upvotes,
     int Downvotes,
     // downvoted (false) oder gar nicht gevotet (null)?
+    bool? CurrentUserVote,
     Guid? ParentCommentId,
     // Die Replies sind einfach wieder eine Liste von CommentResponseDto
     List<CommentResponseDto>? Replies

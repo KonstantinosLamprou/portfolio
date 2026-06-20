@@ -16,8 +16,9 @@ export interface CommentResponseDto {
   author: AuthorDto;
   upvotes: number;
   downvotes: number;
+  currentUserVote?: boolean | null; 
   parentCommentId?: string;
-  IsDeleted: boolean;
+  isDeleted: boolean;
   replies?: CommentResponseDto[];
 }
 

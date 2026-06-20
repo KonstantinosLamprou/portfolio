@@ -141,6 +141,11 @@ builder.Services.AddScoped<GetGuestbookEntriesHandler>();
 builder.Services.AddScoped<UpdateGuestbookEntryHandler>();
 builder.Services.AddScoped<DeleteGuestbookEntryHandler>();
 
+builder.Services.AddScoped<UpdateCommentVoteHandler>(); 
+builder.Services.AddScoped<DeleteCommentVoteHandler>();
+builder.Services.AddScoped<GetCommentsVoteHandler>();
+builder.Services.AddScoped<CreateCommentVoteHandler>();
+
 builder.Services.AddScoped<IBlogInterface, EfBlogRepository>();
 builder.Services.AddScoped<IProjectInterface, EfProjectRepository>();
 builder.Services.AddScoped<IApplicationUserInterface, EfApplicationUserRepository>();

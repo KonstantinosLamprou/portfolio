@@ -18,6 +18,7 @@ public class EfCommentRepository : ICommentInterface
     {
         return await _context.Comments
             .Include(c => c.Author) 
+            .Include(c => c.Votes)
             .SingleOrDefaultAsync(comment => comment.Id == id);
     }
 
@@ -25,6 +26,7 @@ public class EfCommentRepository : ICommentInterface
     {
         return await _context.Comments
             .Include(c => c.Author) 
+            .Include(c => c.Votes)
             .Where(comment => comment.ContentId == contentId)
             .ToListAsync();
     }

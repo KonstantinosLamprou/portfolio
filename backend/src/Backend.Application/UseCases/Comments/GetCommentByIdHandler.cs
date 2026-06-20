@@ -13,7 +13,7 @@ public class GetCommentByIdHandler
         _repository = repository;
     }
 
-    public async Task<CommentResponseDto?> Handle(Guid commentId)
+    public async Task<CommentResponseDto?> Handle(Guid commentId, Guid? currentUserId)
     {
         var comment = await _repository.GetCommentByIdAsync(commentId);
 
@@ -38,6 +38,7 @@ public class GetCommentByIdHandler
                     ProfilePictureUrl: comment.Author.ProfilePictureUrl,
                     Role: comment.Author.Role
                 ),
+            CurrentUserVote: currentUserId.HasValue ? comment.Votes.FirstOrDefault(v => v.UserId == currentUserId.Value)?.IsUpvote : null,
             IsDeleted: comment.IsDeleted,
             Upvotes: comment.IsDeleted ? 0 : comment.Upvotes,
             Downvotes: comment.IsDeleted ? 0 : comment.Downvotes,

@@ -35,7 +35,9 @@ public class CommentsController : ControllerBase
     [ProducesResponseType(typeof(CommentResponseDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetComment(Guid commentId)
     {
-        var comment = await _getCommentByIdHandler.Handle(commentId);
+        Guid userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User) ?? Guid.Empty;
+
+        var comment = await _getCommentByIdHandler.Handle(commentId, userId);
 
         if (comment == null)
             return NotFound();
@@ -77,6 +79,7 @@ public class CommentsController : ControllerBase
     //TODO: 
     // Braucht das Update vielleicht bei keiner Bereichtigung eine Response mit 403 Forbidden statt einer Exception?
     [HttpPatch("{commentId}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Authorize]
     public async Task<IActionResult> UpdateComment(Guid commentId, [FromBody] UpdateCommentRequest request)
     {

@@ -2,7 +2,7 @@
   <div :id="`comment-${comment.id}`" class="mb-6">
     <div class="flex gap-4">
       <img 
-        :src="comment.IsDeleted ? DefaultAvatar : comment.author.profilePictureUrl || DefaultAvatar" 
+        :src="comment.isDeleted ? DefaultAvatar : comment.author.profilePictureUrl || DefaultAvatar" 
         alt="Avatar" 
         class="w-6 h-6 rounded-full bg-chat-bg object-cover shrink-0"
         referrerpolicy="no-referrer"
@@ -13,10 +13,10 @@
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger as-child>
-              <span class="font-medium truncate text-sm lg:text-base text-chat-text-strong cursor-default">{{ comment.IsDeleted ? 'Gelöschter Benutzer' : comment.author.name }}</span>
+              <span class="font-medium truncate text-sm lg:text-base text-chat-text-strong cursor-default">{{ comment.isDeleted ? 'Gelöschter Benutzer' : comment.author.name }}</span>
             </TooltipTrigger>
             <TooltipContent>
-              {{ comment.IsDeleted ? 'Gelöschter Benutzer' : comment.author.name }}
+              {{ comment.isDeleted ? 'Gelöschter Benutzer' : comment.author.name }}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>        
@@ -121,19 +121,13 @@
           </div>
         </div>
 
-        <p v-else class="text-foreground lg:text-base text-sm mb-3 whitespace-pre-wrap break-words">{{ comment.IsDeleted ? 'Dieser Kommentar wurde gelöscht.' : comment.text }}</p>
+        <p v-else class="text-foreground lg:text-base text-sm mb-3 whitespace-pre-wrap break-words">{{ comment.isDeleted ? 'Dieser Kommentar wurde gelöscht.' : comment.text }}</p>
         
         <div class="flex items-center gap-1 lg:text-sm text-xs ">
-          <button class="flex items-center gap-1.5 px-3 py-1.5 text-chat-text hover:bg-chat-hover hover:text-chat-text-strong rounded-full transition cursor-pointer">
-            <ThumbsUpIcon class="w-4 h-4" />
-            <span v-if="comment.upvotes > 0 ? comment.upvotes : '0'">{{ comment.IsDeleted ? '0' : comment.upvotes }}</span>
-          </button>
-          
-          <button class="flex items-center gap-1.5 px-3 py-1.5 text-chat-text hover:bg-chat-hover hover:text-chat-text-strong rounded-full transition cursor-pointer">
-            <ThumbsDownIcon class="w-4 h-4" />
-            <span v-if="comment.downvotes > 0 ? comment.downvotes : '0'">{{ comment.IsDeleted ? '0' : comment.downvotes }}</span>
-          </button>
-          
+          <CommentVote 
+            :comment="comment"
+            :isDeleted="comment.isDeleted"
+          />
           <button 
             @click="isReplying = true"
             
@@ -149,6 +143,7 @@
           :commentId="comment.id"
           :contentId="contentId"
           :contentType="contentType"
+          :isDeleted="comment.isDeleted"
           @cancel="isReplying = false"
           @submit="handleReplySubmit"
         />
@@ -184,10 +179,7 @@ import { useSession } from '@/composables/useSession.ts';
 import { useDeleteCommentMutation, useUpdateCommentMutation } from '@/composables/useComment';
 
 import type { CommentResponseDto } from '@/types/comment.ts';
-import type { CommentResponseDtoExtended } from './Commentwrapper.vue';
 
-import ThumbsUpIcon  from '@/assets/thumb-up.svg';
-import ThumbsDownIcon  from '@/assets/thumb-down.svg';
 import CommentIcon  from '@/assets/comment.svg';
 import ChevronDownIcon from '@/assets/chevron-down.svg';
 import EllipsisIcon from '@/assets/ellipsis.svg';
@@ -196,7 +188,6 @@ import TrashIcon from '@/assets/trash.svg';
 import CopyIcon from '@/assets/copy.svg';
 import DefaultAvatar from '@/assets/default-avatar.svg?url';
 
-import Input from '../ui/input/Input.vue';
 import Button from '../ui/button/Button.vue';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip'
 import { PopoverRoot, PopoverTrigger, PopoverPortal, PopoverContent } from 'reka-ui';
@@ -206,6 +197,7 @@ import Spinner from '@/components/ui/spinner/Spinner.vue';
 import Reply from './Reply.vue';
 import CommentReply from './CommentReply.vue';
 import { toast } from 'vue-sonner';
+import CommentVote from './CommentVote.vue';
 
 
 const props = defineProps<{
@@ -216,6 +208,10 @@ const props = defineProps<{
 
 const { data: session } = useSession()
 
+const isAuthor = computed(() => {
+  if (!session.value || !props.comment.author) return false;
+  return session.value.userId === props.comment.author.id;
+})
 
 // --- Reply Logik ---
 
@@ -253,12 +249,6 @@ navigator.clipboard.writeText(commentUrl)
     }
     );
 };
-
-const isAuthor = computed(() => {
-  if (!session.value || !props.comment.author) return false;
-  return session.value.userId === props.comment.author.id;
-})
-
 
 // --- Mutations für Löschen und Aktualisieren  ---
 

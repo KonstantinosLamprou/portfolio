@@ -13,18 +13,18 @@ public class UpdateCommentVoteHandler
         _repository = repository;
     }
 
-    public async Task Handle(Guid commentId, UpdateVoteDto updateVoteDto, Guid userId)
+    public async Task Handle(Guid commentId, UpdateVoteDto request, Guid userId)
     {
-        if (updateVoteDto.CommentId != commentId)
+        if (request.CommentId != commentId)
             throw new ArgumentException("Die Kommentar-ID in der URL stimmt nicht mit der ID im Request-Body überein.");
         
-        var existingVote = await _repository.GetCommentVotesAsync(updateVoteDto.CommentId);
+        var existingVote = await _repository.GetCommentVotesAsync(request.CommentId);
 
         if (!existingVote.Any(c => c.UserId == userId))
         {
             throw new InvalidOperationException("Keine bestehende Bewertung gefunden, die aktualisiert werden könnte.");
         }
 
-        await _repository.UpdateCommentVoteAsync(updateVoteDto.IsUpvote, updateVoteDto.CommentId, userId);
+        await _repository.UpdateCommentVoteAsync(request.IsUpvote, request.CommentId, userId);
     }
 }

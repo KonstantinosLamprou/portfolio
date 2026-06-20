@@ -49,6 +49,7 @@ public class GetCommentsHandler
                 ProfilePictureUrl: c.Author.ProfilePictureUrl,
                 Role: c.Author.Role
             ),
+            CurrentUserVote: currentUserId.HasValue ? c.Votes.FirstOrDefault(v => v.UserId == currentUserId.Value)?.IsUpvote : null,
             IsDeleted: c.IsDeleted,
             Upvotes: c.IsDeleted ? 0 : c.Upvotes,
             Downvotes: c.IsDeleted ? 0 : c.Downvotes,

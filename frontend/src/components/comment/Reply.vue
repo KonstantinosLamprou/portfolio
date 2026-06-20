@@ -2,7 +2,7 @@
 <div class="ml-2 mb-4">
   <div class="flex gap-4">
     <img 
-      :src="comment.IsDeleted ? DefaultAvatar : comment.author.profilePictureUrl || DefaultAvatar" 
+      :src="comment.isDeleted ? DefaultAvatar : comment.author.profilePictureUrl || DefaultAvatar" 
       alt="Avatar" 
       class="w-6 h-6 rounded-full bg-chat-bg object-cover shrink-0"
       referrerpolicy="no-referrer"
@@ -13,10 +13,10 @@
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger as-child>
-              <span class="font-medium truncate text-sm lg:text-base text-chat-text-strong cursor-default">{{ comment.IsDeleted ? 'Gelöschter Benutzer' : comment.author.name }}</span>
+              <span class="font-medium truncate text-sm lg:text-base text-chat-text-strong cursor-default">{{ comment.isDeleted ? 'Gelöschter Benutzer' : comment.author.name }}</span>
             </TooltipTrigger>
             <TooltipContent>
-              {{ comment.IsDeleted ? 'Gelöschter Benutzer' : comment.author.name }}
+              {{ comment.isDeleted ? 'Gelöschter Benutzer' : comment.author.name }}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>        
@@ -121,18 +121,12 @@
           </div>
         </div>
 
-        <p v-else class="text-foreground lg:text-base text-sm mb-3 whitespace-pre-wrap break-words">{{ comment.IsDeleted ? 'Dieser Kommentar wurde gelöscht.' : comment.text }}</p>
+        <p v-else class="text-foreground lg:text-base text-sm mb-3 whitespace-pre-wrap break-words">{{ comment.isDeleted ? 'Dieser Kommentar wurde gelöscht.' : comment.text }}</p>
         
         <div class="flex items-center gap-1 lg:text-sm text-xs ">
-          <button class="flex items-center gap-1.5 px-3 py-1.5 text-chat-text hover:bg-chat-hover hover:text-chat-text-strong rounded-full transition cursor-pointer">
-            <ThumbsUpIcon class="w-4 h-4" />
-            <span v-if="comment.upvotes > 0 ? comment.upvotes : '0'">{{ comment.IsDeleted ? '0' : comment.upvotes }}</span>
-          </button>
-          
-          <button class="flex items-center gap-1.5 px-3 py-1.5 text-chat-text hover:bg-chat-hover hover:text-chat-text-strong rounded-full transition cursor-pointer">
-            <ThumbsDownIcon class="w-4 h-4" />
-            <span v-if="comment.downvotes > 0 ? comment.downvotes : '0'">{{ comment.IsDeleted ? '0' : comment.downvotes }}</span>
-          </button>
+          <CommentVote
+            :comment="comment"
+          />
         </div>
       </div>
     </div>
@@ -141,8 +135,7 @@
 
 <script setup lang="ts">
 import type { CommentResponseDto } from '@/types/comment';
-import ThumbsUpIcon  from '@/assets/thumb-up.svg';
-import ThumbsDownIcon  from '@/assets/thumb-down.svg';
+
 import EllipsisIcon from '@/assets/ellipsis.svg';
 import TrashIcon from '@/assets/trash.svg';
 import PencilIcon from '@/assets/pencil.svg';
@@ -157,6 +150,7 @@ import { useDeleteCommentMutation, useUpdateCommentMutation } from '@/composable
 import Spinner from '@/components/ui/spinner/Spinner.vue';
 import { toast } from 'vue-sonner';
 import { ref, computed } from 'vue';
+import CommentVote from './CommentVote.vue';
 
 const props = defineProps<{
   comment: CommentResponseDto;

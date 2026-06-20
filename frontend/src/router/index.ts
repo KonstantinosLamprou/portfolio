@@ -48,6 +48,11 @@ const router = createRouter({
       path: '/auth/callback',
       name: 'AuthCallback',
       component: () => import ('@/views/AuthCallbackView.vue')
+    }, 
+    {
+      path: '/guestbook',
+      name: 'Guestbook',
+      component: () => import ('@/views/GuestbookView.vue')
     }
   ],
 

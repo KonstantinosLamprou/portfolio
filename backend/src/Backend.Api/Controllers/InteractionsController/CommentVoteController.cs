@@ -62,20 +62,16 @@ public class CommentVoteController : ControllerBase
     [Authorize]
     public async Task<IActionResult> UpdateCommentVote(Guid commentId, [FromBody] UpdateVoteDto updateVoteDto)
     {
-        try
-        {
-            var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
 
-            if (userId == Guid.Empty || userId == null)
-                return Unauthorized();
+        var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
 
-            await _updateCommentVoteHandler.Handle(commentId, updateVoteDto, userId.Value);
-            return NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        if (userId == Guid.Empty || userId == null)
+            return Unauthorized();
+
+        await _updateCommentVoteHandler.Handle(commentId, updateVoteDto, userId.Value);
+        
+        return NoContent();
+
     }
 
     [HttpDelete("{commentId}")]

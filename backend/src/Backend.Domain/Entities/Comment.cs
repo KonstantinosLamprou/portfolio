@@ -16,6 +16,8 @@ namespace Backend.Domain.Entities
         public int ContentId { get; set; }
         public ContentBase Content { get; set; }
 
+        public bool? CurrentUserVote { get; set; }
+
         // Nullable Guid, denn Hauptkommentare haben keinen Parent
         public Guid? ParentCommentId { get; set; }
         public Comment? ParentComment { get; set; }
