@@ -7,7 +7,7 @@
     
     <PopoverRoot>
       <PopoverTrigger as-child>
-        <button class="glass3d rounded-full text-nowrap overflow-hidden inline-block outline-none cursor-pointer">
+        <button class="glass3d rounded-full text-center text-nowrap overflow-hidden inline-block outline-none cursor-pointer">
           <GlareHover
             glareColor="#ffffff"
             :glareOpacity="0.3"
@@ -20,7 +20,7 @@
             background="transparent"
             borderRadius="9999px"
             borderColor="transparent"
-            className="px-3 py-1.5 flex items-center gap-2 text-sm"
+            className="px-3 py-1.5 flex items-center shadow-sm gap-2 text-sm"
           >
             <FilterIcon class="w-4 h-4"/>
             Sort by

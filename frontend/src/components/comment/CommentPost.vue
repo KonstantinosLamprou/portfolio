@@ -47,7 +47,8 @@ import UnauthenticatedOverlay from './UnauthenticatedOverlay.vue'
 const queryClient = useQueryClient(); 
 
 const props = defineProps<{
-  blogId: number
+  contentId: number
+  contentType: string
 }>()
 
 // --- State & Composables ---
@@ -72,7 +73,7 @@ const { mutate: createComment, isPending } = useMutation({
 
     // TanStack Query wird gesagt das die kommentare für diesen Blogpost veraltet sind und neu gefetcht werden müssen.
     // Dadurch triggert TanStack im CommentWrapper automatisch einen neuen GET-Request
-    queryClient.invalidateQueries({ queryKey: ['comments', props.blogId] })    
+    queryClient.invalidateQueries({ queryKey: ['comments', props.contentId] })    
   },
   onError: (error) => {
     if (isAxiosError(error)) {
@@ -88,8 +89,8 @@ const submitComment = () => {
 
   const payload: CreateCommentRequest = {
     Text: content.value.trim(),
-    ContentType: 'blog', 
-    ContentId: props.blogId, 
+    ContentType: props.contentType, 
+    ContentId: props.contentId, 
     // ParentCommentId lassen wir weg für Top-Level
   };
   

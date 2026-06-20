@@ -1,10 +1,11 @@
 <template>
-  <div class="absolute inset-0 flex items-start pt-13 justify-center rounded-xl bg-main/20 backdrop-blur-[2px] text-gray-300">
+  <div class="absolute inset-0 flex items-start pt-13 justify-center rounded-xl bg-main/20 backdrop-blur-[2px]">
     <Button 
       type="button"
+      variant="none"
       size="nosize"
       @click="dialogState.openDialog"
-      class="glass3d rounded-full text-center text-nowrap overflow-hidden inline-block"
+      class="glass3d rounded-full text-center text-nowrap overflow-hidden inline-block outline-none cursor-pointer"
      >
       <GlareHover
         glareColor="#ffffff"
@@ -21,6 +22,7 @@
         className="rounded-full px-5 py-1 shadow-sm flex items-center text-sm"
       
       >
+      <LoginIcon class="w-4 h-4 mr-2"/>
         Sign In     
       </GlareHover>
     </Button>
@@ -31,6 +33,7 @@
 import { Button } from "@/components/ui/buttons"
 import { useSignInDialogStore } from "@/stores/useSignInDialogStore"
 import GlareHover from "../ui/GlareHover.vue";
+import LoginIcon from '@/assets/login.svg';
 
 const  dialogState  = useSignInDialogStore()
 

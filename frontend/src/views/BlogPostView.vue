@@ -55,10 +55,12 @@
 
     <div class="space-y-6 mt-12">
       <CommentPost
-        :blogId="currentPost.id"
+        :contentId="currentPost.id"
+        :contentType="'blog'"
       />
       <CommentWrapper 
-        :blogId="currentPost.id"
+        :contentId="currentPost.id"
+        :contentType="'blog'"
       /> 
     </div>
   </div>
@@ -84,43 +86,12 @@ import LikeButton from '@/components/content/LikeButton.vue';
 import CommentPost from "@/components/comment/CommentPost.vue"
 import CommentWrapper from "@/components/comment/Commentwrapper.vue"
 
+import type { AuthorDto, ContentBlock, BlogApiResponse } from '@/types/blogTypes.ts';
 
 const queryClient = useQueryClient();
 const route = useRoute();
 const slug = route.params.slug as string;
 const dialogState = useSignInDialogStore(); 
-
-// Typisierung basierend auf deinem C# ContentDetailResponse DTO
-// TODO: Auslagern 
-
-
-interface AuthorDto {
-  id: string | number;
-  name: string;
-  profilePictureUrl?: string;
-  role?: string;
-}
-
-interface ContentBlock {
-  id: string;
-  type: string;
-  data: any; 
-}
-
-interface BlogApiResponse {
-  id: number;
-  title: string;
-  slug: string;
-  dateOfCreation: string; // Von API als String
-  imgSrc: string;
-  description: string;
-  content: ContentBlock[];
-  views: number;
-  likesCount: number;
-  commentsCount: number;
-  currentUserLikeCount: number;
-  author: AuthorDto;
-}
 
 interface BlogDetailData extends Omit<BlogApiResponse, 'dateOfCreation'> {
   dateOfCreation: Date; // Im Frontend als Date

@@ -1,8 +1,6 @@
 <template>
-
-    <div class="h-full flex flex-col overflow-hidden rounded-2xl border border-tertiary p-2 transition duration-300 hover:border-2 hover:border-accent md:hover:scale-[1.01]">
-
-      <RouterLink :to="targetRoute" class="block shrink-0">
+  <RouterLink :to="targetRoute">
+    <div class="h-full flex flex-col overflow-hidden rounded-2xl border-2 border-tertiary p-2 transition duration-300 hover:border-3 hover:border-accent md:hover:scale-[1.01]">
         <img
           :src="imgSrc"
           :alt="title"
@@ -10,8 +8,6 @@
           width="500"
           height="306"
         >
-      </RouterLink>
-
       <div class="flex items-center justify-between gap-2 px-2 pt-4 text-sm text-muted-foreground">
           {{ date }}
         <div class="flex gap-2">
@@ -23,9 +19,7 @@
 
       <div class="px-2 mt-3 flex flex-col flex-1">
         <h2 class="text-textHeading-light dark:text-textHeading mb-3 text-2xl leading-8 font-bold tracking-tight">
-          <RouterLink :to="targetRoute" :aria-label="title">
             {{ title }}
-          </RouterLink>
         </h2>
 
         <p class="prose dark:text-textBody text-textBody-light mb-3 max-w-none text-sm">
@@ -42,7 +36,7 @@
       </div>
 
     </div>
-
+  </RouterLink>
 </template>
 
 <script setup lang="ts">

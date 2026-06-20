@@ -16,7 +16,7 @@
           data-testid="reply-submit-button"
           :disabled="!isAuthenticated || content.trim() === ''"
         >
-          <SendIcon class="size-4 " />
+          <SendIcon class="size-4" />
         </Button>
         
         <UnauthenticatedOverlay v-if="!isAuthenticated" />
@@ -24,16 +24,17 @@
     </form>
 
     <div class="flex gap-2">
-      <button 
+      <!-- <button 
         @click="submitReply"
-        class="px-4 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded-full text-sm font-medium transition"
+        class="px-4 py-1.5 text-chat-text hover:bg-chat-hover hover:text-chat-text-strong rounded-full text-sm font-medium transition"
         :disabled="!content.trim()"
       >
+      <Spinner v-if="isPending" class="size-4" />
         Reply
-      </button>
+      </button> -->
       <button 
         @click="$emit('cancel')"
-        class="px-4 py-1.5 hover:bg-gray-800 text-gray-300 rounded-full text-sm font-medium transition"
+        class="px-4 py-1.5 text-chat-text hover:bg-chat-hover hover:text-chat-text-strong rounded-full text-sm font-medium transition"
       >
         Cancel
       </button>
@@ -48,29 +49,86 @@ import UnauthenticatedOverlay from '@/components/comment/UnauthenticatedOverlay.
 import { SendIcon } from 'lucide-vue-next';
 import { useSession } from '@/composables/useSession'
 import { Button } from '@/components/ui/buttons/'
+import Spinner from '../ui/loaders/SpinnerLoader.vue'
+import { useMutation, useQueryClient } from '@tanstack/vue-query';
+import { toast } from 'vue-sonner';
+import { isAxiosError } from 'axios';
+
+import type { CreateCommentRequest } from '@/types/comment'
+import apiClient from '@/services/api.ts'
 
 
+const queryClient = useQueryClient();
 const emit = defineEmits(['cancel', 'submit']);
-const content = ref('')
-const tabsValue = ref<'write' | 'preview'>('write')
+
+
+const props = defineProps<{
+  commentId: string;
+  contentId: number;
+  contentType: string;
+}>();
 
 // TODO: Hier der reply fetch? 
-const submitReply = () => {
-  if (!isAuthenticated.value) return;
-
-
-  // Hier dann später deine Logik: useCreatePostComment.mutate(...)
-  // Wird die Logik hier weiter zum Parent durchgereicht?
-  if (content.value.trim()) {
-    emit('submit', content.value);
-    content.value = ''; // Reset nach Submit
-  }
-};
 
 const { data: session, isPending: isSessionLoading } = useSession()
 // --- Computed Properties ---
 // !! wandelt das Objekt/null/undefined sicher in true oder false um
-const isAuthenticated = computed(() => !!session.value && !isSessionLoading.value)
+const isAuthenticated = computed(() => !!session.value && !isSessionLoading.value); 
+const content = ref(''); 
+const tabsValue = ref<'write' | 'preview'>('write')
 
+
+const { mutate: createComment, isPending } = useMutation({
+  mutationFn: async (newComment: CreateCommentRequest) => {
+    const { data } = await apiClient.post('/comments', newComment);
+    return data;
+
+
+  },
+  onSuccess: () => {
+    toast.success('Kommentar erfolgreich erstellt!');
+    content.value = ''; 
+    tabsValue.value = 'write';
+
+    queryClient.invalidateQueries({ queryKey: ['comments', props.contentId] })    
+    emit('submit'); 
+
+  },
+  onError: (error) => {
+    if (isAxiosError(error)) {
+      toast.error(`Fehler beim Erstellen des Kommentars: ${error.response?.data?.message || error.message}`);
+    } else {
+      toast.error('Ein unerwarteter Fehler ist aufgetreten.');
+    }
+  },
+});
+
+const submitReply = () => {
+  if (!isAuthenticated.value) {
+    toast.error('Bitte melde dich an, um einen Kommentar zu erstellen.');
+    return;
+  }
+
+  if (content.value.trim() === '') {
+      toast.error('Der Kommentar darf nicht leer sein.');
+      return;
+  }
+
+  if (content.value.trim()) {
+
+    const payload: CreateCommentRequest = {
+      Text: content.value.trim(),
+      ContentType: props.contentType, 
+      ContentId: props.contentId, 
+      ParentCommentId: props.commentId, 
+    };
+    
+    createComment(payload);
+    emit('submit', content.value);
+    content.value = '';
+  }  
+
+
+}
 
 </script>

@@ -1,10 +1,4 @@
 
-export interface ContentBlockDto {
-  id: string;
-  type: string;
-  data: Record<string, any>; // Entspricht JsonElement in C#
-}
-
 export interface CreateBlogRequest {
   contentType: string;
   title: string;
@@ -14,21 +8,34 @@ export interface CreateBlogRequest {
   content: ContentBlockDto[];
 }
 
-export interface BlogApiResponse {
-  id: string;
-  contenttype?: 'blog' | 'project';
-  title: string;
-  author: string;
-  slug: string;
-  dateOfCreation: string; 
-  description: string;
-  content: object;
-  imgSrc: string;
-  likesCount?: number; // likes ist keine Num
-  views?: number;
-  commentsCount?: number; //deprecated? 
-  comment?: string; // deprecated?
+export interface AuthorDto {
+  id: string | number;
+  name: string;
+  profilePictureUrl?: string;
+  role?: string;
 }
+
+export interface ContentBlock {
+  id: string;
+  type: string;
+  data: any; 
+}
+
+export interface BlogApiResponse {
+  id: number;
+  title: string;
+  slug: string;
+  dateOfCreation: string; // Von API als String
+  imgSrc: string;
+  description: string;
+  content: ContentBlock[];
+  views: number;
+  likesCount: number;
+  commentsCount: number;
+  currentUserLikeCount: number;
+  author: AuthorDto;
+}
+
 
 export interface BlogLatestApiResponse {
   id: string;

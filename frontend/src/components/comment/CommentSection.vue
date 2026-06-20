@@ -4,16 +4,27 @@
       <img 
         :src="comment.IsDeleted ? DefaultAvatar : comment.author.profilePictureUrl || DefaultAvatar" 
         alt="Avatar" 
-        class="w-6 h-6 rounded-full bg-chat-bg object-cover"
+        class="w-6 h-6 rounded-full bg-chat-bg object-cover shrink-0"
         referrerpolicy="no-referrer"
       />
       
-      <div class="flex-1">
+      <div class="flex-1 min-w-0">
         <div class="flex items-center gap-2 mb-1">
-          <span class="font-medium text-sm lg:text-base text-chat-text-strong">{{ comment.IsDeleted ? 'Gelöschter Benutzer' : comment.author.name }}</span>
-          <time :datetime="comment.createdAt.toISOString()" class="text-xs lg:text-sm text-chat-text">{{ formatDate(comment.createdAt) }}</time>
-          <div class="ml-auto">
-            <PopoverRoot v-model:open="isPopoverOpen" class="ml-auto">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <span class="font-medium truncate text-sm lg:text-base text-chat-text-strong cursor-default">{{ comment.IsDeleted ? 'Gelöschter Benutzer' : comment.author.name }}</span>
+            </TooltipTrigger>
+            <TooltipContent>
+              {{ comment.IsDeleted ? 'Gelöschter Benutzer' : comment.author.name }}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>        
+        <time :datetime="String(comment.createdAt)" class="text-xs lg:text-sm text-chat-text">
+          {{ formatDate(comment.createdAt) }}
+        </time>
+          <div class="ml-auto shrink-0">
+            <PopoverRoot v-model:open="isPopoverOpen" >
               <PopoverTrigger as-child>
                 <button class="text-chat-text hover:text-chat-text-strong hover:bg-chat-hover p-1 rounded-full transition cursor-pointer">
                   <EllipsisIcon class="w-4 h-4"/>
@@ -21,18 +32,18 @@
               </PopoverTrigger>
               <PopoverPortal>
                 <PopoverContent
-                  class="z-50 w-44 rounded-xl bg-[#1f1f1f] p-1.5 shadow-xl border border-white/10 text-sm text-[#fafafa] mt-2 outline-none"
+                  class="z-50 w-auto flex flex-row lg:flex-col lg:w-44 gap-1 rounded-xl bg-[#1f1f1f] p-1.5 shadow-xl border border-white/10 text-sm text-[#fafafa] mt-2 outline-none"
                   :side-offset="4"
-                  align="start"
+                  align="end"
                 >
                   <Dialog>
                     <DialogTrigger as-child>
                       <Button
                         v-if="isAuthor"
-                        class="flex w-full items-center bg-[#1f1f1f] text-[#fafafa] justify-between rounded-lg px-3 py-2 text-left hover:bg-white/10 transition-colors cursor-pointer"
+                        class="flex items-center justify-center lg:justify-start bg-transparent hover:bg-white/10 text-[#fafafa] rounded-lg p-2 lg:px-3 lg:py-2 transition-colors cursor-pointer"
                       >
-                        <TrashIcon class="w-4 h-4 mr-2"/>
-                        Löschen
+                        <TrashIcon class="w-5 h-5 lg:w-4 lg:h-4 lg:mr-2 shrink-0"/>
+                        <p class="hidden lg:block">Löschen</p>
                       </Button>
                     </DialogTrigger>
                     <DialogContent>
@@ -40,12 +51,22 @@
                         <DialogTitle>Kommentar löschen</DialogTitle>
                         <DialogDescription>Willst du diesen Kommentar wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.</DialogDescription>
                       </DialogHeader>
-                      <DialogFooter>
-                        <DialogClose class="mr-2">
-                          <Button variant="outline">Abbrechen</Button>
+                      <DialogFooter >
+                        <DialogClose class="lg:mr-2">
+                          <Button 
+                          variant="outline"
+                          size="sm"
+                          >
+                          Abbrechen
+                        </Button>
                         </DialogClose>
                         <DialogClose>
-                          <Button @click="handleDelete" :disabled="isDeleting" class="px-4 py-2 rounded-md transition">
+                          <Button 
+                          @click="handleDelete" 
+                          :disabled="isDeleting" 
+                          class="transition"
+                          size="sm"  
+                            >
                             <Spinner v-if="isDeleting" />
                             Löschen
                           </Button>
@@ -53,53 +74,54 @@
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
-                  <Dialog>
-                    <DialogTrigger as-child>
-                      <Button
-                        v-if="isAuthor"
-                        class="flex w-full items-center bg-[#1f1f1f] text-[#fafafa] justify-between rounded-lg px-3 py-2 text-left hover:bg-white/10 transition-colors cursor-pointer"
-                      >
-                        <PencilIcon class="w-4 h-4 mr-2"/>
-                        Aktualisieren
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Kommentar aktualisieren</DialogTitle>
-                        <DialogDescription>Hier kannst du deinen Kommentar bearbeiten und aktualisieren.</DialogDescription>
-                      </DialogHeader>
-                      <Input 
-                        :disabled="isUpdating" 
-                        class="mb-4" 
-                        v-model="updatedText"/>
-                      <DialogFooter>
-                        <DialogClose class="mr-2">
-                          <Button variant="outline">Abbrechen</Button>
-                        </DialogClose>  
-                        <DialogClose>
-                          <Button @click="handleUpdate" :disabled="isUpdating">
-                            <Spinner v-if="isUpdating"/>
-                            Aktualisieren
-                          </Button>
-                        </DialogClose>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
 
+                  <Button
+                    v-if="isAuthor"
+                    @click="startEditing"
+                    class="flex items-center justify-center lg:justify-start bg-transparent hover:bg-white/10 text-[#fafafa] rounded-lg p-2 lg:px-3 lg:py-2 transition-colors cursor-pointer"
+                  >
+                    <PencilIcon class="w-5 h-5 lg:w-4 lg:h-4 lg:mr-2 shrink-0"/>
+                    <p class="hidden lg:block">Bearbeiten</p>
+                  </Button>
                   <button
                     @click="copyCommentLink"
-                    class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left hover:bg-white/10 transition-colors cursor-pointer"
+                    class="flex items-center justify-center lg:justify-start bg-transparent hover:bg-white/10 text-[#fafafa] rounded-lg p-2 lg:px-3 lg:py-2 transition-colors cursor-pointer"
                   >
-                    <CopyIcon class="w-4 h-4 mr-2"/>
-                    Link kopieren
+                    <CopyIcon class="w-5 h-5 lg:w-4 lg:h-4 lg:mr-2 shrink-0"/>
+                    <p class="hidden lg:block">Link kopieren</p>
                   </button>
                 </PopoverContent>
               </PopoverPortal>
             </PopoverRoot>
           </div>
         </div>
-        
-        <p class="text-foreground lg:text-base text-sm mb-3 pr-3 whitespace-pre-wrap">{{ comment.IsDeleted ? 'Dieser Kommentar wurde gelöscht.' : comment.text }}</p>
+        <div v-if="isEditingComment">
+          <textarea 
+            v-model="updatedText"
+            rows="2"
+            class="w-full rounded-md lg:text-base resize-none border border-chat-border bg-transparent text-foreground p-3 text-sm focus:ring-2 focus:ring-ring focus:outline-none"
+          />
+          <div class="flex justify-end gap-2 mt-2 mb-2">
+            <Button 
+              @click="cancelEdit" 
+              variant="outline"
+              size="sm"
+              
+              >
+              <p class="text-xs lg:text-sm">Abbrechen</p>
+            </Button>
+            <Button 
+              @click="handleUpdate" 
+              :disabled="isUpdating"
+              size="sm"
+              >
+              <Spinner v-if="isUpdating" />
+              <p class="text-xs lg:text-sm">Speichern</p>
+            </Button>
+          </div>
+        </div>
+
+        <p v-else class="text-foreground lg:text-base text-sm mb-3 whitespace-pre-wrap break-words">{{ comment.IsDeleted ? 'Dieser Kommentar wurde gelöscht.' : comment.text }}</p>
         
         <div class="flex items-center gap-1 lg:text-sm text-xs ">
           <button class="flex items-center gap-1.5 px-3 py-1.5 text-chat-text hover:bg-chat-hover hover:text-chat-text-strong rounded-full transition cursor-pointer">
@@ -114,6 +136,7 @@
           
           <button 
             @click="isReplying = true"
+            
             class="flex items-center gap-1.5 px-3 py-1.5 text-chat-text hover:bg-chat-hover hover:text-chat-text-strong rounded-full transition cursor-pointer ml-2"
           >
             <CommentIcon class="w-4 h-4" />
@@ -123,6 +146,9 @@
 
         <CommentReply 
           v-if="isReplying" 
+          :commentId="comment.id"
+          :contentId="contentId"
+          :contentType="contentType"
           @cancel="isReplying = false"
           @submit="handleReplySubmit"
         />
@@ -145,7 +171,6 @@
             v-for="reply in comment.replies" 
             :key="reply.id" 
             :comment="reply"
-            @reply-added="$emit('reply-added', $event)" 
           />
         </div>
       </div>
@@ -173,6 +198,7 @@ import DefaultAvatar from '@/assets/default-avatar.svg?url';
 
 import Input from '../ui/input/Input.vue';
 import Button from '../ui/button/Button.vue';
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip'
 import { PopoverRoot, PopoverTrigger, PopoverPortal, PopoverContent } from 'reka-ui';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog'
 import Spinner from '@/components/ui/spinner/Spinner.vue';
@@ -181,36 +207,36 @@ import Reply from './Reply.vue';
 import CommentReply from './CommentReply.vue';
 import { toast } from 'vue-sonner';
 
+
 const props = defineProps<{
-  comment: CommentResponseDtoExtended;
+  comment: CommentResponseDto;
+  contentId: number;
+  contentType: string;
 }>();
-
-
-const emit = defineEmits(['reply-added']);
-const isReplying = ref(false);
-const showReplies = ref(false);
-
-// TODO: Antwort verschicken
-const handleReplySubmit = (text: string) => {
-  // Hier würdest du das Event nach oben durchreichen oder direkt den API-Call machen
-  emit('reply-added', { parentId: props.comment.id, text });
-  isReplying.value = false;
-  showReplies.value = true; // Replies direkt aufklappen, wenn man selbst geantwortet hat
-};
-
-
-
-const formatDate = (date: Date) => {
-  return date.toLocaleDateString('de-DE');
-};
-
 
 const { data: session } = useSession()
 
-const isAuthor = computed(() => {
-  if (!session.value || !props.comment.author) return false;
-  return session.value.userId === props.comment.author.id;
-})
+
+// --- Reply Logik ---
+
+const isReplying = ref(false);
+const showReplies = ref(false);
+
+// fürs rendering der replies
+const handleReplySubmit = () => {
+
+  isReplying.value = false;
+  showReplies.value = true; 
+};
+
+
+// helper 
+const formatDate = (date: Date | string) => {
+  if (typeof date === 'string') {
+    date = new Date(date);
+  }
+  return date.toLocaleDateString('de-DE');
+};
 
 const copyCommentLink = () => {
   // Erstellt Link wie: https://deineseite.de/blog/42#comment-8a4b...
@@ -228,10 +254,30 @@ navigator.clipboard.writeText(commentUrl)
     );
 };
 
-const isPopoverOpen = ref(false);
+const isAuthor = computed(() => {
+  if (!session.value || !props.comment.author) return false;
+  return session.value.userId === props.comment.author.id;
+})
+
+
+// --- Mutations für Löschen und Aktualisieren  ---
 
 const { mutate: deleteComment, isPending: isDeleting } = useDeleteCommentMutation();
 const { mutate: updateComment, isPending: isUpdating } = useUpdateCommentMutation();
+const isPopoverOpen = ref(false);
+const isEditingComment = ref(false);
+const updatedText = ref(props.comment.text);
+
+const startEditing = () => {
+  isEditingComment.value = true;
+  isPopoverOpen.value = false; 
+  updatedText.value = props.comment.text; 
+};
+
+const cancelEdit = () => {
+  isEditingComment.value = false;
+  updatedText.value = props.comment.text; 
+};
 
 const handleDelete = () => {
   deleteComment(props.comment.id, {
@@ -246,9 +292,6 @@ const handleDelete = () => {
     }
   });
 };
-
-
-const updatedText = ref(props.comment.text);
 
 const handleUpdate = () => {
 
@@ -265,7 +308,7 @@ const handleUpdate = () => {
   updateComment({ commentId: props.comment.id, text: updatedText.value }, {
     onSuccess: () => {
       toast("Kommentar aktualisiert.");
-      isPopoverOpen.value = false;
+      isEditingComment.value = false;
     }, 
     onError: () => {
       toast.error("Fehler beim Aktualisieren des Kommentars.");

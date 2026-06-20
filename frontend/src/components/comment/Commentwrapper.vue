@@ -24,6 +24,8 @@
             v-else
             v-for="comment in sortedComments" 
             :key="comment.id" 
+            :contentId="props.contentId"
+            :contentType="props.contentType"
             :comment="comment"
             @reply-added="onReplyAdded"
           />
@@ -43,8 +45,12 @@ import CommentSection from './CommentSection.vue';
 import type { CommentResponseDto } from '@/types/comment.ts';
 
 const props = defineProps<{
-  blogId: number
+  contentId: number
+  contentType: string
+  
 }>()
+
+
 
 export interface CommentResponseDtoExtended extends Omit<CommentResponseDto, 'createdAt'> {
   createdAt: Date; 
@@ -55,7 +61,7 @@ const currentSort = ref<'newest' | 'oldest'>('newest');
 const fetchAllTopLevelComments = async (): Promise<CommentResponseDtoExtended[]> => {
 
   const { data } = await apiClient.get<CommentResponseDto[]>(
-    `/comments?contentId=${props.blogId}&contentType=blog`
+    `/comments?contentId=${props.contentId}&contentType=${props.contentType}`
   );
   
   return data.map((comment: any) => ({
@@ -70,7 +76,7 @@ const {
   isError 
 } = useQuery({ 
   // Die contentId MUSS in den Query-Key, damit verschiedene Blogposts eigene Caches haben
-  queryKey: ['comments', props.blogId], 
+  queryKey: ['comments', props.contentId], 
   queryFn: fetchAllTopLevelComments 
 });
 

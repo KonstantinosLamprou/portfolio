@@ -128,9 +128,10 @@
                 background="transparent"
                 borderRadius="9999px"
                 borderColor="transparent"
-                className="px-7 py-3"
+                className="flex items-center gap-1 px-7 py-3"
               
               >
+              <LoginIcon class="w-4 h-4 mr-2"/>
                 Sign In     
               </GlareHover>
             </button>
@@ -162,6 +163,7 @@ import SpinnerLoader from '@/components/ui/loaders/SpinnerLoader.vue'
 import TextType from '@/components/ui/TextType.vue'
 import { Button } from "@/components/ui/buttons"
 import { useSignInDialogStore } from "@/stores/useSignInDialogStore"
+import LoginIcon from '@/assets/login.svg';
 
 const  dialogState  = useSignInDialogStore()
 

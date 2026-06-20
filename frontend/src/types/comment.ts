@@ -28,7 +28,6 @@ export interface CommentReplyDto {
   author: AuthorDto;
   upvotes: number;
   downvotes: number;
-  currentUserVote: boolean | null;
   parentCommentId: string; 
 }
 

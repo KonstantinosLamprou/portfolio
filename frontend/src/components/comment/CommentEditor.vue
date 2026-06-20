@@ -23,14 +23,14 @@
           <InputGroupTextarea
             ref="textareaRef"
             v-model="content"
-            class="min-h-24 resize-none px-4 py-2 lg:text-base text-sm  text-[color:var(--color-body)] placeholder:text-[color:var(--muted-foreground)] leading-relaxed"
+            class="min-h-24 resize-none px-4 py-2 lg:text-base text-sm text-[color:var(--foreground)] placeholder:text-[color:var(--muted-foreground)] leading-relaxed"
             :placeholder="placeholder"
             :disabled="disabled"
             @keydown="handleKeydown"
             @blur="handleBlur"
 
           />
-          <InputGroupAddon
+          <!-- <InputGroupAddon
             align="block-end"
             class="border-t rounded-b-xl border-[color:var(--border)] bg-[color:var(--tab-background)]"
           >
@@ -64,14 +64,14 @@
             >
               <Strikethrough />
             </InputGroupButton>
-          </InputGroupAddon>
+          </InputGroupAddon> -->
         </InputGroup>
       </div>
     </TabsContent>
 
     <TabsContent value="preview" class="w-full mt-2 space-y-2">
-      <div class="rounded-xl border border-[color:var(--border)] bg-gray-50 dark:bg-gray-800/50 px-4 pt-3 pb-12 min-h-[136px] prose dark:prose-invert max-w-none text-sm whitespace-pre-wrap break-words">
-        <p v-if="!content.trim()" class="text-gray-400 italic">Nothing to preview...</p>
+      <div class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-color)] px-4 pt-3 pb-12 min-h-[98px] prose dark:prose-invert max-w-none text-sm whitespace-pre-wrap break-words">
+        <p v-if="!content.trim()" class="italic">Nothing to preview...</p>
         <div v-else>{{ content }}</div> 
       </div>
     </TabsContent>
@@ -79,10 +79,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick } from 'vue'
-import { Bold, Italic, Strikethrough } from 'lucide-vue-next'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from '../ui/inputGroup'
+import { InputGroup, InputGroupTextarea } from '../ui/inputGroup'
 
 // Props (Dinge, die nicht 2-Way-Bound sind)
 defineProps<{
@@ -99,41 +97,6 @@ const emit = defineEmits<{
   (e: 'escape'): void
 }>()
 
-const textareaRef = ref<any>(null)
-
-type DecorationType = 'bold' | 'italic' | 'strikethrough'
-
-function decorate(type: DecorationType) {
-  // WICHTIG: Da InputGroupTextarea eine Vue-Komponente ist, müssen wir an das native DOM-Element ($el) kommen.
-  // Je nach UI-Bibliothek kann das auch textareaRef.value.input o.ä. sein.
-  const el = textareaRef.value?.$el || textareaRef.value
-  
-  if (!el || typeof el.selectionStart !== 'number') return
-
-  const start = el.selectionStart
-  const end = el.selectionEnd
-  const selected = content.value.substring(start, end)
-  
-  let prefix = ''
-  let suffix = ''
-  
-  switch (type) {
-    case 'bold': prefix = '**'; suffix = '**'; break
-    case 'italic': prefix = '*'; suffix = '*'; break
-    case 'strikethrough': prefix = '~~'; suffix = '~~'; break
-  }
-  
-  content.value = 
-    content.value.substring(0, start) + 
-    prefix + selected + suffix + 
-    content.value.substring(end)
-
-  nextTick(() => {
-    el.focus()
-    // Setzt den Cursor wieder an die richtige Stelle
-    el.setSelectionRange(start + prefix.length, start + prefix.length + selected.length)
-  })
-}
 
 function handleKeydown(e: KeyboardEvent) {
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {

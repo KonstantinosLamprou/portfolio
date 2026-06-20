@@ -28,7 +28,7 @@
     "marked": "^18.0.3",
     "pinia": "^3.0.4",
     "postcss": "^8.5.8",
-    "reka-ui": "^2.9.10",
+    "reka-ui": "^2.10.0",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.2.2",
     "vaul-vue": "^0.4.1",
