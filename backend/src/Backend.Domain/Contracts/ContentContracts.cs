@@ -15,6 +15,7 @@ public record ContentListResponse(
     string Description,
     int Views,
     int LikesCount,
+    string[] Tags,
     int CommentsCount
 );
 
@@ -31,6 +32,7 @@ public record ContentDetailResponse(
     int Views,
     int LikesCount,
     int CommentsCount,
+    string[] Tags,
     AuthorDto Author,
     // für: ob der aktuelle User noch liken darf
     int CurrentUserLikeCount
@@ -49,6 +51,7 @@ public record CreateBlogRequest(
     string Slug,
     string ImgSrc,
     string Description,
+    string[] Tags,
     // Die Blöcke kommen aus deinem Vue-Editor 
     List<ContentBlockDto> Content
 );

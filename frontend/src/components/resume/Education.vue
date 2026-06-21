@@ -38,7 +38,7 @@
 
                     <span class="text-text md:text-2xl">{{ data.title }}</span>
 
-                    <span v-if="data.latest" class="text-xs font-medium px-2.5 py-1 rounded-md bg-surface text-onlydarkmatcha tracking-wider uppercase">
+                    <span v-if="data.latest" class="text-xs font-medium px-2.5 py-1 rounded-md bg-surface text-matcha border tracking-wider uppercase">
                       Aktuell
                     </span>
                   </h3>

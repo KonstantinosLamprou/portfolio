@@ -1,9 +1,9 @@
 <template>
   <div class="container my-30 flex flex-col xl:flex-row">
 
-    <div class="mb-15 flex justify-center xl:mb-0 xl:w-1/2 xl:max-w-1/2">
-      <div class="glass3d flex w-87.5 flex-col items-center rounded-4xl py-10">
-        <div class="bg-picture w-56 h-56 rounded-full overflow-hidden flex items-end justify-center shadow-inner">
+    <div class="mb-5 lg:mb-15 flex justify-center xl:mb-0 xl:w-1/2 xl:max-w-1/2">
+      <div class="glass3d flex w-70 lg:w-87.5 flex-col items-center rounded-4xl py-10">
+        <div class="bg-picture w-46 h-46 lg:w-56 lg:h-56 rounded-full overflow-hidden flex items-end justify-center shadow-inner">
           <img
             src="../../assets/avatar.png"
             alt="Avatar von Konstantinos"
@@ -11,25 +11,15 @@
           />
         </div>
 
-        <h3 class="pt-4 pb-2 text-2xl leading-8 font-bold tracking-tight text-white">
+        <h3 class="pt-4 pb-2 lg:text-2xl text-xl leading-8 font-bold tracking-tight">
           Konstantinos Lamprou
         </h3>
-        <div class="text-textBody">Informatikstudent</div>
-        <div class="text-textBody">Praktikant, Meierhofer AG</div>
-        <div class="text-textBody">Zurzeit: Testautomatisierer</div>
+        <div class="">Informatikstudent</div>
+        <div class="">Praktikant, Meierhofer AG</div>
+        <div class="">Zurzeit: Testautomatisierer</div>
 
         //Svgs hier:
         <div class="flex space-x-4">
-
-          <a
-            href="kostaslamprounk@gmail.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Meine Mail"
-            class="transition-all duration-300 hover:scale-110 inline-block"
-          >
-            <MailIcon class="w-8 h-8" />
-          </a>
 
           <a
             href="https://github.com/KonstantinosLamprou"

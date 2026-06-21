@@ -47,38 +47,38 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-const hasLiked = ref(false)
-const isLoading = ref(false)
-const isAnimating = ref(false)
+const props = defineProps<{
+  storageKey: string;
+  isLoading: boolean;
+}>()
 
-// Wir senden ein Event an die Eltern-Komponente, um die Zahl zu erhöhen
 const emit = defineEmits(['increaseLove'])
 
-onMounted(() => {
+const hasLiked = ref(false)
+const isAnimating = ref(false)
 
-  if (sessionStorage.getItem('portfolio_loved') === 'true') {
+onMounted(() => {
+  // Prüfen, ob der Nutzer bereits geliket hat anhand des übergebenen Keys
+  if (sessionStorage.getItem(props.storageKey) === 'true') {
     hasLiked.value = true
   }
 })
 
-const handleLike = async () => {
-  if (hasLiked.value || isLoading.value) return
+const handleLike = () => {
+  if (hasLiked.value || props.isLoading) return
 
-  isLoading.value = true
   isAnimating.value = true
 
-  //Mock
-  // Fake Ladezeit (simuliert Backend-Aufruf)
-  await new Promise(resolve => setTimeout(resolve, 800))
-
-  //für die session
+  // Lokalen State sofort aktualisieren & Session Storage setzen (Optimistic UI)
   hasLiked.value = true
-  sessionStorage.setItem('portfolio_loved', 'true')
+  sessionStorage.setItem(props.storageKey, 'true')
 
-  // Zahl oben erhöhen
+  // API Call im Parent triggern
   emit('increaseLove')
 
-  isLoading.value = false
-  setTimeout(() => { isAnimating.value = false }, 600)
+  // Animation nach kurzer Zeit beenden
+  setTimeout(() => { 
+    isAnimating.value = false 
+  }, 600)
 }
 </script>

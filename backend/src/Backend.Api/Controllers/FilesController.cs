@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Backend.Api.Controllers;
 
@@ -16,9 +19,10 @@ public class FilesController : ControllerBase
     }
 
     [HttpPost("upload")]
-    [Authorize] 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UploadImage(IFormFile? file)
     {
+        
         if (file == null || file.Length == 0)
             return BadRequest("Backend sagt: Keine Datei hochgeladen oder Datei ist leer.");
 
@@ -50,7 +54,7 @@ public class FilesController : ControllerBase
         return Ok(new { url = fileUrl });
     }
     [HttpDelete("delete")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public IActionResult DeleteImage([FromQuery] string fileUrl)
     {
         if (string.IsNullOrEmpty(fileUrl))

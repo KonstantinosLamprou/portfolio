@@ -99,7 +99,9 @@ public class AuthController : ControllerBase
             new Claim(ClaimTypes.NameIdentifier, result.UserId.ToString()), 
             new Claim(ClaimTypes.Email, result.Email),
             new Claim(ClaimTypes.Name, result.Name),
-            new Claim("Provider", result.Provider)
+            new Claim("Provider", result.Provider),
+            new Claim("ProfilePictureUrl", result.ProfilePictureUrl ?? string.Empty),
+            new Claim(ClaimTypes.Role, result.Role.ToString())
         };
 
         var internalIdentity = new ClaimsIdentity(internalClaims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -128,22 +130,30 @@ public class AuthController : ControllerBase
         var email = User.FindFirst(ClaimTypes.Email)?.Value ?? string.Empty;
         var name = User.FindFirst(ClaimTypes.Name)?.Value ?? User.Identity?.Name ?? string.Empty;
         var profilePictureUrl = User.FindFirst("ProfilePictureUrl")?.Value ?? string.Empty;
+        var role = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
         // Den Provider auslesen
         var provider = User.FindFirst("Provider")?.Value ?? "Unknown";
 
         // (Falls die ID aus dem Claim keine gültige Guid ist, wird eine leere Guid erzeugt)
         Guid.TryParse(userIdString, out var userId);
 
-        // 3. Dein DTO instanziieren
         var userDto = new UserDto(
             UserId: userId,
             Email: email,
             Name: name,
             Provider: provider,
-            ProfilePictureUrl: profilePictureUrl
+            ProfilePictureUrl: profilePictureUrl, 
+            Role: role
         );
 
-        // TanStack Query es unter `data.user` direkt findet
         return Ok(new { user = userDto });
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        
+        return Ok(new { message = "Erfolgreich abgemeldet." });
     }
 }

@@ -44,38 +44,25 @@ import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 
 const props = defineProps<{
-  id: string;
+  id: number;
   type?: 'blog' | 'project';
   title: string;
   slug: string;
-  author: string;
   date: string;
   description: string;
   content: object;
   imgSrc: string;
   likes?: number;
   views?: number;
-  comments?: number; //Anzahl
-  comment?: string;
+  comments?: number; 
 }>();
 
 const targetRoute = computed(() => {
   if (props.type === 'project') {
-    // Falls du in router/index.ts irgendwann eine ProjectPost Route einbaust,
-    // kannst du diesen Namen entsprechend anpassen (z.B. 'ProjectPost').
-    // Wenn aktuell noch keine da ist, geht das ins leere oder wir leiten testweise auf 'projekte'
+
     return { name: 'ProjectPost', params: { slug: props.slug } };
   }
   return { name: 'BlogPost', params: { slug: props.slug } };
 });
 
-// const formattedDate = computed(() => {
-
-//   const months = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
-//   const month = months[props.date.getMonth()];
-//   const day = String(props.date.getDate()).padStart(2, '0');
-//   const year = props.date.getFullYear();
-
-//   return `${month} ${day}.${year}`; // Ergebnis: "Apr 02.2024"
-// });
 </script>

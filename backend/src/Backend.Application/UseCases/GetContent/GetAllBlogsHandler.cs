@@ -29,7 +29,8 @@ namespace Backend.Application.UseCases.GetContent
                 Description: b.Description,
                 Views: b.Views,
                 LikesCount: b.Likes?.Sum(l => l.Count) ?? 0,
-                CommentsCount: b.Comments?.Count ?? 0
+                CommentsCount: b.Comments?.Count ?? 0,
+                Tags: b.Tags
             ));
         }
     }

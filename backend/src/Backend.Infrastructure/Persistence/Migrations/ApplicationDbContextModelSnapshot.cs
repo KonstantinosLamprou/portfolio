@@ -152,6 +152,10 @@ namespace Backend.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.PrimitiveCollection<string[]>("Tags")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
@@ -202,9 +206,6 @@ namespace Backend.Infrastructure.Persistence.Migrations
                     b.Property<int>("Count")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("LastLikedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -213,6 +214,33 @@ namespace Backend.Infrastructure.Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Likes");
+                });
+
+            modelBuilder.Entity("Backend.Domain.Entities.Statistics", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("TotalLikes")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TotalViews")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Statistics");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            TotalLikes = 0,
+                            TotalViews = 0
+                        });
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.Blog", b =>

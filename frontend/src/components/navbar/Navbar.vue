@@ -18,7 +18,7 @@
 
     </div>
     <div class="ml-auto flex flex-row">
-      <Search />
+      <!-- <Search /> -->
       <ThemeSwitch />
       <MobileNav />
 
@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import Search from "@/components/navbar/Search.vue"
+// import Search from "@/components/navbar/Search.vue"
 import ThemeSwitch from "@/components/navbar/ThemeSwitch.vue"
 import MobileNav from "./MobileNav.vue";
 import { RouterLink } from 'vue-router'

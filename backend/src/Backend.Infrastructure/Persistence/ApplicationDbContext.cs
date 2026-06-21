@@ -23,6 +23,8 @@ namespace Backend.Infrastructure.Persistence
         public DbSet<CommentVote> CommentVotes { get; set; }
 
         public DbSet<GuestbookEntry> GuestbookEntries { get; set; }
+        public DbSet<Statistics> Statistics { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -72,6 +74,14 @@ namespace Backend.Infrastructure.Persistence
                 .HasOne(g => g.User)
                 .WithMany(u => u.GuestbookEntries)
                 .HasForeignKey(g => g.UserId); 
+
+            builder.Entity<Statistics>()
+                .HasData(new Statistics
+                {
+                    Id = 1,
+                    TotalViews = 0,
+                    TotalLikes = 0
+                });
 
         }
 

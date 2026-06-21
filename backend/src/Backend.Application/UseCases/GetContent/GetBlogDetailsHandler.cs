@@ -43,6 +43,7 @@ public class GetBlogDetailsHandler
             Views: blogDetails.Views,
             LikesCount: blogDetails.Likes?.Sum(l => l.Count) ?? 0,
             CommentsCount: blogDetails.Comments?.Count ?? 0,
+            Tags: blogDetails.Tags,
 
             // Prüft, ob der aktuelle User in der Like-Liste steht. Wenn ja, gib den Count, sonst 0.
             CurrentUserLikeCount: currentUserId.HasValue

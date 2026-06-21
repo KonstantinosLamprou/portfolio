@@ -6,7 +6,7 @@
 
             <GuestbookEditor /> 
 
-             <GuestbookEntries />
+            <GuestbookEntries />
         </div>
     </div>
 </template>

@@ -64,6 +64,7 @@ const props = defineProps<{
   slug: string
   initialLikes: number
   currentUserLikes: number
+  contentType: 'blog' | 'project'
 }>()
 
 const queryClient = useQueryClient()
@@ -75,16 +76,12 @@ const { mutate: likePost, isPending } = useMutation({
     const { data } = await apiClient.post(`/like/${props.ContentId}`)
     return data
   },
-  // Optimistic Update: Bevor die Response da ist, updaten wir das UI
   onMutate: async () => {
-    // Laufende Fetches für diesen Blogpost abbrechen, damit sie unser Update nicht überschreiben
-    await queryClient.cancelQueries({ queryKey: ['blog', props.slug] })
+    await queryClient.cancelQueries({ queryKey: [props.contentType, props.slug] })
 
-    // Vorherigen Zustand zwischenspeichern (für einen möglichen Rollback)
-    const previousBlogData = queryClient.getQueryData(['blog', props.slug])
+    const previousContentData = queryClient.getQueryData([props.contentType, props.slug])
 
-    // Den Cache direkt manipulieren. Das ändert sofort die Props in der Elternkomponente!
-    queryClient.setQueryData(['blog', props.slug], (old: any) => {
+    queryClient.setQueryData([props.contentType, props.slug], (old: any) => {
       if (!old) return old
       return {
         ...old,
@@ -93,14 +90,14 @@ const { mutate: likePost, isPending } = useMutation({
       }
     })
 
-    return { previousBlogData }
+    return { previousContentData }
   },
 
   // Bei einem Fehler (z.B. User nicht eingeloggt, Server down, oder Limit überschritten)
   onError: (err, variables, context) => {
     // UI auf den Stand vor dem Klick zurücksetzen
-    if (context?.previousBlogData) {
-      queryClient.setQueryData(['blog', props.slug], context.previousBlogData)
+    if (context?.previousContentData) {
+      queryClient.setQueryData([props.contentType, props.slug], context.previousContentData)
     }
 
     if (isAxiosError(err)) {
@@ -119,7 +116,7 @@ const { mutate: likePost, isPending } = useMutation({
   },
   // im Hintergrund nochmal frische Daten vom Server holen
   onSettled: () => {
-    queryClient.invalidateQueries({ queryKey: ['blog', props.slug] })
+    queryClient.invalidateQueries({ queryKey: [props.contentType, props.slug] })
   }
 })
 

@@ -77,25 +77,23 @@
             class="mt-1 w-full rounded-md border p-2 bg-surface"
           ></textarea>
         </div>
-        <!-- <div class="md:col-span-2">
-          <label class="block text-sm font-medium">Tags</label>
-          <input 
-            v-model="post.tags" 
-            type="text" 
-            placeholder="Schlagwörter (durch Komma getrennt)"
-            class="mt-1 w-full rounded-md border p-2 bg-surface"
-          />
-        </div> -->
+          <TagsInput v-model="post.tags" class="md:col-span-2 ">
+            <TagsInputItem v-for="tag in post.tags" :key="tag" :value="tag">
+              <TagsInputItemText />
+              <TagsInputItemDelete />
+            </TagsInputItem>
+            <TagsInputInput placeholder="Cplusplus..." />
+          </TagsInput>
       </section>
 
       <section class="mb-10">
         <div class="flex flex-col mb-4 sm:flex-row sm:justify-between sm:items-center">
           <h2 class="text-2xl font-semibold">Inhaltsblöcke</h2>
           <div class="flex gap-2 flex-wrap ">
-            <button type="button" @click="addBlock('heading')" class="px-3 py-1 bg-accent text-main rounded hover:opacity-80">+ Überschrift</button>
-            <button type="button" @click="addBlock('paragraph')" class="px-3 py-1 bg-accent text-main rounded hover:opacity-80">+ Text</button>
-            <button type="button" @click="addBlock('image')" class="px-3 py-1 bg-accent text-main rounded hover:opacity-80">+ Bild</button>
-            <button type="button" @click="addBlock('code')" class="px-3 py-1 bg-accent text-main rounded hover:opacity-80">+ Code</button>
+            <button type="button" @click="addBlock('heading')" class="px-3 py-1 text-foreground border border-input rounded hover:opacity-80">+ Überschrift</button>
+            <button type="button" @click="addBlock('paragraph')" class="px-3 py-1 text-foreground border border-input rounded hover:opacity-80">+ Text</button>
+            <button type="button" @click="addBlock('image')" class="px-3 py-1 text-foreground border border-input rounded hover:opacity-80">+ Bild</button>
+            <button type="button" @click="addBlock('code')" class="px-3 py-1 text-foreground border border-input  rounded hover:opacity-80">+ Code</button>
           </div>
         </div>
 
@@ -120,11 +118,11 @@
                 </button>
             </div>
             
-            <div class="mb-4 font-semibold text-sm text-gray-400 border-b pb-2">
+            <div class="mb-4 font-semibold text-sm text-foreground border-b pb-2">
               Block: {{ block.type.toUpperCase() }}
             </div>
             
-            <BlockEditor :type="block.type" v-model="block.data" />
+            <BlockEditor class="text-black" :type="block.type" v-model="block.data" />
           </div>
         </div>
       </section>
@@ -148,6 +146,8 @@ import { type ContentBlockDto, type CreateBlogRequest } from '@/types/blogTypes.
 import { useCreateContentblogs, useCreateContentprojects } from '@/composables/content/useCreateContent.ts'
 import { toast } from 'vue-sonner'
 import apiClient from '@/services/api.ts'
+import { isAxiosError } from 'axios'
+import { TagsInput, TagsInputInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/components/ui/tags-input'
 
 const { 
   mutate: mutateBlog, 
@@ -169,15 +169,16 @@ const post = ref<CreateBlogRequest>({
   slug: '',
   imgSrc: '',
   description: '',
+  tags: [],
   content: []
 })
 
 // Methode um einen neuen Block hinzuzufügen
 const addBlock = (type: string) => {
   post.value.content.push({
-    id: crypto.randomUUID(), // Generiert eine sichere, eindeutige ID (wie Guid in C#)
+    id: crypto.randomUUID(), 
     type: type,
-    data: {} // Leeres Objekt für den Anfang, wird später durch die Block-Komponente befüllt
+    data: {} 
   })
 }
 
@@ -209,6 +210,7 @@ const handleSubmit = () => {
         slug: '', 
         imgSrc: '', 
         description: '', 
+        tags: [],
         content: [] 
       }
     },
@@ -219,7 +221,6 @@ const handleSubmit = () => {
     }
   }
 
-  // WEICHE: Welchen Endpunkt rufen wir auf?
   if (post.value.contentType === 'blog') {
     mutateBlog(post.value, callbacks)
   } else if (post.value.contentType === 'project') {
@@ -247,22 +248,33 @@ const handleCoverImageUpload = async (event: Event) => {
       withCredentials: true 
     })
 
-    // URL in dein post-Objekt speichern
     post.value.imgSrc = response.data.url
     
     toast.success('Vorschaubild erfolgreich hochgeladen!', { id: toastId })
     
-} catch (error: any) { // <-- error als 'any' typisieren (oder AxiosError)
-    // 1. Genaue Backend-Antwort in der Konsole loggen
-    console.error('Detail-Fehler vom Server:', error.response?.data)
+} catch (error: any) { 
+console.error('Detail-Fehler vom Server:', error)
     
-    // 2. Die Fehlermeldung des Backends auslesen (falls vorhanden)
-    const backendMessage = typeof error.response?.data === 'string' 
-      ? error.response.data 
-      : (error.response?.data?.title || 'Unbekannter Fehler beim Bild-Upload')
+    let errorMessage = 'Ein unbekannter Fehler ist aufgetreten.'
 
-    // 3. Fehlermeldung im Toast anzeigen
-    toast.error(backendMessage, { id: toastId })
+    if (isAxiosError(error)) {
+      if (error.response?.status === 401) {
+        errorMessage = 'Du bist nicht angemeldet oder deine Sitzung ist abgelaufen.'
+      } else if (error.response?.data) {
+        const data = error.response.data
+        if (typeof data === 'string' && data.trim() !== '') {
+          errorMessage = data
+        } else if (data.title) {
+          errorMessage = data.title
+        }
+      } else if (error.message) {
+         errorMessage = error.message
+      }
+    } else if (error instanceof Error) {
+      errorMessage = error.message
+    }
+
+    toast.error(errorMessage, { id: toastId })
     
     target.value = ''
   } 

@@ -6,16 +6,6 @@
                 <div class="mb-3 flex space-x-4">
 
                   <a
-                    href="kostaslamprounk@gmail.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Meine Mail"
-                    class="transition-all duration-300 hover:scale-110 inline-block"
-                  >
-                    <Mail class="w-6 h-6" />
-                  </a>
-
-                  <a
                     href="https://github.com/KonstantinosLamprou"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -46,7 +36,14 @@
                   </a>
                 </div>
                 <div class="mb-2 flex items-center space-x-2 md:text-sm text-center text-xs">
-                    <RouterLink class="transition-all duration-300 text-link hover:text-sky hover:underline hover:scale-102" to="">Source Code hier</RouterLink>
+                    <a 
+                      class="transition-all duration-300 text-link hover:text-sky hover:underline hover:scale-102" href="https://github.com/KonstantinosLamprou/portfolio"
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      aria-label="Source Code des Portfolios auf Github"
+                      >
+                      Source Code hier
+                    </a>
                     <div> • </div>
                     <div> ©2026 </div>
                     <div> • </div>

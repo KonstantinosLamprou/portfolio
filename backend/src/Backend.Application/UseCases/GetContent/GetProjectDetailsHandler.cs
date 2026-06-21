@@ -43,6 +43,7 @@ public class GetProjectDetailsHandler
             Views: projectDetails.Views,
             LikesCount: projectDetails.Likes?.Sum(l => l.Count) ?? 0,
             CommentsCount: projectDetails.Comments?.Count ?? 0,
+            Tags: projectDetails.Tags,
 
             // Prüft, ob der aktuelle User in der Like-Liste steht. Wenn ja, gib den Count, sonst 0.
             CurrentUserLikeCount: currentUserId.HasValue

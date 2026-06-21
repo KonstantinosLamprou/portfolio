@@ -29,6 +29,7 @@ namespace Backend.Application.UseCases.GetContent
                 ImgSrc: b.ImgSrc,
                 Description: b.Description,
                 Views: b.Views,
+                Tags: b.Tags,
                 LikesCount: b.Likes?.Sum(l => l.Count) ?? 0,
                 CommentsCount: b.Comments?.Count ?? 0
             ));

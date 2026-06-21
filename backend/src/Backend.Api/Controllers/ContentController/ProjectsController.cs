@@ -45,23 +45,20 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetProjectDetails(string slug)
     {
-        // Versuchen, den aktuellen User auszulesen (falls er einen Token hat)
         Guid? userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User); 
 
-        // Handler aufrufen
         var result = await _projectDetailshandler.Handle(slug, userId);
 
-        // Wenn null zurückkommt, existiert der Blog nicht
         if (result == null)
         {
-            return NotFound(new { message = "Blog nicht gefunden." });
+            return NotFound(new { message = "Projekt nicht gefunden." });
         }
 
         return Ok(result);
     }
 
     [HttpPost("create")]
-    [Authorize]  
+    [Authorize(Roles = "Admin")]  
     public async Task<IActionResult> CreateContent([FromBody] CreateBlogRequest request)
     {
         var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);

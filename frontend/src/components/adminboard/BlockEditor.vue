@@ -6,7 +6,7 @@
         <label class="block text-xs font-medium text-gray-500 uppercase">Ebene</label>
         <select 
           v-model="model.level" 
-          class="mt-1 w-full rounded border p-2 bg-white"
+          class="mt-1 w-full rounded border p-2 bg-white "
         >
           <option :value="1">H1 (Haupttitel)</option>
           <option :value="2">H2 (Sektion)</option>

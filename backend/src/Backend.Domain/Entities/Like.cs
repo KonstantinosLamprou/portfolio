@@ -6,7 +6,6 @@ namespace Backend.Domain.Entities
 {
     public class Like
     {
-        public Guid Id { get; set; }
         public DateTime LastLikedAt { get; set; } = DateTime.UtcNow;
         public int Count { get; set; } = 1;
 

@@ -35,7 +35,8 @@ public class CreateContentHandler
                         Data = c.Data.GetRawText() 
                     })
                     .ToList(),
-                AuthorId = authorId
+                AuthorId = authorId, 
+                Tags = request.Tags
             },
             "project" => new Project
             {
@@ -51,7 +52,8 @@ public class CreateContentHandler
                         Data = c.Data.GetRawText() 
                     })
                     .ToList(),
-                AuthorId = authorId
+                AuthorId = authorId,
+                Tags = request.Tags
             },
             _ => throw new InvalidOperationException($"Ungültiger ContentType: {request.ContentType}")
         };
@@ -83,6 +85,7 @@ public class CreateContentHandler
             Views: savedContent.Views,
             LikesCount: savedContent.Likes?.Sum(l => l.Count) ?? 0,
             CommentsCount: savedContent.Comments?.Count ?? 0,
+            Tags: savedContent.Tags,
             Author: new AuthorDto(author.Id, author.Name, author.ProfilePictureUrl, author.Role),
             CurrentUserLikeCount: 0
         );

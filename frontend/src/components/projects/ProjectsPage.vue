@@ -54,67 +54,58 @@ import { toast } from 'vue-sonner'
 import ContentCard from '../content/ContentCard.vue';
 import apiClient from '@/services/api.ts';
 import Spinner from '@/components/ui/loaders/SpinnerLoader.vue'
+import { formatDate } from '@/helper/DateHelper.ts';
+
+//TODO:
+// neue ladeanimation 
+// wenn keine Blogs vorhanden sind, was cooles anzeigen 
 
 
-// 1. Typ für die rohen Daten, die vom C# Backend kommen
 interface ProjectApiResponse {
-  id: string;
-  contenttype?: 'blog' | 'project';
+  id: number;
+  contenttype?: 'project';
   title: string;
   author: string;
   slug: string;
-  dateOfCreation: string; // Von der API kommt es immer als String (ISO-Format)
+  dateOfCreation: string; 
   description: string;
   content: object;
   imgSrc: string;
   likesCount?: number; // likes ist keine Num
   views?: number;
-  commentsCount?: number; //deprecated? 
-  comment?: string; // deprecated?
+  commentsCount?: number; 
 }
 
-// 2. Typ für unser lokales Frontend (nach unserer Transformation)
-// Omit kopiert das API-Interface, aber wirft das alte 'date' raus, 
-// damit wir es mit dem echten Date-Objekt überschreiben können.
+
 interface ProjectData extends Omit<ProjectApiResponse, 'dateOfCreation'> {
-  dateOfCreation: Date; // Hier ist es jetzt garantiert ein Date!
+  dateOfCreation: Date; 
 }
 
-// 1. Definiere die Fetch-Funktion mit Axios
 const fetchProjects = async (): Promise<ProjectData[]> => {
-  // Axios wirft automatisch einen Fehler bei Status-Codes wie 404 oder 500,
-  // wir brauchen also kein manuelles "if (!response.ok)" mehr.
+
   const { data } = await apiClient.get<ProjectApiResponse[]>('projects');
   
-  // Datums-Mapping
   return data.map(project => ({
       ...project,
       dateOfCreation: new Date(project.dateOfCreation) 
     }));
 };
 
-// 2. Nutze TanStack Query
 const { 
   data: projects,
   isPending,  
   isError, 
   error 
 } = useQuery({
-  queryKey: ['projects'], // Eindeutiger Key für den Cache
+  queryKey: ['projects'], 
   queryFn: fetchProjects,
-  retry: 1 // Optional: Versucht es bei einem Fehler noch 1x erneut
+  retry: 1 
 });
 
-// 3. Fehlerbehandlung mit Toast
-// Wir überwachen isError. Sobald es auf true springt, triggern wir den Toast.
 watch(isError, (hasError) => {
   if (hasError && error.value) {
-    // Gibt die genaue Axios-Fehlermeldung im Toast aus (oder eine generische Message)
     toast.error(`Fehler beim Laden: ${error.value.message || 'Server nicht erreichbar'}`);
   }
 });
 
-const formatDate = (date: Date) => {
-  return date.toLocaleDateString('de-DE');
-};
 </script>

@@ -1,5 +1,11 @@
 <template>
 <div class="flex flex-col items-center mt-6">
+  
+  <div v-if="entries == null || undefined" class="text-center flex flex-col gap-4 text-muted-foreground mt-10">
+    <TriangleAlertIcon class="w-12 h-12 mx-auto text-warning" />
+    Es gibt noch keine Einträge. Sei der Erste, der einen Gruß hinterlässt!  
+  </div>
+
   <div 
     v-for="entry in entries"
     :key="entry.id" 
@@ -47,7 +53,7 @@
 import DefaultAvatar from '@/assets/default-avatar.svg?url';
 import { useGetGuestbookEntries } from '@/composables/useGuestbook';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
-
+import TriangleAlertIcon from '@/assets/triangle-alert.svg';
 const { data: entries } = useGetGuestbookEntries();
 
 // Helper für das Datum

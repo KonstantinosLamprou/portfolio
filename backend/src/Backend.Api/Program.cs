@@ -58,22 +58,6 @@ builder.Services.AddAuthentication(options =>
     options.SaveTokens = true; // Speichert Access Tokens 
     options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
 
-    options.Events.OnCreatingTicket = async context =>
-    {
-        var email = context.Identity?.FindFirst(ClaimTypes.Email)?.Value;
-
-        if (!string.IsNullOrEmpty(email))
-        {
-            var dbContext = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
-
-            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
-
-            if (user != null && user.Role == Backend.Domain.Entities.UserRole.Admin)
-            {
-               context.Identity?.AddClaim(new Claim(ClaimTypes.Role, "Admin"));
-            }
-        }
-    };
 })
 .AddGitHub(options =>
 {
@@ -82,23 +66,6 @@ builder.Services.AddAuthentication(options =>
     options.Scope.Add("user:email"); 
     options.ClaimActions.MapJsonKey("urn:github:avatar_url", "avatar_url", "url");
 
-    // GitHub gibt E-Mails oft nur über die API zurück, dieser Scope hilft dabei:
-     options.Events.OnCreatingTicket = async context =>
-     {
-        var email = context.Identity?.FindFirst(ClaimTypes.Email)?.Value;
-
-        if (!string.IsNullOrEmpty(email))
-        {
-            var dbContext = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
-
-            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
-
-            if (user != null && user.Role == Backend.Domain.Entities.UserRole.Admin)
-            {
-                context.Identity?.AddClaim(new Claim(ClaimTypes.Role, "Admin"));
-            }
-        }
-    };
 });
 
 builder.Services.Configure<AdminOptions>(
@@ -147,6 +114,9 @@ builder.Services.AddScoped<DeleteCommentVoteHandler>();
 builder.Services.AddScoped<GetCommentsVoteHandler>();
 builder.Services.AddScoped<CreateCommentVoteHandler>();
 
+builder.Services.AddScoped<GetStatisticsHandler>();
+builder.Services.AddScoped<UpdateStatisticsHandler>();
+
 builder.Services.AddScoped<IBlogInterface, EfBlogRepository>();
 builder.Services.AddScoped<IProjectInterface, EfProjectRepository>();
 builder.Services.AddScoped<IApplicationUserInterface, EfApplicationUserRepository>();
@@ -154,6 +124,7 @@ builder.Services.AddScoped<ILikeInterface, EfLikeRepository>();
 builder.Services.AddScoped<ICommentInterface, EfCommentRepository>();
 builder.Services.AddScoped<ICommentVoteInterface, EfCommentVoteRepository>();
 builder.Services.AddScoped<IGuestbookEntry, EfGuestbookEntryRepository>();
+builder.Services.AddScoped<IStatisticsInterface, EfStatisticsRepository>();
 builder.Services.AddHostedService<ImageCleanupService>();
 
 

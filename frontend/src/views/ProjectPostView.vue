@@ -45,13 +45,24 @@
       
       <aside class="w-full lg:w-68 px-4 lg:py-10 sticky top-34">
         <TableOfContents :toc="tableOfContents" />
-        <LikeButton :slug="currentPost.slug" :initial-likes="currentPost.likesCount" :user-liked="currentPost.currentUserLikeCount" />
+        <LikeButton 
+          :ContentId = "currentPost.id"
+          :slug="currentPost.slug" 
+          :initialLikes="currentPost.likesCount" 
+          :currentUserLikes="currentPost.currentUserLikeCount"
+          :contentType="'project'" />
       </aside>
     </div>
 
     <div class="space-y-6 mt-12">
-      <CommentPost />
-      <CommentWrapper /> 
+      <CommentPost
+        :contentId="currentPost.id"
+        :contentType="'project'"
+      />
+      <CommentWrapper 
+        :contentId="currentPost.id"
+        :contentType="'project'"
+      /> 
     </div>
   </div>
 
@@ -75,32 +86,20 @@ import TableOfContents from '@/components/content/TableOfContents.vue';
 import LikeButton from '@/components/content/LikeButton.vue';
 import CommentPost from "@/components/comment/CommentPost.vue"
 import CommentWrapper from "@/components/comment/Commentwrapper.vue"
+import { formatDate } from '@/helper/DateHelper.ts';
+import type { AuthorDto, ContentBlock } from '@/types/blogTypes.ts';
 
 const queryClient = useQueryClient();
 const route = useRoute();
-const slug = route.params.slug as string;
+const slug = computed(() => route.params.slug as string);
 const dialogState = useSignInDialogStore(); 
 
-//Auslagern 
-
-interface AuthorDto {
-  id: string | number;
-  name: string;
-  profilePictureUrl?: string;
-  role?: string;
-}
-
-interface ContentBlock {
-  id: string;
-  type: string;
-  data: any; 
-}
 
 interface ProjectApiResponse {
   id: number;
   title: string;
   slug: string;
-  dateOfCreation: string; // Von API als String
+  dateOfCreation: string;
   imgSrc: string;
   description: string;
   content: ContentBlock[];
@@ -115,12 +114,9 @@ interface ProjectDetailData extends Omit<ProjectApiResponse, 'dateOfCreation'> {
   dateOfCreation: Date; // Im Frontend als Date
 }
 
-// Fetch Funktion für TanStack Query
 const fetchProjectDetails = async (): Promise<ProjectDetailData> => {
-  // Wir feuern den Request an deinen aktualisierten Endpoint (mit Slug)
-  const { data } = await apiClient.get<ProjectApiResponse>(`projects/${slug}`);
+  const { data } = await apiClient.get<ProjectApiResponse>(`projects/${slug.value}`);
   
-  // Datums-Transformation
   return {
     ...data,
     dateOfCreation: new Date(data.dateOfCreation)
@@ -135,7 +131,7 @@ const {
   isSuccess,
   error 
 } = useQuery({
-  queryKey: ['projects', slug],
+  queryKey: ['project', slug.value],
   queryFn: fetchProjectDetails,
   retry: false 
 });
@@ -149,11 +145,6 @@ watch(isError, (hasError) => {
     }
   }
 });
-
-// Auslagern 
-const formatDate = (date: Date) => {
-  return date.toLocaleDateString('de-DE');
-};
 
 const tableOfContents = computed(() => {
   if (!currentPost.value) return [];
@@ -176,13 +167,13 @@ interface UpdateViewsContentResponse {
 
 const { mutate: incrementView } = useMutation({
   mutationFn: async (contentId: number): Promise<UpdateViewsContentResponse> => {
-    const { data } = await apiClient.patch(`/blogs/${contentId}/view`);
+    const { data } = await apiClient.patch(`/projects/${contentId}/view`);
 
     return data;
   }, 
 
   onSuccess: (data) => {
-    queryClient.setQueryData(['blog', slug], (old: any) => {
+    queryClient.setQueryData(['project', slug.value], (old: any) => {
 
       if (!old) return old;
 

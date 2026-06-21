@@ -5,7 +5,8 @@ export interface CreateBlogRequest {
   slug: string;
   imgSrc: string;
   description: string;
-  content: ContentBlockDto[];
+  tags: string[];
+  content: ContentBlock[];
 }
 
 export interface AuthorDto {
@@ -32,6 +33,7 @@ export interface BlogApiResponse {
   views: number;
   likesCount: number;
   commentsCount: number;
+  tags: string[];
   currentUserLikeCount: number;
   author: AuthorDto;
 }
@@ -47,4 +49,5 @@ export interface BlogLatestApiResponse {
   views?: number;
   likesCount?: number;
   commentsCount?: number;
+  tags?: string[];
 }

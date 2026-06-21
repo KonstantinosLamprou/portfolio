@@ -9,6 +9,7 @@ export interface UserSession {
   email: string
   provider?: string
   profilePictureUrl?: string
+  role: string
 }
 
 const fetchSession = async (): Promise<UserSession | null> => {
@@ -33,5 +34,5 @@ export function useSession() {
     // Optional: Konfiguriere das Caching
     staleTime: 1000 * 60 * 5, // Daten bleiben 5 Minuten "frisch"
     retry: false, // Bei 401 nicht endlos neu versuchen
-  })
+  }); 
 }

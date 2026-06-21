@@ -49,7 +49,8 @@
           :ContentId = "currentPost.id"
           :slug="currentPost.slug" 
           :initialLikes="currentPost.likesCount" 
-          :currentUserLikes="currentPost.currentUserLikeCount" />
+          :currentUserLikes="currentPost.currentUserLikeCount"
+          :contentType="'blog'" />
       </aside>
     </div>
 
@@ -85,24 +86,22 @@ import TableOfContents from '@/components/content/TableOfContents.vue';
 import LikeButton from '@/components/content/LikeButton.vue';
 import CommentPost from "@/components/comment/CommentPost.vue"
 import CommentWrapper from "@/components/comment/Commentwrapper.vue"
+import { formatDate } from '@/helper/DateHelper.ts';
 
-import type { AuthorDto, ContentBlock, BlogApiResponse } from '@/types/blogTypes.ts';
+import type { BlogApiResponse } from '@/types/blogTypes.ts';
 
 const queryClient = useQueryClient();
 const route = useRoute();
-const slug = route.params.slug as string;
+const slug = computed(() => route.params.slug as string);
 const dialogState = useSignInDialogStore(); 
 
 interface BlogDetailData extends Omit<BlogApiResponse, 'dateOfCreation'> {
   dateOfCreation: Date; // Im Frontend als Date
 }
 
-// Fetch Funktion für TanStack Query
 const fetchBlogDetails = async (): Promise<BlogDetailData> => {
-  // Wir feuern den Request an deinen aktualisierten Endpoint (mit Slug)
-  const { data } = await apiClient.get<BlogApiResponse>(`blogs/${slug}`);
+  const { data } = await apiClient.get<BlogApiResponse>(`blogs/${slug.value}`);
   
-  // Datums-Transformation
   return {
     ...data,
     dateOfCreation: new Date(data.dateOfCreation)
@@ -117,9 +116,9 @@ const {
   isSuccess,
   error 
 } = useQuery({
-  queryKey: ['blog', slug], // Der Slug macht den Cache-Key eindeutig
+  queryKey: ['blog', slug.value],
   queryFn: fetchBlogDetails,
-  retry: false // Bei einem 404 wollen wir nicht sofort 3x neu versuchen
+  retry: false 
 });
 
 // Fehler-Toast
@@ -132,12 +131,6 @@ watch(isError, (hasError) => {
     }
   }
 });
-
-// TODO: auslagern
-// Hilfsfunktion für ein schöneres Datum
-const formatDate = (date: Date) => {
-  return date.toLocaleDateString('de-DE');
-};
 
 const tableOfContents = computed(() => {
   if (!currentPost.value) return [];
@@ -166,7 +159,7 @@ const { mutate: incrementView } = useMutation({
   }, 
 
   onSuccess: (data) => {
-    queryClient.setQueryData(['blog', slug], (old: any) => {
+    queryClient.setQueryData(['blog', slug.value], (old: any) => {
 
       if (!old) return old;
 

@@ -22,6 +22,7 @@ namespace Backend.Domain.Entities
         // Hier ist die Magie: Eine stark typisierte Liste, aber dynamische Payload
         public List<ContentBlock> Content { get; set; } = new();
 
+        public string[] Tags { get; set; } = Array.Empty<string>(); 
         public ICollection<Like> Likes { get; set; } = new List<Like>(); 
         public int Views { get; set; }
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();

@@ -5,18 +5,23 @@
         Latest
       </h2>
       <p class="text-lg leading-7">
-        Hier kannst du meine letzten aktuellsten Blog-Einträge lesen.
+        Hier kannst du meine aktuellsten Blog-Einträge lesen.
       </p>
     </div>
 
     <ul class="divide-surface divide-y">
 
-      <li v-if="isError" class="py-12 text-gray-500">
+      <li v-if="isError" class="py-12 text-gray-600">
         Zurzeit gibt es noch keine Beiträge. Schau später wieder vorbei!
       </li>
 
-      <li v-else-if="isPending" class="py-12 text-gray-500">
+      <li v-else-if="isPending" class="py-12 text-gray-600">
         Lade Beiträge...
+      </li>
+
+      <li v-else-if="blogs && blogs.length === 0" class="py-12 text-gray-600 text-center">
+        <TriangleAlertIcon class="inline w-6 h-6 mr-2" />
+        Es wurden keine Beiträge gefunden.
       </li>
 
       <li
@@ -38,21 +43,21 @@
             <div class="space-y-5 xl:col-span-3">
               <div class="space-y-6">
                 <div>
-                  <h3 class="text-2xl leading-8 font-medium tracking-tight transition-transform duration-300 hover:scale-101">
-                    <RouterLink :to="`/blog/${blog.slug}`" class="text-heading ">
+                  <h3 class="text-2xl leading-8 font-medium tracking-tight transition-transform duration-300">
+                    <RouterLink :to="`/blog/${blog.slug}`" class="text-heading hover:text-heading-hover transition-colors">
                       {{ blog.title }}
                     </RouterLink>
                   </h3>
 
-                  <!-- <div class="flex flex-wrap gap-3 mt-2">
+                  <div class="flex flex-wrap gap-3 mt-2">
                     <span
-                      v-for="tag in post.tags"
+                      v-for="tag in blog.tags"
                       :key="tag"
-                      class="text-sm font-medium text-onlydarkmatcha uppercase tracking-wider"
+                      class="text-sm font-medium text-matcha uppercase tracking-wider border border-matcha/50 rounded-full px-2 py-1"
                     >
                       {{ tag }}
                     </span>
-                  </div> -->
+                  </div> 
                 </div>
 
                 <div class="prose max-w-none text-body opacity-80">
@@ -91,6 +96,7 @@ import { toast } from 'vue-sonner'
 import { RouterLink } from 'vue-router';
 import type { BlogLatestApiResponse } from '@/types/blogTypes.ts';
 import apiClient from '@/services/api.ts';
+import TriangleAlertIcon from '@/assets/triangle-alert.svg';
 
 
 interface BlogData extends Omit<BlogLatestApiResponse, 'dateOfCreation'> {
@@ -108,26 +114,23 @@ const fetchLatestBlogs = async (): Promise<BlogData[]> => {
 }
 
 const { 
-  data: blogs, // Wir benennen 'data' in 'blogs' um für eine bessere Lesbarkeit im Template
-  isPending,   // isPending ist true, während der erste Fetch läuft (Vue Query v5)
+  data: blogs, 
+  isPending,   
   isError, 
   error 
 } = useQuery({
-  queryKey: ['latest-blogs'], // Eindeutiger Key für den Cache
+  queryKey: ['latest-blogs'], 
   queryFn: fetchLatestBlogs,
-  retry: 1 // Optional: Versucht es bei einem Fehler noch 1x erneut
+  retry: 1 
 });
 
-// 3. Fehlerbehandlung mit Toast
-// Wir überwachen isError. Sobald es auf true springt, triggern wir den Toast.
+
 watch(isError, (hasError) => {
   if (hasError && error.value) {
-    // Gibt die genaue Axios-Fehlermeldung im Toast aus (oder eine generische Message)
     toast.error(`Fehler beim Laden: ${error.value.message || 'Server nicht erreichbar'}`);
   }
 });
 
-// Hilfsfunktion, um das Datum schön zu formatieren
 const formatDate = (date: Date) => {
   return new Intl.DateTimeFormat('de-DE', {
     day: '2-digit',

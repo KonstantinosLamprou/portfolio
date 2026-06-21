@@ -15,6 +15,8 @@
   --color-picture: var(--picture-color);
   --color-sky: var(--sky-color);
   --color-link: var(--link-color);
+  --color-heading: var(--heading-color);
+  --color-heading-hover: var(--heading-color-hover);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -86,7 +88,8 @@
     --radius: 0.625rem;
 
     --heading-color: #1c1c1c;
-    --matcha-color: #21241d;
+    --heading-color-hover: #333333;
+    --matcha-color: #90a955;
     --koi-color: #ce5a57;
     --picture-color: #1c1e21;
     --sky-color: #82c0fa;
@@ -131,6 +134,7 @@
     --ring: oklch(0.556 0 0);
 
     --heading-color: #e7dfd1;
+    --heading-color-hover: #d4c6ac;
     --matcha-color: #90a955;
     --koi-color: #e46f68;
     --picture-color: #e5e7eb;

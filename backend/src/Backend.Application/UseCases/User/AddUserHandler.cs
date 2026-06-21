@@ -54,6 +54,6 @@ public class AddUserHandler
 
         await _repo.SaveChangesAsync(ct);
 
-        return new AddUserResult(user.Id, user.Email, user.Name, user.AuthProvider);
+        return new AddUserResult(user.Id, user.Email, user.Name, user.AuthProvider, user.ProfilePictureUrl, user.Role);
     }
 }
