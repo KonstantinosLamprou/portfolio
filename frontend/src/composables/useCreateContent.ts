@@ -1,8 +1,7 @@
 import { useMutation } from '@tanstack/vue-query'
-import { type ContentBlockDto, type CreateBlogRequest } from '@/types/blogTypes.ts'
+import { type CreateBlogRequest } from '@/types/blogTypes.ts'
 import  apiClient from '@/services/api'
 import { isAxiosError } from 'axios'
-
 
 export function useCreateContentblogs() {
   return useMutation({
@@ -14,21 +13,17 @@ export function useCreateContentblogs() {
 
       } catch (error) {
 
-        // Axios-spezifisches Fehlerhandling
         if (isAxiosError(error)) {
 
-          // Versucht, die 'message' aus deinem C# ProblemDetails/BadRequest zu lesen
           const serverMessage = error.response?.data?.message 
           throw new Error(serverMessage || 'Fehler beim Speichern. Bist du richtig eingeloggt?')
         }
     
-        // Fallback für Netzwerkfehler (z.B. Backend offline)
         throw new Error('Ein unerwarteter Fehler ist aufgetreten.')
       }
     }
   })
 }
-
 
 export function useCreateContentprojects() {
   return useMutation({
@@ -40,18 +35,14 @@ export function useCreateContentprojects() {
 
       } catch (error) {
 
-        // Axios-spezifisches Fehlerhandling
         if (isAxiosError(error)) {
 
-          // Versucht, die 'message' aus deinem C# ProblemDetails/BadRequest zu lesen
           const serverMessage = error.response?.data?.message 
           throw new Error(serverMessage || 'Fehler beim Speichern. Bist du richtig eingeloggt?')
         }
     
-        // Fallback für Netzwerkfehler (z.B. Backend offline)
         throw new Error('Ein unerwarteter Fehler ist aufgetreten.')
       }
     }
   })
 }
-

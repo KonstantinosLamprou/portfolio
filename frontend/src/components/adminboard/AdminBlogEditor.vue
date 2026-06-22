@@ -143,7 +143,7 @@
 import { ref, computed } from 'vue'
 import BlockEditor from './BlockEditor.vue'
 import { type ContentBlockDto, type CreateBlogRequest } from '@/types/blogTypes.ts'
-import { useCreateContentblogs, useCreateContentprojects } from '@/composables/content/useCreateContent.ts'
+import { useCreateContentblogs, useCreateContentprojects } from '@/composables/useCreateContent.ts'
 import { toast } from 'vue-sonner'
 import apiClient from '@/services/api.ts'
 import { isAxiosError } from 'axios'

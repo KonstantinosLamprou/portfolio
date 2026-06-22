@@ -30,7 +30,7 @@
                     @click="dialogState.openDialog"
                     type="button"
                     variant="none" 
-                    class="self-end mb-1 rounded-xl border"
+                    class="self-end mb-1 rounded-xl border hover:text-foreground-hover transition-colors duration-200"
                 >
                     <SignInicon class="w-4 h-4 mr-2" />
                     Sign In
@@ -40,7 +40,7 @@
                     @click="handleLogout"
                     variant="none"
                     type="button"
-                    class="self-end mb-1 rounded-xl border"
+                    class="self-end mb-1 rounded-xl border hover:text-foreground-hover transition-colors duration-200"
                 >
                 <SignOutIcon v-if="!isLogoutLoading" class="w-4 h-4 mr-2" />
                 <Spinner v-else size="sm" class="mx-auto mr-2"/>
@@ -49,7 +49,7 @@
                 <Button 
                     variant="none"
                     type="submit"
-                    class="self-end mb-1 rounded-xl border"
+                    class="self-end mb-1 rounded-xl border hover:text-foreground-hover transition-colors duration-200"
                     :disabled="!isAuthenticated || content.trim() === ''"
                 >
                     Absenden

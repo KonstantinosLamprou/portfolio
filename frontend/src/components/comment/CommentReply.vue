@@ -16,6 +16,7 @@
           data-testid="reply-submit-button"
           :disabled="!isAuthenticated || content.trim() === ''"
         >
+          <Spinner v-if="isPending" class="size-4" />
           <SendIcon class="size-4" />
         </Button>
         
@@ -49,7 +50,7 @@ import UnauthenticatedOverlay from '@/components/comment/UnauthenticatedOverlay.
 import { SendIcon } from 'lucide-vue-next';
 import { useSession } from '@/composables/useSession'
 import { Button } from '@/components/ui/buttons/'
-import Spinner from '../ui/loaders/SpinnerLoader.vue'
+import Spinner from '@/components/ui/spinner/Spinner.vue'
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { toast } from 'vue-sonner';
 import { isAxiosError } from 'axios';

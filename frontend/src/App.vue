@@ -1,6 +1,6 @@
 
 <template>
-  <SplashScreen />
+  <SplashScreen /> 
 
   <section class="relative overflow-clip bg-main text-body transition-colors duration-300">
     <BackgroundGradient position="top"/>

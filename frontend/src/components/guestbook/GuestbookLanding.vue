@@ -1,6 +1,6 @@
 <template>
     <div class="mt-12 justify-center flex">
-        <div class="p-5 rounded-lg bg-surface/50 border border-surface/50 w-full lg:w-2/3">
+        <div class="p-5 rounded-lg bg-linear-to-br from-blue-50 via-purple-50 to-rose-50 dark:from-blue-900/20 dark:via-purple-900/20 dark:to-rose-900/10 border border-surface/50 w-full lg:w-2/3">
             <div class=" flex justify-between ">
                 <div class="flex flex-row gap-3 mb-2">
                     <MessageCircleIcon class="w-6 h-6 lg:w-8 lg:h-8 " />

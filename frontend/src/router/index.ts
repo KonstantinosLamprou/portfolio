@@ -6,53 +6,60 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('@/views/HomeView.vue')
+      component: () => import('@/views/HomeView.vue'),
+      meta: { title: 'Kostas | ~' }
     },
     {
       path: '/lebenslauf',
       name: 'resume',
-      component: () => import('@/views/ResumeView.vue')
+      component: () => import('@/views/ResumeView.vue'),
+      meta: { title: 'Kostas | Lebenslauf' }
     },
     {
        path: '/projekte',
        name: 'projekte',
-       component: () => import('@/views/ProjectsView.vue')
+       component: () => import('@/views/ProjectsView.vue'), 
+        meta: { title: 'Kostas | Projekte' }
     },
         {
        path: '/blog',
        name: 'All Blogs',
-       component: () => import('@/views/AllBlogView.vue')
+       component: () => import('@/views/BlogsView.vue'),
+       meta: { title: 'Kostas | Blog' }
     },
-    // Admin route deprecated
     {
-    path: '/auth/callback',
-    name: 'Login Callback',
-    component: () => import('@/views/AuthCallbackView.vue'),
+      path: '/auth/callback',
+      name: 'Login Callback',
+      component: () => import('@/views/AuthCallbackView.vue'),
     },
     {
       path: '/admin/editor',
       name: 'Editor',
-      component: () => import ('@/views/EditorView.vue')
+      component: () => import ('@/views/EditorView.vue'),
+      meta: { title: 'Kostas | Editor' }
     },
     {
       path: '/blog/:slug',
       name: 'BlogPost',
-      component: () => import ('@/views/BlogPostView.vue')
+      component: () => import ('@/views/BlogPostView.vue'),
+      meta: { title: 'Kostas | Blog-Post' }
     },
     {
       path: '/projekte/:slug',
       name: 'ProjectPost',
-      component: () => import ('@/views/ProjectPostView.vue')
+      component: () => import ('@/views/ProjectPostView.vue'),
+      meta: { title: 'Kostas | Projekt-Post' }
     }, 
     {
       path: '/auth/callback',
       name: 'AuthCallback',
-      component: () => import ('@/views/AuthCallbackView.vue')
+      component: () => import ('@/views/AuthCallbackView.vue'),
     }, 
     {
       path: '/guestbook',
       name: 'Guestbook',
-      component: () => import ('@/views/GuestbookView.vue')
+      component: () => import ('@/views/GuestbookView.vue'),
+      meta: { title: 'Kostas | Gästebuch' }
     }
   ],
 
@@ -76,5 +83,10 @@ const router = createRouter({
 
   }
 })
+
+  router.afterEach((to) => {
+    // Fallback
+    document.title = to.meta.title as string || 'Dein Name - Portfolio'
+  })
 
 export default router

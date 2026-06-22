@@ -11,6 +11,7 @@
   --font-heading: var(--font-sans);
 
   --color-matcha: var(--matcha-color);
+  --color-navbar: var(--navbar-color);
   --color-koi: var(--koi-color);
   --color-picture: var(--picture-color);
   --color-sky: var(--sky-color);
@@ -20,6 +21,7 @@
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-foreground-hover: var(--foreground-hover);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
@@ -48,6 +50,13 @@
   --color-chat-text-strong: var(--chat-text-strong);
   --color-chat-border: var(--chat-border);
 
+  --color-drawer-bg: var(--drawer-bg);
+  --color-drawer-card: var(--drawer-card);
+  --color-drawer-card-hover: var(--drawer-card-hover);
+  --color-drawer-border: var(--drawer-border);
+  --color-drawer-text: var(--drawer-text);
+  --color-drawer-text-muted: var(--drawer-text-muted);
+
   --animate-blink: blink 3s linear infinite;
   @keyframes blink {
     0%, 100% { opacity: 1; }
@@ -59,6 +68,7 @@
   :root {
     --background: oklch(1 0 0);         
     --foreground: #0a0a0a;  
+    --foreground-hover: #272727;
     /* --foreground-strong: #0a0a0a;             */
 
     --card: #1c1c1c;                    
@@ -88,6 +98,7 @@
     --radius: 0.625rem;
 
     --heading-color: #1c1c1c;
+    --navbar-color: rgba(0, 0, 0, 0.15);
     --heading-color-hover: #333333;
     --matcha-color: #90a955;
     --koi-color: #ce5a57;
@@ -101,12 +112,20 @@
     --chat-text: #6b7280;        /* Icons/Datum */
     --chat-text-strong: #0a0a0a; /* Autorenname */
     --chat-border: #e5e7eb;
+
+    --drawer-bg: #ffffff;          /* Weißer Hintergrund */
+    --drawer-card: #f4f4f5;        /* Helles Grau (zinc-100) für Buttons */
+    --drawer-card-hover: #e4e4e7;  /* Etwas dunkleres Grau (zinc-200) beim Hovern */
+    --drawer-border: #e4e4e7;      /* Rahmen und Handle */
+    --drawer-text: #09090b;        /* Fast Schwarz für gute Lesbarkeit */
+    --drawer-text-muted: #71717a;  /* Mittleres Grau (zinc-500) für Subtexte */
   }
 
   .dark {
 
     --background: oklch(0.141 0.005 285.823);
     --foreground: #fafafa;  
+    --foreground-hover: #b9b9b9;
     /* --foreground-strong: #fafafa; */
 
     --card: #1f1f1f;                        
@@ -134,6 +153,7 @@
     --ring: oklch(0.556 0 0);
 
     --heading-color: #e7dfd1;
+    --navbar-color: rgba(0, 0, 0, 0.3);
     --heading-color-hover: #d4c6ac;
     --matcha-color: #90a955;
     --koi-color: #e46f68;
@@ -146,6 +166,13 @@
     --chat-text: #a1a1aa;        
     --chat-text-strong: #fafafa; 
     --chat-border: #3f3f46;      
+
+    --drawer-bg: #09090b;          /* bg-zinc-950 */
+    --drawer-card: #18181b;        /* bg-zinc-900 */
+    --drawer-card-hover: #27272a;  /* hover:bg-zinc-800 */
+    --drawer-border: #27272a;      /* border-zinc-800 */
+    --drawer-text: #ffffff;        /* text-white */
+    --drawer-text-muted: #a1a1aa;  /* text-zinc-400 */
   }
 }
 
@@ -212,10 +239,18 @@
   * {
     @apply border-border outline-ring/50;
 
+    /*Versteckt Scrollbar global für Firefox, IE, Edge */
+      -ms-overflow-style: none;  
+      scrollbar-width: none;
+    }
+    /* Versteckt die Scrollbar für IE, Edge und Firefox */
+    *::-webkit-scrollbar {
+        display: none;
+    }
   }
   body {
     @apply bg-background text-foreground;
 
   }
 
-}
+

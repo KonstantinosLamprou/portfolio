@@ -35,7 +35,7 @@
           <RouterLink
             to="/lebenslauf"
             aria-label="my projects"
-            class="glass3d rounded-full text-nowrap overflow-hidden inline-block"
+            class="glass3d rounded-full font-medium text-nowrap overflow-hidden inline-block"
           >
             <GlareHover
               glareColor="#ffffff"
@@ -59,7 +59,7 @@
           <RouterLink
             to="/projekte"
             aria-label="my projects"
-            class="glass3d rounded-full text-nowrap overflow-hidden inline-block"
+            class="glass3d rounded-full font-medium text-nowrap overflow-hidden inline-block"
           >
             <GlareHover
               glareColor="#ffffff"
@@ -82,7 +82,7 @@
           <button
             @click="fetchTagline"
             :disabled="isLoading"
-            class="glass3d rounded-full text-nowrap overflow-hidden inline-block"
+            class="glass3d rounded-full font-medium text-nowrap overflow-hidden inline-block"
             :class="{ 'opacity-50 cursor-not-allowed': isLoading }"
             aria-label="Generate new line"
           >
@@ -114,7 +114,7 @@
           <button 
               @click="dialogState.openDialog"
               v-if="!isAuthenticated"
-              class="glass3d rounded-full text-center text-nowrap overflow-hidden inline-block"
+              class="glass3d rounded-full font-medium text-center text-nowrap overflow-hidden inline-block"
               aria-label="Sign-In"
             >
               <GlareHover
@@ -139,7 +139,7 @@
             <button 
               v-else
               @click="handleLogout"
-              class="glass3d rounded-full text-center text-nowrap overflow-hidden inline-block"
+              class="glass3d rounded-full font-medium text-center text-nowrap overflow-hidden inline-block"
               aria-label="Sign-Out"
             >
               <Spinner v-if="isLogoutLoading" size="sm" class="mx-auto"/>
@@ -170,7 +170,7 @@
             Derzeitiges KI-Modell im Einsatz:
           </p>
           <div class="relative w-64">
-            <button class="glass3d flex w-full items-center justify-between rounded-full px-4 py-2 shadow-sm transition hover:border-gray-400">
+            <button class="glass3d flex w-full font-medium items-center justify-between rounded-full px-4 py-2 shadow-sm transition hover:border-gray-400">
               <div class="flex w-full items-center justify-center">
                 DeepSeek
               </div>

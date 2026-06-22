@@ -7,7 +7,7 @@
     
     <PopoverRoot>
       <PopoverTrigger as-child>
-        <button class="glass3d rounded-full text-center text-nowrap overflow-hidden inline-block outline-none cursor-pointer">
+        <button class="glass3d rounded-xl font-medium text-center text-nowrap overflow-hidden inline-block outline-none cursor-pointer">
           <GlareHover
             glareColor="#ffffff"
             :glareOpacity="0.3"

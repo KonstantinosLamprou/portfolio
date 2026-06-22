@@ -5,7 +5,7 @@
       variant="none"
       size="nosize"
       @click="dialogState.openDialog"
-      class="glass3d rounded-full text-center text-nowrap overflow-hidden inline-block outline-none cursor-pointer"
+      class="glass3d rounded-xl text-center items-center text-nowrap overflow-hidden inline-block outline-none cursor-pointer"
      >
       <GlareHover
         glareColor="#ffffff"
@@ -19,7 +19,7 @@
         background="transparent"
         borderRadius="9999px"
         borderColor="transparent"
-        className="rounded-full px-5 py-1 shadow-sm flex items-center text-sm"
+        className="px-5 py-1 shadow-sm flex items-center text-sm"
       
       >
       <LoginIcon class="w-4 h-4 mr-2"/>

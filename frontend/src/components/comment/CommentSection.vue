@@ -1,6 +1,10 @@
 <template>
-  <div :id="`comment-${comment.id}`" class="mb-6">
-    <div class="flex gap-4">
+  <div class="mb-6">
+    <div 
+      :id="`comment-${comment.id}`" 
+      class="flex gap-4 scroll-mt-24"
+      ref="commentNode"
+      >
       <img 
         :src="comment.isDeleted ? DefaultAvatar : comment.author.profilePictureUrl || DefaultAvatar" 
         alt="Avatar" 
@@ -174,7 +178,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, nextTick } from 'vue';
 import { useSession } from '@/composables/useSession.ts';
 import { useDeleteCommentMutation, useUpdateCommentMutation } from '@/composables/useComment';
 
@@ -199,12 +203,25 @@ import CommentReply from './CommentReply.vue';
 import { toast } from 'vue-sonner';
 import CommentVote from './CommentVote.vue';
 
-
 const props = defineProps<{
   comment: CommentResponseDto;
   contentId: number;
   contentType: string;
 }>();
+
+//Helper für Links
+const commentNode = ref<HTMLElement | null>(null);
+
+onMounted(() => {
+  // Ein kurzes Timeout gibt dem Browser Zeit für das Layout-Rendering
+  setTimeout(() => {
+    const expectedHash = `#comment-${props.comment.id}`;
+    
+    if (window.location.hash === expectedHash && commentNode.value) {
+      commentNode.value.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, 150); // 150 Millisekunden warten
+});
 
 const { data: session } = useSession()
 

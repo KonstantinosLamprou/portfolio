@@ -64,11 +64,9 @@ onMounted(() => {
     })
   }
 
-  // Speichern die Liste
   skillsList.value = loadedSkills
 })
 
-// Hilfsfunktion: Macht den ersten Buchstaben groß (z.B. 'javascript' -> 'Javascript')
 const formatName = (name: string) => {
   if (name.toLowerCase() === 'csharp') return 'C#'
   if (name.toLowerCase() === 'cpp') return 'C++'
