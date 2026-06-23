@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 //refactoring 
 
 
-namespace Backend.Infrastructure.Persistence.Repositories
+namespace Backend.Infrastructure.Repositories
 {
-    public class EfBlogRepository : IBlogInterface
+    public class BlogRepository : IBlogInterface
     {
         private readonly ApplicationDbContext _context; 
 
-        public EfBlogRepository(ApplicationDbContext context)
+        public BlogRepository(ApplicationDbContext context)
         {
             _context = context; 
         }

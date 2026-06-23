@@ -8,13 +8,13 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Backend.Infrastructure.Persistence.Repositories
+namespace Backend.Infrastructure.Repositories
 {
-    public class EfProjectRepository : IProjectInterface
+    public class ProjectRepository : IProjectInterface
     {
         private readonly ApplicationDbContext _context;
 
-        public EfProjectRepository(ApplicationDbContext context)
+        public ProjectRepository(ApplicationDbContext context)
         {
             _context = context;
         }

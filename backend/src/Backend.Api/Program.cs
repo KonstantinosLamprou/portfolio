@@ -1,14 +1,6 @@
-using Backend.Domain.Interfaces;
 using Backend.Infrastructure;
-using Backend.Infrastructure.Persistence.Repositories;
-using Backend.Infrastructure.Persistence;
-using Backend.Application.UseCases.User;  
-using Backend.Application.UseCases.SaveContent;  
-using Backend.Application.UseCases.Interactions;
-using Backend.Application.UseCases.GetContent;
-using Backend.Application.UseCases.Comments;
-using Backend.Application.UseCases.Guestbook;
 using Backend.Application.Options;
+using Backend.Application; 
 using Backend.Presentation.Workers; 
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI; 
@@ -83,48 +75,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // Den Handler für die Dependency Injection registrieren
-builder.Services.AddScoped<AddUserHandler>();
-
-builder.Services.AddScoped<CreateContentHandler>();
-
-builder.Services.AddScoped<AddLikeHandler>();
-
-builder.Services.AddScoped<GetAllBlogsHandler>();
-builder.Services.AddScoped<GetAllProjectsHandler>();
-builder.Services.AddScoped<GetBlogDetailsHandler>();
-builder.Services.AddScoped<GetProjectDetailsHandler>();
-builder.Services.AddScoped<GetLatestBlogsHandler>();
-builder.Services.AddScoped<UpdateViewsBlogHandler>();
-builder.Services.AddScoped<UpdateViewsProjectHandler>();
-
-builder.Services.AddScoped<CreateCommentHandler>();
-builder.Services.AddScoped<GetCommentsHandler>();
-builder.Services.AddScoped<UpdateCommentHandler>();
-builder.Services.AddScoped<DeleteCommentHandler>();
-builder.Services.AddScoped<GetCommentByIdHandler>();
-
-builder.Services.AddScoped<CreateGuestbookEntryHandler>();
-builder.Services.AddScoped<GetGuestbookEntriesHandler>();
-builder.Services.AddScoped<GetGuestbookEntryHandler>();
-builder.Services.AddScoped<UpdateGuestbookEntryHandler>();
-builder.Services.AddScoped<DeleteGuestbookEntryHandler>();
-
-builder.Services.AddScoped<UpdateCommentVoteHandler>(); 
-builder.Services.AddScoped<DeleteCommentVoteHandler>();
-builder.Services.AddScoped<GetCommentsVoteHandler>();
-builder.Services.AddScoped<CreateCommentVoteHandler>();
-
-builder.Services.AddScoped<GetStatisticsHandler>();
-builder.Services.AddScoped<UpdateStatisticsHandler>();
-
-builder.Services.AddScoped<IBlogInterface, EfBlogRepository>();
-builder.Services.AddScoped<IProjectInterface, EfProjectRepository>();
-builder.Services.AddScoped<IApplicationUserInterface, EfApplicationUserRepository>();
-builder.Services.AddScoped<ILikeInterface, EfLikeRepository>();
-builder.Services.AddScoped<ICommentInterface, EfCommentRepository>();
-builder.Services.AddScoped<ICommentVoteInterface, EfCommentVoteRepository>();
-builder.Services.AddScoped<IGuestbookEntry, EfGuestbookEntryRepository>();
-builder.Services.AddScoped<IStatisticsInterface, EfStatisticsRepository>();
+builder.Services.AddApplicationServices();
 builder.Services.AddHostedService<ImageCleanupService>();
 
 
@@ -135,10 +86,10 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // Erlaube deinem Vue-Frontend den Zugriff
-              .AllowAnyHeader()                     // Erlaube alle Header (z.B. Content-Type)
-              .AllowAnyMethod()                     // Erlaube GET, POST, PUT, DELETE etc.
-              .AllowCredentials();                  // EXTREM WICHTIG: Erlaubt das Senden von Cookies!
+        policy.WithOrigins("http://localhost:5173") 
+              .AllowAnyHeader()                     
+              .AllowAnyMethod()                     
+              .AllowCredentials();                 
     });
 });
 

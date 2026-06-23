@@ -1,24 +1,23 @@
 ﻿using Backend.Domain.Contracts;
-using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Backend.Application.UseCases.GetContent
+namespace Backend.Application.UseCases.Content
 {
-    public class GetLatestBlogsHandler
+    public class GetAllBlogsHandler
     {
-        private readonly IBlogInterface _repository;
+        private readonly IBlogInterface _repository; 
 
-        public GetLatestBlogsHandler(IBlogInterface repository)
+        public GetAllBlogsHandler(IBlogInterface repository)
         {
-            _repository = repository;
+            _repository = repository; 
         }
-        public async Task<IEnumerable<ContentListResponse>> Handle(int count = 3)
+
+        public async Task<IEnumerable<ContentListResponse>> Handle()
         {
-            var blogs = await _repository.GetLatestBlogsAsync(count); 
+            var blogs = await _repository.GetAllBlogsAsync();
 
             //Mapping Entity -> DTO
             return blogs.Select(b => new ContentListResponse(
@@ -29,9 +28,9 @@ namespace Backend.Application.UseCases.GetContent
                 ImgSrc: b.ImgSrc,
                 Description: b.Description,
                 Views: b.Views,
-                Tags: b.Tags,
                 LikesCount: b.Likes?.Sum(l => l.Count) ?? 0,
-                CommentsCount: b.Comments?.Count ?? 0
+                CommentsCount: b.Comments?.Count ?? 0,
+                Tags: b.Tags
             ));
         }
     }

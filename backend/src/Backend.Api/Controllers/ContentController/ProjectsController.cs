@@ -1,10 +1,9 @@
-﻿using Backend.Domain.Contracts;
-using Backend.Application.UseCases.GetContent;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using Backend.Application.UseCases.SaveContent;
+using Backend.Domain.Contracts;
 using Backend.Application.UseCases.Interactions;
+using Backend.Application.UseCases.Content;
 using Backend.Api.Helpers;
 
 namespace Backend.Api.Controllers;

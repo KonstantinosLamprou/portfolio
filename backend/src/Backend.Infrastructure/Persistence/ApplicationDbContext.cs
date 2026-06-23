@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using System.Text;
 
-namespace Backend.Infrastructure.Persistence
+namespace Backend.Infrastructure
 {
     public class ApplicationDbContext : DbContext
     {

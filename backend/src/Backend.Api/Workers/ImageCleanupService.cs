@@ -1,4 +1,4 @@
-using Backend.Infrastructure.Persistence;
+using Backend.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Presentation.Workers; 

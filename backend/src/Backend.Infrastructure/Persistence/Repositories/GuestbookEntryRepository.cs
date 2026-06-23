@@ -2,13 +2,13 @@ using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Backend.Infrastructure.Persistence.Repositories;
+namespace Backend.Infrastructure.Repositories;
 
-public class EfGuestbookEntryRepository : IGuestbookEntry
+public class GuestbookEntryRepository : IGuestbookEntry
 {
     private readonly ApplicationDbContext _context; 
 
-    public EfGuestbookEntryRepository(ApplicationDbContext context)
+    public GuestbookEntryRepository(ApplicationDbContext context)
     {
         _context = context;
     }

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Backend.Application.UseCases.DeleteContent
+namespace Backend.Application.UseCases.Content
 {
     public class DeleteBlogHandler
     {

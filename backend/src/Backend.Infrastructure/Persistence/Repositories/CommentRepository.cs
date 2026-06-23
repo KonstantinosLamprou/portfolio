@@ -2,13 +2,13 @@ using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Backend.Infrastructure.Persistence.Repositories;
+namespace Backend.Infrastructure.Repositories;
 
-public class EfCommentRepository : ICommentInterface
+public class CommentRepository : ICommentInterface
 {
     private readonly ApplicationDbContext _context;
 
-    public EfCommentRepository(ApplicationDbContext context)
+    public CommentRepository(ApplicationDbContext context)
     {
         _context = context;
     }

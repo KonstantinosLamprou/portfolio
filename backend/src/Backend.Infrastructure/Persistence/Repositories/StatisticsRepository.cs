@@ -3,13 +3,13 @@ using Backend.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace Backend.Infrastructure.Persistence.Repositories;
+namespace Backend.Infrastructure.Repositories;
 
-public class EfStatisticsRepository : IStatisticsInterface
+public class StatisticsRepository : IStatisticsInterface
 {
     private readonly ApplicationDbContext _context;
 
-    public EfStatisticsRepository(ApplicationDbContext context)
+    public StatisticsRepository(ApplicationDbContext context)
     {
         _context = context;
     }

@@ -3,7 +3,7 @@ using Backend.Domain.Contracts;
 using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
 
-namespace Backend.Application.UseCases.SaveContent;
+namespace Backend.Application.UseCases.Content;
 
 public class CreateContentHandler
 {

@@ -5,7 +5,7 @@ using System.Text.Json;
 using Backend.Domain.Contracts;
 using Backend.Domain.Interfaces;
 
-namespace Backend.Application.UseCases.GetContent; 
+namespace Backend.Application.UseCases.Content; 
 
 public class GetProjectDetailsHandler
 {

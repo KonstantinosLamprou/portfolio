@@ -5,13 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Backend.Infrastructure.Persistence.Repositories;
+namespace Backend.Infrastructure.Repositories;
 
-public class EfLikeRepository : ILikeInterface
+public class LikeRepository : ILikeInterface
 {
     private readonly ApplicationDbContext _context;
 
-    public EfLikeRepository(ApplicationDbContext context)
+    public LikeRepository(ApplicationDbContext context)
     {
         _context = context;
     }

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Backend.Application.UseCases.GetContent
+namespace Backend.Application.UseCases.Content
 {
     public class GetAllProjectsHandler
     {

@@ -2,13 +2,13 @@ using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Backend.Infrastructure.Persistence.Repositories;
+namespace Backend.Infrastructure.Repositories;
 
-public class EfApplicationUserRepository : IApplicationUserInterface
+public class ApplicationUserRepository : IApplicationUserInterface
 {
     private readonly ApplicationDbContext _context;
 
-    public EfApplicationUserRepository(ApplicationDbContext context)
+    public ApplicationUserRepository(ApplicationDbContext context)
     {
         _context = context;
     }

@@ -1,6 +1,5 @@
-﻿using Backend.Application.UseCases.GetContent;
-using Backend.Application.UseCases.Interactions;
-using Backend.Application.UseCases.SaveContent;
+﻿using Backend.Application.UseCases.Interactions;
+using Backend.Application.UseCases.Content;
 using Backend.Domain.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
