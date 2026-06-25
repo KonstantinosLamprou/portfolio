@@ -1,10 +1,11 @@
 using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
 using Backend.Domain.Contracts;
+using Backend.Application.Common.Interfaces;
 
 namespace Backend.Application.UseCases.Comments;
 
-public class GetCommentByIdHandler
+public class GetCommentByIdHandler : IQueryHandler<GetCommentByIdQuery, CommentResponseDto?>
 {
     private readonly ICommentInterface _repository;
 
@@ -13,9 +14,9 @@ public class GetCommentByIdHandler
         _repository = repository;
     }
 
-    public async Task<CommentResponseDto?> Handle(Guid commentId, Guid? currentUserId)
+    public async Task<CommentResponseDto?> HandleAsync(GetCommentByIdQuery query, CancellationToken cancellationToken = default)
     {
-        var comment = await _repository.GetCommentByIdAsync(commentId);
+        var comment = await _repository.GetCommentByIdAsync(query.CommentId);
 
         if (comment == null)
             return null;
@@ -38,7 +39,7 @@ public class GetCommentByIdHandler
                     ProfilePictureUrl: comment.Author.ProfilePictureUrl,
                     Role: comment.Author.Role
                 ),
-            CurrentUserVote: currentUserId.HasValue ? comment.Votes.FirstOrDefault(v => v.UserId == currentUserId.Value)?.IsUpvote : null,
+            CurrentUserVote: query.CurrentUserId.HasValue ? comment.Votes.FirstOrDefault(v => v.UserId == query.CurrentUserId.Value)?.IsUpvote : null,
             IsDeleted: comment.IsDeleted,
             Upvotes: comment.IsDeleted ? 0 : comment.Upvotes,
             Downvotes: comment.IsDeleted ? 0 : comment.Downvotes,

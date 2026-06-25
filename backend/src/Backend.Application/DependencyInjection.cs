@@ -1,9 +1,12 @@
+using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using Backend.Application.Common.Interfaces;
+using Backend.Application.Common.Decorators;
 using Backend.Application.UseCases.Content;
 using Backend.Application.UseCases.Comments;
 using Backend.Application.UseCases.Guestbook;
 using Backend.Application.UseCases.Interactions;
 using Backend.Application.UseCases.User;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Backend.Application;
 
@@ -19,7 +22,29 @@ public static class DependencyInjection
 
         return services;
     }
+    // public static IServiceCollection AddApplication(this IServiceCollection services)
+    // {
+    //     var assembly = Assembly.GetExecutingAssembly();
 
+    //     // 1. Scrutor sucht automatisch ALLE Klassen, die IQueryHandler implementieren, 
+    //     // und registriert sie im Container.
+    //     services.Scan(selector => selector
+    //         .FromAssemblies(assembly)
+    //         .AddClasses(filter => filter.AssignableTo(typeof(IQueryHandler<,>)))
+    //         .AsImplementedInterfaces()
+    //         .WithScopedLifetime());
+
+    //     // 2. Die Matroschka-Puppe: Wir stülpen den PerformanceLogger über alle Handler!
+    //     services.Decorate(typeof(IQueryHandler<,>), typeof(PerformanceLoggingDecorator<,>));
+
+    // 2. Innere Hülle: Caching (Wird nur ausgeführt, wenn der Logger den Befehl durchreicht)
+            // services.Decorate(typeof(IQueryHandler<,>), typeof(CachingDecorator<,>));
+
+            // // 3. Äußere Hülle: Performance Logger (Stoppt die Zeit vom ERSTEN Klick an)
+            // services.Decorate(typeof(IQueryHandler<,>), typeof(PerformanceLoggingDecorator<,>));
+
+    //     return services;
+    // }
     private static IServiceCollection AddHandlers(this IServiceCollection services)
     {
         // User Handler

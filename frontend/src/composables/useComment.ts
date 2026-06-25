@@ -5,8 +5,8 @@ export function useUpdateCommentMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ commentId, text }: { commentId: string, text: string }) => {
-      const response = await apiClient.patch(`/comments/${commentId}`, { 
+    mutationFn: async ({ commentId, text, contentId }: { commentId: string, text: string, contentId: number }) => {
+      const response = await apiClient.patch(`/comments/${commentId}?${contentId}`, { 
         commentId: commentId, 
         text: text 
       });
@@ -30,8 +30,8 @@ export function useDeleteCommentMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (commentId: string) => {
-      await apiClient.delete(`/comments/${commentId}`);
+    mutationFn: async ({commentId, contentId}: { commentId: string, contentId: number }) => {
+      await apiClient.delete(`/comments/${commentId}?${contentId}`);
 
     },
     onSuccess: () => {

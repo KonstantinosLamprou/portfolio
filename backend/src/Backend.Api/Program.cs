@@ -14,9 +14,20 @@ using System.Security.Claims;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication;
 using Backend.Api.Middlewares;
+using Serilog;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Logger Lokal
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration) 
+    .Enrich.FromLogContext()
+    .WriteTo.Console() 
+    .WriteTo.Seq("http://seq:80") 
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 Env.Load();
 builder.Configuration.AddEnvironmentVariables();
@@ -64,6 +75,8 @@ builder.Services.Configure<AdminOptions>(
     builder.Configuration.GetSection("Admin")
 );
 
+builder.Services.AddMemoryCache();
+
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
 builder.Services.AddControllers();
@@ -76,6 +89,7 @@ builder.Services.AddSwaggerGen(options =>
 
 // Den Handler für die Dependency Injection registrieren
 builder.Services.AddApplicationServices();
+
 builder.Services.AddHostedService<ImageCleanupService>();
 
 

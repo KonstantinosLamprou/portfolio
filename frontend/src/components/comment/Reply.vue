@@ -154,7 +154,7 @@ import CommentVote from './CommentVote.vue';
 
 const props = defineProps<{
   comment: CommentResponseDto;
-  
+  contentId: number;
 }>();
 
 const { data: session } = useSession()
@@ -207,7 +207,7 @@ const cancelEdit = () => {
 };
 
 const handleDelete = () => {
-  deleteComment(props.comment.id, {
+  deleteComment({ commentId: props.comment.id, contentId: props.contentId }, {
     onSuccess: () => {
       toast("Kommentar erfolgreich entfernt.");
       isPopoverOpen.value = false;
@@ -232,7 +232,7 @@ const handleUpdate = () => {
     return;
   }
   
-  updateComment({ commentId: props.comment.id, text: updatedText.value }, {
+  updateComment({ commentId: props.comment.id, text: updatedText.value, contentId: props.contentId }, {
     onSuccess: () => {
       toast("Kommentar aktualisiert.");
       isEditingComment.value = false;

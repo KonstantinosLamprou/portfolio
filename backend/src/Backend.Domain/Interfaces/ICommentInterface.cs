@@ -4,9 +4,8 @@ namespace Backend.Domain.Interfaces;
 
 public interface ICommentInterface
 {
-    Task<Comment?> GetCommentByIdAsync(Guid CommentId);
-    Task<IEnumerable<Comment>> GetCommentsByContentIdAsync(int contentId);
-    Task AddCommentAsync(Comment comment);
-    Task UpdateCommentAsync(Comment comment);
-    Task<bool> DeleteCommentAsync(Guid CommentId);
+    Task<Comment?> GetCommentByIdAsync(Guid commentId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Comment>> GetCommentsByContentIdAsync(int contentId, CancellationToken cancellationToken = default);
+    Task AddCommentAsync(Comment comment, CancellationToken cancellationToken = default);
+    Task UpdateCommentAsync(Comment comment, CancellationToken cancellationToken = default);
 }

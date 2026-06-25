@@ -33,11 +33,14 @@ public class CommentsController : ControllerBase
 
     [HttpGet("{commentId}")]
     [ProducesResponseType(typeof(CommentResponseDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetComment(Guid commentId)
+    public async Task<IActionResult> GetComment(Guid commentId, CancellationToken cancellationToken)
     {
         Guid userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User) ?? Guid.Empty;
 
-        var comment = await _getCommentByIdHandler.Handle(commentId, userId);
+        var comment = await _getCommentByIdHandler.HandleAsync(
+            new GetCommentByIdQuery(commentId, userId), 
+            cancellationToken
+            );
 
         if (comment == null)
             return NotFound();
@@ -45,9 +48,11 @@ public class CommentsController : ControllerBase
         return Ok(comment);
     }
 
-    [HttpPost ("")]
+    [HttpPost]
     [Authorize] 
-    public async Task<IActionResult> CreateComment([FromBody] CreateCommentRequest request)
+    public async Task<IActionResult> CreateComment(
+        [FromBody] CreateCommentRequest request, 
+        CancellationToken cancellationToken)
     {
         // ID aus den Token-Claims des angemeldeten Users holen
         var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -55,7 +60,7 @@ public class CommentsController : ControllerBase
         if (!Guid.TryParse(userIdString, out Guid authorId))
             return Unauthorized();
 
-        var responseDto = await _createCommentHandler.Handle(request, authorId);
+        var responseDto = await _createCommentHandler.HandleAsync(new CreateCommentCommand(request, authorId), cancellationToken);
 
         return CreatedAtAction(nameof(GetComment), new { commentId = responseDto.Id }, responseDto); 
     
@@ -65,49 +70,56 @@ public class CommentsController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<CommentResponseDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetComments(
         [FromQuery] int contentId, 
-        [FromQuery] string contentType)
+        [FromQuery] string contentType, 
+        CancellationToken cancellationToken)
     {
 
         Guid userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User) ?? Guid.Empty;
 
-        var comments = await _getCommentsHandler.Handle(contentType, contentId, userId);
+        //Testen ob das hier so funktioniert ohne type 
+        var comments = await _getCommentsHandler.HandleAsync(
+            new GetCommentsQuery(contentId, contentType, userId), 
+            cancellationToken);
 
         return Ok(comments);
     }
 
-
-    //TODO: 
-    // Braucht das Update vielleicht bei keiner Bereichtigung eine Response mit 403 Forbidden statt einer Exception?
     [HttpPatch("{commentId}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Authorize]
-    public async Task<IActionResult> UpdateComment(Guid commentId, [FromBody] UpdateCommentRequest request)
+    public async Task<IActionResult> UpdateComment(
+        Guid commentId, 
+        [FromBody] UpdateCommentRequest request, 
+        [FromQuery] int contentId, 
+        CancellationToken cancellationToken)
     {
         var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
 
         if (userId == null)
             return Unauthorized();
 
-        await _updateCommentHandler.Handle(commentId, request, userId.Value);
+        await _updateCommentHandler.HandleAsync(
+            new UpdateCommentCommand(commentId, contentId, request, userId.Value), 
+            cancellationToken);
 
         return NoContent();
     }
     
-
     [HttpDelete("{commentId}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Authorize]
-    public async Task<IActionResult> DeleteComment(Guid commentId)
+    public async Task<IActionResult> DeleteComment(
+        Guid commentId, 
+        [FromQuery] int contentId, 
+        CancellationToken cancellationToken) 
     {
         var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
-
-        if (userId == null)
+        if (userId == null) 
             return Unauthorized();
 
-        var result = await _deleteCommentHandler.Handle(commentId, userId.Value);
-
-        if (!result)
-            return NotFound();
+        await _deleteCommentHandler.HandleAsync(
+            new DeleteCommentCommand(commentId, contentId, userId.Value), 
+            cancellationToken);
 
         return NoContent();
     }

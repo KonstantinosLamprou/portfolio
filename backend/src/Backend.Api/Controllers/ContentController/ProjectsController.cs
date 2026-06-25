@@ -42,11 +42,17 @@ public class ProjectsController : ControllerBase
     [HttpGet("{slug}")] // /api/blogs/123
     [ProducesResponseType(typeof(ContentDetailResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetProjectDetails(string slug)
+    public async Task<IActionResult> GetProjectDetails(
+        string slug, 
+        CancellationToken cancellationToken
+    )
     {
         Guid? userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User); 
 
-        var result = await _projectDetailshandler.Handle(slug, userId);
+        var result = await _projectDetailshandler.HandleAsync(
+            new GetProjectDetailsQuery(slug, userId),
+            cancellationToken
+            );
 
         if (result == null)
         {

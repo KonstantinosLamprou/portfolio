@@ -18,8 +18,17 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
-  # Dein neuer Super-Container für .NET und Vue
+  seq:
+      image: datalust/seq:latest
+      container_name: portfolio_seq
+      environment:
+        - ACCEPT_EULA=Y
+        - SEQ_FIRSTRUN_ADMINPASSWORD=${SEQ_FIRSTRUN_ADMINPASSWORD}
+      ports:
+        - "5341:80"
+      restart: unless-stopped
+      volumes:
+        - seq_data:/data
   workspace:
     image: mcr.microsoft.com/devcontainers/dotnet:10.0
     container_name: portfolio_workspace
@@ -32,6 +41,9 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      seq:
+        condition: service_started
 
 volumes:
   postgres_data:
+  seq_data:

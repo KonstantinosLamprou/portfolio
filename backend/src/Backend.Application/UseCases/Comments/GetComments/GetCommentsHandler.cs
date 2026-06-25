@@ -2,10 +2,11 @@ using System.Text.Json;
 using Backend.Domain.Contracts;
 using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
+using Backend.Application.Common.Interfaces;
 
 namespace Backend.Application.UseCases.Comments;
 
-public class GetCommentsHandler
+public class GetCommentsHandler : IQueryHandler<GetCommentsQuery, List<CommentResponseDto>>
 {
     private readonly IBlogInterface _blogRepository;
     private readonly IProjectInterface _projectRepository;
@@ -18,17 +19,17 @@ public class GetCommentsHandler
         _commentRepository = commentRepository;
     }
 
-    public async Task<List<CommentResponseDto>> Handle(string contentType, int contentId, Guid? currentUserId)
+    public async Task<List<CommentResponseDto>> HandleAsync(GetCommentsQuery query, CancellationToken cancellationToken)
     {
-        ContentBase? content = contentType.ToLower() switch 
+        ContentBase? content = query.ContentType.ToLower() switch 
         {
-            "blog" => await _blogRepository.GetBlogByIdAsync(contentId),
-            "project" => await _projectRepository.GetProjectByIdAsync(contentId),
-            _ => throw new ArgumentException($"Ungültiger ContentType: {contentType}")
+            "blog" => await _blogRepository.GetBlogByIdAsync(query.ContentId),
+            "project" => await _projectRepository.GetProjectByIdAsync(query.ContentId),
+            _ => throw new ArgumentException($"Ungültiger ContentType: {query.ContentType}")
         };
 
         if (content == null)
-            throw new KeyNotFoundException($"Content mit ID {contentId} nicht gefunden.");
+            throw new KeyNotFoundException($"Content mit ID {query.ContentId} nicht gefunden.");
 
 
         var allComments = await _commentRepository.GetCommentsByContentIdAsync(content.Id);
@@ -49,7 +50,7 @@ public class GetCommentsHandler
                 ProfilePictureUrl: c.Author.ProfilePictureUrl,
                 Role: c.Author.Role
             ),
-            CurrentUserVote: currentUserId.HasValue ? c.Votes.FirstOrDefault(v => v.UserId == currentUserId.Value)?.IsUpvote : null,
+            CurrentUserVote: query.CurrentUserId.HasValue ? c.Votes.FirstOrDefault(v => v.UserId == query.CurrentUserId.Value)?.IsUpvote : null,
             IsDeleted: c.IsDeleted,
             Upvotes: c.IsDeleted ? 0 : c.Upvotes,
             Downvotes: c.IsDeleted ? 0 : c.Downvotes,

@@ -2,10 +2,11 @@ using System.Text.Json;
 using Backend.Domain.Contracts;
 using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
+using Backend.Application.Common.Interfaces;
 
 namespace Backend.Application.UseCases.Comments;
 
-public class CreateCommentHandler
+public class CreateCommentHandler : ICommandHandler<CreateCommentCommand, CommentResponseDto>
 {
     private readonly IBlogInterface _blogRepository;
     private readonly IProjectInterface _projectRepository;
@@ -18,27 +19,30 @@ public class CreateCommentHandler
         _commentRepository = commentRepository;
     }
 
-    public async Task<CommentResponseDto> Handle(CreateCommentRequest request, Guid authorId)
+    public async Task<CommentResponseDto> HandleAsync(CreateCommentCommand command, CancellationToken cancellationToken = default)
     {
+        // Hier wird die AuthorId aus dem Request benötigt. In der Regel sollte diese aus dem Authentifizierungs-Token oder Cookie stammen.
+        Guid AuthorId = command.authorId; // Dies sollte aus dem Request kommen, nicht hartcodiert sein.
+
         // Entscheidung: Blog oder Project?
-        ContentBase? content = request.ContentType.ToLower() switch
+        ContentBase? content = command.request.ContentType.ToLower() switch
         {
-            "blog" => await _blogRepository.GetBlogByIdAsync(request.ContentId),
-            "project" => await _projectRepository.GetProjectByIdAsync(request.ContentId),
-            _ => throw new ArgumentException($"Ungültiger ContentType: {request.ContentType}")
+            "blog" => await _blogRepository.GetBlogByIdAsync(command.request.ContentId),
+            "project" => await _projectRepository.GetProjectByIdAsync(command.request.ContentId),
+            _ => throw new ArgumentException($"Ungültiger ContentType: {command.request.ContentType}")
         };
 
         if (content == null)
-            throw new KeyNotFoundException($"Content mit ID {request.ContentId} nicht gefunden.");
+            throw new KeyNotFoundException($"Content mit ID {command.request.ContentId} nicht gefunden.");
 
         // Kommentar erstellen
         Comment comment = new Comment
         {
             ContentId = content.Id,
-            AuthorId = authorId, // Wird diese aus dem Cookie im Frontend übergeben? Oder brauchen wir hier die AuthorDto aus dem Request?
-            Text = request.Text,
+            AuthorId = AuthorId, 
+            Text = command.request.Text,
             CreatedAt = DateTime.UtcNow,
-            ParentCommentId = request.ParentCommentId == Guid.Empty ? null : request.ParentCommentId
+            ParentCommentId = command.request.ParentCommentId == Guid.Empty ? null : command.request.ParentCommentId
         };
 
         // Kommentar speichern
@@ -63,6 +67,5 @@ public class CreateCommentHandler
             IsDeleted: false,
             Replies: new List<CommentResponseDto>()
         );
-
     }
 }
