@@ -4,6 +4,6 @@ namespace Backend.Domain.Interfaces;
 
 public interface IStatisticsInterface
 {
-    Task<Statistics?> GetStatisticsAsync();
-    Task UpdateStatisticsAsync(Statistics statistics);
+    Task<Statistics?> GetStatisticsAsync(CancellationToken cancellationToken = default);
+    Task UpdateStatisticsAsync(Statistics statistics, CancellationToken cancellationToken = default);
 }

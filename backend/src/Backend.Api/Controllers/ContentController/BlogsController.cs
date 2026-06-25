@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Backend.Api.Helpers; 
+using Backend.Application.Common.Interfaces; 
+
 
 namespace Backend.Api.Controllers;
 
@@ -12,21 +14,21 @@ namespace Backend.Api.Controllers;
 [Route("api/blogs")] // /api/blogs
 public class BlogsController : ControllerBase
 {
-    private readonly GetAllBlogsHandler _getAllBlogsHandler;
-    private readonly GetBlogDetailsHandler _blogDetailshandler; 
-    private readonly CreateContentHandler _createContentHandler;
-    private readonly GetLatestBlogsHandler _latestBlogsHandler;
+    private readonly IQueryHandler<GetAllBlogsQuery, IEnumerable<ContentListResponse>> _getAllBlogsHandler;
+    private readonly IQueryHandler<GetBlogsDetailsQuery, ContentDetailResponse> _blogDetailshandler;
+    private readonly ICommandHandler<CreateContentCommand, ContentDetailResponse> _createContentHandler;
+    private readonly IQueryHandler<GetLatestBlogsQuery, IEnumerable<ContentListResponse>> _latestBlogsHandler;
 
-    private readonly UpdateViewsBlogHandler _updateViewsBlogHandler;
+    private readonly ICommandHandler<UpdateBlogViewsCommand, UpdateViewsContentResponse> _updateViewsBlogHandler;
 
 
     // Handler Dependency Injection 
     public BlogsController(
-        GetAllBlogsHandler getAllBlogsHandler,
-        GetBlogDetailsHandler blogDetailshandler,
-        CreateContentHandler createContentHandler,
-        GetLatestBlogsHandler latestBlogsHandler, 
-        UpdateViewsBlogHandler updateViewsBlogHandler
+        IQueryHandler<GetAllBlogsQuery, IEnumerable<ContentListResponse>> getAllBlogsHandler,
+        IQueryHandler<GetBlogsDetailsQuery, ContentDetailResponse> blogDetailshandler,
+        ICommandHandler<CreateContentCommand, ContentDetailResponse> createContentHandler,
+        IQueryHandler<GetLatestBlogsQuery, IEnumerable<ContentListResponse>> latestBlogsHandler, 
+        ICommandHandler<UpdateBlogViewsCommand, UpdateViewsContentResponse> updateViewsBlogHandler
           )
     {
         _getAllBlogsHandler = getAllBlogsHandler;
@@ -38,9 +40,9 @@ public class BlogsController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<ContentListResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAllBlogs()
+    public async Task<IActionResult> GetAllBlogs(CancellationToken ct = default)
     {
-        var result = await _getAllBlogsHandler.Handle();
+        var result = await _getAllBlogsHandler.HandleAsync(new GetAllBlogsQuery(CurrentUserHelper.GetCurrentUserIdFromClaims(User) ?? Guid.Empty), ct);
 
         return Ok(result); 
     }
@@ -48,11 +50,11 @@ public class BlogsController : ControllerBase
     [HttpGet("{slug}")] // /api/blogs/123
     [ProducesResponseType(typeof(ContentDetailResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetBlogDetails(string slug)
+    public async Task<IActionResult> GetBlogDetails(string slug, CancellationToken ct = default)
     {
         Guid userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User) ?? Guid.Empty;
 
-        var result = await _blogDetailshandler.Handle(slug, userId);
+        var result = await _blogDetailshandler.HandleAsync(new GetBlogsDetailsQuery(slug, userId), ct);
 
         if (result == null)
         {
@@ -64,31 +66,44 @@ public class BlogsController : ControllerBase
 
     [HttpGet("latest")] // /api/blogs/latest?count=5 wegen FromQuery kann man es anpassen 
     [ProducesResponseType(typeof(IEnumerable<ContentListResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetLatestBlogs([FromQuery] int count = 3)
+    public async Task<IActionResult> GetLatestBlogs([FromQuery] int count = 3, CancellationToken ct = default)
     {
-        var result = await _latestBlogsHandler.Handle(count);
+        var result = await _latestBlogsHandler.HandleAsync(new GetLatestBlogsQuery(count), ct);
         return Ok(result);
     }
 
-    [HttpPost("create")]
+    [HttpPost]
     [Authorize(Roles = "Admin")]  
-    public async Task<IActionResult> CreateContent([FromBody] CreateBlogRequest request)
+    public async Task<IActionResult> CreateContent([FromBody] CreateContentRequest request, CancellationToken ct)
     {
-        Guid? userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User) ?? Guid.Empty;
+        Guid? userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
 
-
-        if (!userId.HasValue)
+        if (userId == null || userId == Guid.Empty)
             return Unauthorized(new { message = "User nicht authentifiziert." });
 
-        var result = await _createContentHandler.Handle(request, userId.Value);
+        var result = await _createContentHandler.HandleAsync(new CreateContentCommand(
+            ContentType: request.ContentType,
+            Title: request.Title,
+            Slug: request.Slug,
+            ImgSrc: request.ImgSrc,
+            Description: request.Description,
+            Content: request.Content,
+            Tags: request.Tags,
+            CurrentUserId: userId.Value
+        ), ct);
+
         return CreatedAtAction(nameof(GetBlogDetails), new { slug = result.Slug }, result);
     }
 
     [HttpPatch("{blogId}/view")]
     [ProducesResponseType(typeof(UpdateViewsContentResponse), StatusCodes.Status200OK)]
-    public async Task<IActionResult> IncrementBlogViews(int blogId)
+    public async Task<IActionResult> IncrementBlogViews(
+        [FromRoute] int blogId, 
+        [FromQuery] string slug, 
+        CancellationToken cancellationToken)
     {
-        var result = await _updateViewsBlogHandler.Handle(blogId);
+        var result = await _updateViewsBlogHandler.HandleAsync(new UpdateBlogViewsCommand(blogId, slug), cancellationToken);
+
         return Ok(result);
     }
 

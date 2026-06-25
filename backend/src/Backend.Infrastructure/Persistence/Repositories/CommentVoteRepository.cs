@@ -13,31 +13,31 @@ public class CommentVoteRepository : ICommentVoteInterface
         _context = context;
     }
 
-    public async Task<IEnumerable<CommentVote>> GetCommentVotesAsync(Guid commentId)
+    public async Task<IEnumerable<CommentVote>> GetCommentVotesAsync(Guid commentId, CancellationToken cancellationToken = default)
     {
         return await _context.CommentVotes
             .Where(vote => vote.CommentId == commentId)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<CommentVote?> GetUserCommentVoteAsync(Guid commentId, Guid userId)
+    public async Task<CommentVote?> GetUserCommentVoteAsync(Guid commentId, Guid userId, CancellationToken cancellationToken = default)
     {
         return await _context.CommentVotes
-            .SingleOrDefaultAsync(vote => vote.CommentId == commentId && vote.UserId == userId);
+            .SingleOrDefaultAsync(vote => vote.CommentId == commentId && vote.UserId == userId, cancellationToken);
     }
 
-    public async Task CreateCommentVoteAsync(CommentVote vote)
+    public async Task CreateCommentVoteAsync(CommentVote vote, CancellationToken cancellationToken = default)
     {
         
         _context.CommentVotes.Add(vote);
 
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateCommentVoteAsync(bool isUpvote, Guid commentId, Guid userId)
+    public async Task UpdateCommentVoteAsync(bool isUpvote, Guid commentId, Guid userId, CancellationToken cancellationToken = default)
     {
         var existingVote = await _context.CommentVotes
-            .SingleOrDefaultAsync(vote => vote.CommentId == commentId && vote.UserId == userId);
+            .SingleOrDefaultAsync(vote => vote.CommentId == commentId && vote.UserId == userId, cancellationToken);
 
         if (existingVote != null)
         {
@@ -45,22 +45,20 @@ public class CommentVoteRepository : ICommentVoteInterface
             existingVote.VotedAt = DateTime.UtcNow;
 
             _context.CommentVotes.Update(existingVote);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 
-    public async Task<bool> DeleteCommentVoteAsync(Guid commentId, Guid userId)
+    public async Task DeleteCommentVoteAsync(Guid commentId, Guid userId, CancellationToken cancellationToken = default)
     {
         var existingVote = await _context.CommentVotes
-            .SingleOrDefaultAsync(vote => vote.CommentId == commentId && vote.UserId == userId);
+            .SingleOrDefaultAsync(vote => vote.CommentId == commentId && vote.UserId == userId, cancellationToken);
 
         if (existingVote != null)
         {
             _context.CommentVotes.Remove(existingVote);
-            await _context.SaveChangesAsync();
-            return true;
+            await _context.SaveChangesAsync(cancellationToken);
         }
-        return false;
     }
 
 }

@@ -2,10 +2,11 @@ using System.Text.Json;
 using Backend.Domain.Contracts;
 using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
+using Backend.Application.Common.Interfaces;
 
 namespace Backend.Application.UseCases.Content;
 
-public class CreateContentHandler
+public class CreateContentHandler : ICommandHandler<CreateContentCommand, ContentDetailResponse>
 {
     private readonly IBlogInterface _blogRepository;
     private readonly IProjectInterface _projectRepository;
@@ -16,18 +17,17 @@ public class CreateContentHandler
         _projectRepository = projectRepository;
     }
 
-    public async Task<ContentDetailResponse> Handle(CreateBlogRequest request, Guid authorId)
+    public async Task<ContentDetailResponse> HandleAsync(CreateContentCommand command, CancellationToken cancellationToken = default)
     {
-        // Entscheidung: Blog oder Project?
-        ContentBase content = request.ContentType.ToLower() switch
+        ContentBase content = command.ContentType.ToLower() switch
         {
             "blog" => new Blog
             {
-                Title = request.Title,
-                Slug = request.Slug,
-                ImgSrc = request.ImgSrc,
-                Description = request.Description,
-                Content = request.Content
+                Title = command.Title,
+                Slug = command.Slug,
+                ImgSrc = command.ImgSrc,
+                Description = command.Description,
+                Content = command.Content
                     .Select(c => new ContentBlock 
                     { 
                         Id = c.Id,
@@ -35,16 +35,16 @@ public class CreateContentHandler
                         Data = c.Data.GetRawText() 
                     })
                     .ToList(),
-                AuthorId = authorId, 
-                Tags = request.Tags
+                AuthorId = command.CurrentUserId, 
+                Tags = command.Tags
             },
             "project" => new Project
             {
-                Title = request.Title,
-                Slug = request.Slug,
-                ImgSrc = request.ImgSrc,
-                Description = request.Description,
-                Content = request.Content
+                Title = command.Title,
+                Slug = command.Slug,
+                ImgSrc = command.ImgSrc,
+                Description = command.Description,
+                Content = command.Content
                     .Select(c => new ContentBlock 
                     { 
                         Id = c.Id,
@@ -52,21 +52,20 @@ public class CreateContentHandler
                         Data = c.Data.GetRawText() 
                     })
                     .ToList(),
-                AuthorId = authorId,
-                Tags = request.Tags
+                AuthorId = command.CurrentUserId,
+                Tags = command.Tags
             },
-            _ => throw new InvalidOperationException($"Ungültiger ContentType: {request.ContentType}")
+            _ => throw new InvalidOperationException($"Ungültiger ContentType: {command.ContentType}")
         };
 
-        // Je nachdem was es ist, speichern
         ContentBase savedContent = content switch
         {
-            Blog blog => await _blogRepository.SaveBlogAsync(blog),
-            Project project => await _projectRepository.SaveProjectAsync(project),
+            Blog blog => await _blogRepository.SaveBlogAsync(blog, cancellationToken),
+            Project project => await _projectRepository.SaveProjectAsync(project, cancellationToken),
             _ => throw new InvalidOperationException()
         };
 
-        // Mapping zu DTO (wie in deinen anderen Handlers)
+        // Mapping DTO 
         var author = savedContent.Author;
         return new ContentDetailResponse(
             Id: savedContent.Id,

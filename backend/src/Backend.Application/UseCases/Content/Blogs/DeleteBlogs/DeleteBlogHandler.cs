@@ -13,7 +13,7 @@ namespace Backend.Application.UseCases.Content
             _repository = repository;
         }
 
-        public async Task<bool> Handle(string slug, Guid currentUserId)
+        public async Task Handle(string slug, Guid currentUserId)
         {
             var blog = await _repository.GetBlogBySlugAsync(slug);
 
@@ -23,7 +23,7 @@ namespace Backend.Application.UseCases.Content
             if (blog.AuthorId != currentUserId /* && !IsCurrentUserAdmin() */) 
                 throw new UnauthorizedAccessException("Sie haben keine Berechtigung, diesen Blog zu löschen.");
 
-           return await _repository.DeleteBlogAsync(blog.Id); 
+           await _repository.DeleteBlogAsync(blog.Id); 
         }
     }
 }

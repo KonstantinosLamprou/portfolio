@@ -4,6 +4,9 @@ using System.Security.Claims;
 using Backend.Application.UseCases.Interactions;
 using Backend.Api.Helpers;
 using Backend.Domain.Contracts;
+using Backend.Application.Common.Interfaces;
+using Backend.Application.Common.Models;
+
 
 namespace Backend.Api.Controllers;
 
@@ -11,16 +14,16 @@ namespace Backend.Api.Controllers;
 [Route("api/commentvote")]
 public class CommentVoteController : ControllerBase
 {
-    private readonly CreateCommentVoteHandler _createCommentVoteHandler;
-    private readonly UpdateCommentVoteHandler _updateCommentVoteHandler;
-    private readonly DeleteCommentVoteHandler _deleteCommentVoteHandler;
-    private readonly GetCommentsVoteHandler _getCommentsVoteHandler;
+    private readonly ICommandHandler<CreateCommentVoteCommand, Unit> _createCommentVoteHandler;
+    private readonly ICommandHandler<UpdateCommentVoteCommand, Unit> _updateCommentVoteHandler;
+    private readonly ICommandHandler<DeleteCommentVoteCommand, Unit> _deleteCommentVoteHandler;
+    private readonly IQueryHandler<GetCommentsVoteQuery, Dictionary<string, int>> _getCommentsVoteHandler;
 
     public CommentVoteController(
-        CreateCommentVoteHandler createCommentVoteHandler,
-        UpdateCommentVoteHandler updateCommentVoteHandler,
-        DeleteCommentVoteHandler deleteCommentVoteHandler,
-        GetCommentsVoteHandler getCommentsVoteHandler)
+        ICommandHandler<CreateCommentVoteCommand, Unit> createCommentVoteHandler,
+        ICommandHandler<UpdateCommentVoteCommand, Unit> updateCommentVoteHandler,
+        ICommandHandler<DeleteCommentVoteCommand, Unit> deleteCommentVoteHandler,
+        IQueryHandler<GetCommentsVoteQuery, Dictionary<string, int>> getCommentsVoteHandler)
     {
         _createCommentVoteHandler = createCommentVoteHandler;
         _updateCommentVoteHandler = updateCommentVoteHandler;
@@ -29,38 +32,35 @@ public class CommentVoteController : ControllerBase
     }
 
     [HttpGet("{commentId}")]
-    public async Task<IActionResult> GetCommentsVote(Guid commentId)
+    public async Task<IActionResult> GetCommentsVote([FromRoute] Guid commentId, CancellationToken cancellationToken)
     {
-            var result = await _getCommentsVoteHandler.Handle(commentId);
+        var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User) ?? Guid.Empty;
 
-            return Ok(result);
+        var result = await _getCommentsVoteHandler.HandleAsync(new GetCommentsVoteQuery(commentId, userId), cancellationToken);
+
+        return Ok(result);
     }
 
     [HttpPost]
     [ProducesResponseType(typeof(CreateVoteDto), StatusCodes.Status201Created)]
     [Authorize]
-    public async Task<IActionResult> CreateOrUpdateCommentVote([FromBody] CreateVoteDto createVoteDto)
+    public async Task<IActionResult> CreateOrUpdateCommentVote([FromBody] CreateVoteDto createVoteDto, CancellationToken cancellationToken)
     {
-        try
-        {
-            var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
+        var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
 
-            if (userId == Guid.Empty || userId == null)
-                return Unauthorized();
+        if (userId == Guid.Empty || userId == null)
+            return Unauthorized();
 
-            await _createCommentVoteHandler.Handle(createVoteDto, userId.Value);
-            return CreatedAtAction(nameof(GetCommentsVote), new { commentId = createVoteDto.CommentId }, createVoteDto); 
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        await _createCommentVoteHandler.HandleAsync(new CreateCommentVoteCommand(createVoteDto, userId.Value), cancellationToken);
+
+        return CreatedAtAction(nameof(GetCommentsVote), new { commentId = createVoteDto.CommentId }, createVoteDto); 
+
     }
 
     [HttpPatch("{commentId}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Authorize]
-    public async Task<IActionResult> UpdateCommentVote(Guid commentId, [FromBody] UpdateVoteDto updateVoteDto)
+    public async Task<IActionResult> UpdateCommentVote([FromRoute] Guid commentId, [FromBody] UpdateVoteDto updateVoteDto, CancellationToken cancellationToken)
     {
 
         var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
@@ -68,7 +68,7 @@ public class CommentVoteController : ControllerBase
         if (userId == Guid.Empty || userId == null)
             return Unauthorized();
 
-        await _updateCommentVoteHandler.Handle(commentId, updateVoteDto, userId.Value);
+        await _updateCommentVoteHandler.HandleAsync(new UpdateCommentVoteCommand(commentId, updateVoteDto.IsUpvote, userId.Value), cancellationToken);
         
         return NoContent();
 
@@ -77,25 +77,17 @@ public class CommentVoteController : ControllerBase
     [HttpDelete("{commentId}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Authorize]
-    public async Task<IActionResult> DeleteCommentVote(Guid commentId)
+    public async Task<IActionResult> DeleteCommentVote([FromRoute] Guid commentId, CancellationToken cancellationToken)
     {
-        try
-        {
-            var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
 
-            if (userId == Guid.Empty || userId == null)
-                return Unauthorized();
+        var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
 
-            var result = await _deleteCommentVoteHandler.Handle(commentId, userId.Value);
+        if (userId == Guid.Empty || userId == null)
+            return Unauthorized();
 
-            if (!result)
-                return NotFound(new { message = "Keine Bewertung gefunden, die gelöscht werden könnte." });
+        await _deleteCommentVoteHandler.HandleAsync(new DeleteCommentVoteCommand(commentId, userId.Value), cancellationToken);
 
-            return NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        return NoContent();
+
     }
 }

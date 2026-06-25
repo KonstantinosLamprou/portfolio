@@ -13,21 +13,21 @@ public class GuestbookEntryRepository : IGuestbookEntry
         _context = context;
     }
 
-    public async Task<IEnumerable<GuestbookEntry>?> GetAllEntriesAsync()
+    public async Task<IEnumerable<GuestbookEntry>?> GetAllEntriesAsync(CancellationToken cancellationToken = default)
     {
         return await _context.GuestbookEntries
             .Include(e => e.User)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<GuestbookEntry?> GetEntryByIdAsync(Guid id)
+    public async Task<GuestbookEntry?> GetEntryByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.GuestbookEntries
             .Include(e => e.User) 
-            .SingleOrDefaultAsync(entry => entry.Id == id); 
+            .SingleOrDefaultAsync(entry => entry.Id == id, cancellationToken); 
     }
 
-    public async Task<GuestbookEntry> SaveEntryAsync(GuestbookEntry entry)
+    public async Task<GuestbookEntry> SaveEntryAsync(GuestbookEntry entry, CancellationToken cancellationToken = default)
     {
         if (entry.Id == Guid.Empty)
         {
@@ -37,23 +37,20 @@ public class GuestbookEntryRepository : IGuestbookEntry
         {
             _context.GuestbookEntries.Update(entry);
         }
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
 
-        await _context.Entry(entry).Reference(e => e.User).LoadAsync();
+        await _context.Entry(entry).Reference(e => e.User).LoadAsync(cancellationToken);
 
         return entry;
     }
 
-    public async Task<bool> DeleteEntryAsync(GuestbookEntry? entry)
+    public async Task DeleteEntryAsync(GuestbookEntry? entry, CancellationToken cancellationToken = default)
     {
         if (entry != null)
         {
             _context.GuestbookEntries.Remove(entry);
-            await _context.SaveChangesAsync();
-
-            return true;
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        return false;
     }
 }

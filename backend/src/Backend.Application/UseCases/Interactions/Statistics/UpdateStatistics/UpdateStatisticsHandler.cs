@@ -1,9 +1,11 @@
 using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
+using Backend.Application.Common.Interfaces;
+using Backend.Application.Common.Models; 
 
 namespace Backend.Application.UseCases.Interactions;
 
-public class UpdateStatisticsHandler
+public class UpdateStatisticsHandler : ICommandHandler<UpdateStatisticsCommand, Unit>
 {
     private readonly IStatisticsInterface _repository;
 
@@ -12,19 +14,21 @@ public class UpdateStatisticsHandler
         _repository = repository;
     }
 
-    public async Task Handle(int? viewToAdd, int? likeToAdd)
+    public async Task<Unit> HandleAsync(UpdateStatisticsCommand command, CancellationToken cancellationToken = default)
     {
-        var statistics = await _repository.GetStatisticsAsync() ?? throw new InvalidOperationException("Statistics not found.");
+        var statistics = await _repository.GetStatisticsAsync(cancellationToken) ?? throw new InvalidOperationException("Statistics not found.");
 
-        if (viewToAdd.HasValue)
+        if (command.ViewsToAdd.HasValue)
         {
-            statistics.TotalViews += viewToAdd.Value;
+            statistics.TotalViews += command.ViewsToAdd.Value;
         }
-        if (likeToAdd.HasValue)
+        if (command.LikesToAdd.HasValue)
         {
-            statistics.TotalLikes += likeToAdd.Value;
+            statistics.TotalLikes += command.LikesToAdd.Value;
         }
 
-        await _repository.UpdateStatisticsAsync(statistics);
+        await _repository.UpdateStatisticsAsync(statistics, cancellationToken);
+
+        return Unit.Value;
     }
 }

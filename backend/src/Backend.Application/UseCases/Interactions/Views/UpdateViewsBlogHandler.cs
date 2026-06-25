@@ -1,8 +1,9 @@
 using Backend.Domain.Contracts;
 using Backend.Domain.Interfaces;
+using Backend.Application.Common.Interfaces;
 
 namespace Backend.Application.UseCases.Interactions;
-public class UpdateViewsBlogHandler
+public class UpdateViewsBlogHandler : ICommandHandler<UpdateBlogViewsCommand, UpdateViewsContentResponse>
 {
     private readonly IBlogInterface _repository;
     public UpdateViewsBlogHandler(IBlogInterface repository)
@@ -10,16 +11,16 @@ public class UpdateViewsBlogHandler
         _repository = repository;
     }
 
-    public async Task<UpdateViewsContentResponse> Handle(int blogId)
+    public async Task<UpdateViewsContentResponse> HandleAsync(UpdateBlogViewsCommand command, CancellationToken cancellationToken = default)
     {
-        var blog = await _repository.GetBlogByIdAsync(blogId);
+        var blog = await _repository.GetBlogByIdAsync(command.BlogId, cancellationToken);
 
         if (blog == null)
-            throw new ArgumentException($"Blog mit ID {blogId} nicht gefunden.");
+            throw new ArgumentException($"Blog mit ID {command.BlogId} nicht gefunden.");
 
         blog.Views += 1;
 
-        var updatedBlog = await _repository.UpdateBlogViewsAsync(blog);
+        var updatedBlog = await _repository.UpdateBlogViewsAsync(blog, cancellationToken);
 
         return new UpdateViewsContentResponse(
             updatedBlog.Id, 

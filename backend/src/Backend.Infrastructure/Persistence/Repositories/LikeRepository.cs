@@ -16,10 +16,10 @@ public class LikeRepository : ILikeInterface
         _context = context;
     }
 
-    public async Task<Like?> GetLikeAsync(int contentId, Guid userId)
+    public async Task<Like?> GetLikeAsync(int contentId, Guid userId, CancellationToken cancellationToken = default)
     {
         return await _context.Set<Like>()
-            .SingleOrDefaultAsync(cl => cl.ContentId == contentId && cl.UserId == userId);
+            .SingleOrDefaultAsync(cl => cl.ContentId == contentId && cl.UserId == userId, cancellationToken);
     }
 
     public void AddLike(Like like)
@@ -27,9 +27,9 @@ public class LikeRepository : ILikeInterface
         _context.Set<Like>().Add(like);
     }
 
-    public async Task SaveChangesAsync()
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }
 

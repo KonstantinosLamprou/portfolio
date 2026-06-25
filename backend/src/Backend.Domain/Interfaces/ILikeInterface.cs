@@ -7,10 +7,10 @@ namespace Backend.Domain.Interfaces
 {
     public interface ILikeInterface
     {
-        Task<Like?> GetLikeAsync(int contentId, Guid userId);
+        Task<Like?> GetLikeAsync(int contentId, Guid userId, CancellationToken cancellationToken = default);
 
         // Speichert neue oder aktualisierte Likes in der DB
-        Task SaveChangesAsync();
+        Task SaveChangesAsync(CancellationToken cancellationToken = default);
 
         void AddLike(Like like);
     }

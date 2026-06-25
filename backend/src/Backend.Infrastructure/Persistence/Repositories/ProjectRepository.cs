@@ -20,27 +20,27 @@ namespace Backend.Infrastructure.Repositories
         }
 
 
-        public async Task<Project?> GetProjectByIdAsync(int id)
+        public async Task<Project?> GetProjectByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            return await _context.Projects.SingleOrDefaultAsync(project => project.Id == id);
+            return await _context.Projects.SingleOrDefaultAsync(project => project.Id == id, cancellationToken);
         }
 
-        public async Task<Project?> GetProjectBySlugAsync(string slug)
+        public async Task<Project?> GetProjectBySlugAsync(string slug, CancellationToken cancellationToken = default)
         {
-            return await _context.Projects.SingleOrDefaultAsync(project => project.Slug == slug);
+            return await _context.Projects.SingleOrDefaultAsync(project => project.Slug == slug, cancellationToken);
         }
 
-        public async Task<Project?> GetProjectDetailsBySlugAsync(string slug)
+        public async Task<Project?> GetProjectDetailsBySlugAsync(string slug, CancellationToken cancellationToken = default)
         {
             return await _context.Projects
                 .Include(p => p.Author) 
                 .Include(p => p.Content)
                 .Include(p => p.Likes)      
                 .Include(p => p.Comments)   
-                .SingleOrDefaultAsync(project => project.Slug == slug);
+                .SingleOrDefaultAsync(project => project.Slug == slug, cancellationToken);
         }
 
-        public async Task<Project> SaveProjectAsync(Project project)
+        public async Task<Project> SaveProjectAsync(Project project, CancellationToken cancellationToken = default)
         {
             if (project.Id == 0)
             {
@@ -50,37 +50,37 @@ namespace Backend.Infrastructure.Repositories
             {
                 _context.Projects.Update(project);
             }
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
-            await _context.Entry(project).Reference(b => b.Author).LoadAsync();
+            await _context.Entry(project).Reference(b => b.Author).LoadAsync(cancellationToken);
             return project;
         }
 
-        public async Task<bool> DeleteProjectAsync(int id)
+        public async Task DeleteProjectAsync(int id, CancellationToken cancellationToken = default)
         {
-            var project = await _context.Projects.FindAsync(id);
+            var project = await _context.Projects.FindAsync(id, cancellationToken);
 
-            if (project == null)
-                return false;
+            if (project != null)
+            {
+                _context.Projects.Remove(project);
+                await _context.SaveChangesAsync(cancellationToken);
+            }
 
-            _context.Projects.Remove(project);
-            await _context.SaveChangesAsync();
-            return true;
         }
 
-        public async Task<IEnumerable<Project>> GetAllProjectsAsync()
+        public async Task<IEnumerable<Project>> GetAllProjectsAsync(CancellationToken cancellationToken = default)
         { 
             return await _context.Projects
                 .Include(p => p.Likes)
                 .Include(p => p.Comments)
                 .OrderByDescending(project => project.DateOfCreation)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
         
-        public async Task<Project> UpdateProjectViewsAsync(Project project)
+        public async Task<Project> UpdateProjectViewsAsync(Project project, CancellationToken cancellationToken = default)
         {
             _context.Projects.Update(project);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return project;
         }
 

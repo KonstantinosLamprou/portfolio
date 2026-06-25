@@ -21,25 +21,25 @@ namespace Backend.Infrastructure.Repositories
             _context = context; 
         }
         
-        public async Task<Blog?> GetBlogByIdAsync(int id)
+        public async Task<Blog?> GetBlogByIdAsync(int id, CancellationToken ct = default)
         {
-            return await _context.Blogs.SingleOrDefaultAsync(blog => blog.Id == id); 
+            return await _context.Blogs.SingleOrDefaultAsync(blog => blog.Id == id, ct); 
         }
 
-        public async Task<Blog?> GetBlogBySlugAsync(string slug)
+        public async Task<Blog?> GetBlogBySlugAsync(string slug, CancellationToken ct = default)
         {
-            return await _context.Blogs.SingleOrDefaultAsync(blog => blog.Slug == slug);
+            return await _context.Blogs.SingleOrDefaultAsync(blog => blog.Slug == slug, ct);
         }
-        public async Task<Blog?> GetBlogWithDetailsBySlugAsync(string slug)
+        public async Task<Blog?> GetBlogWithDetailsBySlugAsync(string slug, CancellationToken ct = default)
         {
             return await _context.Blogs
                 .Include(b => b.Author) 
                 .Include(b => b.Content)
                 .Include(b => b.Likes)      
                 .Include(b => b.Comments)   
-                .SingleOrDefaultAsync(blog => blog.Slug == slug);
+                .SingleOrDefaultAsync(blog => blog.Slug == slug, ct);
         }
-        public async Task<Blog> SaveBlogAsync(Blog blog)
+        public async Task<Blog> SaveBlogAsync(Blog blog, CancellationToken ct = default)
         {
             if (blog.Id == 0)
             {
@@ -49,45 +49,44 @@ namespace Backend.Infrastructure.Repositories
             {
                 _context.Blogs.Update(blog);
             }
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(ct);
 
             // Author laden für die Response!
-            await _context.Entry(blog).Reference(b => b.Author).LoadAsync();
+            await _context.Entry(blog).Reference(b => b.Author).LoadAsync(ct);
             return blog;
         }
 
-        public async Task<bool> DeleteBlogAsync(int id)
+        public async Task DeleteBlogAsync(int id, CancellationToken ct = default)
         {
-            var blog = await _context.Blogs.FindAsync(id);
+            var blog = await _context.Blogs.FindAsync(id, ct);
 
-            if (blog == null)
-                return false;
-
-            _context.Blogs.Remove(blog);
-            await _context.SaveChangesAsync();
-            return true;
+            if (blog != null)
+            {
+                _context.Blogs.Remove(blog);
+                await _context.SaveChangesAsync(ct);
+            }
         }
-        public async Task<IEnumerable<Blog>> GetAllBlogsAsync()
+        public async Task<IEnumerable<Blog>> GetAllBlogsAsync(CancellationToken ct = default)
         {
             return await _context.Blogs
                 .Include(b => b.Likes)
                 .Include(b => b.Comments)
-                .ToListAsync();
+                .ToListAsync(ct);
         }
-        public async  Task<IEnumerable<Blog>> GetLatestBlogsAsync(int count = 3)
+        public async  Task<IEnumerable<Blog>> GetLatestBlogsAsync(int count = 3, CancellationToken ct = default)
         {
             return await _context.Blogs
                 .Include(b => b.Likes)
                 .Include(b => b.Comments)
                 .OrderByDescending(blog => blog.DateOfCreation)
                 .Take(count)
-                .ToListAsync();
+                .ToListAsync(ct);
         }
 
-        public async Task<Blog> UpdateBlogViewsAsync(Blog blog)
+        public async Task<Blog> UpdateBlogViewsAsync(Blog blog, CancellationToken ct = default)
         {
             _context.Blogs.Update(blog);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(ct);
             return blog;
         }
 

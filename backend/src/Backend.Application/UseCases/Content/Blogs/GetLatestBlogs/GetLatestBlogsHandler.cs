@@ -5,10 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using Backend.Application.Common.Interfaces;
 
 namespace Backend.Application.UseCases.Content
 {
-    public class GetLatestBlogsHandler
+    public class GetLatestBlogsHandler : IQueryHandler<GetLatestBlogsQuery, IEnumerable<ContentListResponse>>
     {
         private readonly IBlogInterface _repository;
 
@@ -16,9 +17,9 @@ namespace Backend.Application.UseCases.Content
         {
             _repository = repository;
         }
-        public async Task<IEnumerable<ContentListResponse>> Handle(int count = 3)
+        public async Task<IEnumerable<ContentListResponse>> HandleAsync(GetLatestBlogsQuery query, CancellationToken cancellationToken = default)
         {
-            var blogs = await _repository.GetLatestBlogsAsync(count); 
+            var blogs = await _repository.GetLatestBlogsAsync(query.Count, cancellationToken); 
 
             //Mapping Entity -> DTO
             return blogs.Select(b => new ContentListResponse(

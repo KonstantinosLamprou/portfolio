@@ -90,7 +90,7 @@ public class AuthController : ControllerBase
         );
 
         // HIER IST DIE MAGIE: Wir fangen dein AddUserResult auf!
-        var result = await _handler.Handle(cmd, HttpContext.RequestAborted);
+        var result = await _handler.HandleAsync(cmd, HttpContext.RequestAborted);
 
         // 3. Eigene Claims mit DEINER Guid erstellen
         var internalClaims = new List<Claim>

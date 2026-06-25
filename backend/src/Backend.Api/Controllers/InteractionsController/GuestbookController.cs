@@ -3,6 +3,8 @@ using Backend.Application.UseCases.Guestbook;
 using Backend.Domain.Contracts;
 using Backend.Api.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Backend.Application.Common.Interfaces;
+using Backend.Application.Common.Models;
 
 namespace Backend.Api.Controllers;
 
@@ -10,18 +12,18 @@ namespace Backend.Api.Controllers;
 [Route("api/guestbook")]
 public class GuestbookController : ControllerBase
 {
-    private readonly GetGuestbookEntriesHandler _getGuestbookEntriesHandler;
-    private readonly CreateGuestbookEntryHandler _createGuestbookEntryHandler;
-    private readonly UpdateGuestbookEntryHandler _updateGuestbookEntryHandler;
-    private readonly DeleteGuestbookEntryHandler _deleteGuestbookEntryHandler;
-    private readonly GetGuestbookEntryHandler _getGuestbookEntryHandler;
+    private readonly IQueryHandler<GetGuestbookEntriesQuery, IEnumerable<UserGuestbookEntryResponse>> _getGuestbookEntriesHandler;
+    private readonly ICommandHandler<CreateGuestbookEntryCommand, UserGuestbookEntryResponse> _createGuestbookEntryHandler;
+    private readonly ICommandHandler<UpdateGuestbookEntryCommand, UserGuestbookEntryResponse> _updateGuestbookEntryHandler;
+    private readonly ICommandHandler<DeleteGuestbookEntryCommand, Unit> _deleteGuestbookEntryHandler;
+    private readonly IQueryHandler<GetGuestbookEntryQuery, UserGuestbookEntryResponse> _getGuestbookEntryHandler;
 
     public GuestbookController(
-        GetGuestbookEntriesHandler getGuestbookEntriesHandler, 
-        CreateGuestbookEntryHandler createGuestbookEntryHandler,
-        UpdateGuestbookEntryHandler updateGuestbookEntryHandler, 
-        DeleteGuestbookEntryHandler deleteGuestbookEntryHandler,
-        GetGuestbookEntryHandler getGuestbookEntryHandler)
+        IQueryHandler<GetGuestbookEntriesQuery, IEnumerable<UserGuestbookEntryResponse>> getGuestbookEntriesHandler, 
+        ICommandHandler<CreateGuestbookEntryCommand, UserGuestbookEntryResponse> createGuestbookEntryHandler,
+        ICommandHandler<UpdateGuestbookEntryCommand, UserGuestbookEntryResponse> updateGuestbookEntryHandler, 
+        ICommandHandler<DeleteGuestbookEntryCommand, Unit> deleteGuestbookEntryHandler,
+        IQueryHandler<GetGuestbookEntryQuery, UserGuestbookEntryResponse> getGuestbookEntryHandler)
     {
         _getGuestbookEntriesHandler = getGuestbookEntriesHandler;
         _createGuestbookEntryHandler = createGuestbookEntryHandler;
@@ -30,24 +32,23 @@ public class GuestbookController : ControllerBase
         _getGuestbookEntryHandler = getGuestbookEntryHandler;
     }
 
-    [HttpGet()]
+    [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<UserGuestbookEntryResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> GetGuestbookEntries()
+    public async Task<IActionResult> GetGuestbookEntries(CancellationToken cancellationToken = default)
     {
-        var entries = await _getGuestbookEntriesHandler.Handle();
+        var entries = await _getGuestbookEntriesHandler.HandleAsync(new GetGuestbookEntriesQuery(), cancellationToken);
 
-        if (entries == null || !entries.Any())
-            return NoContent();
-            
-        return Ok(entries);
+        return Ok(entries ?? Enumerable.Empty<UserGuestbookEntryResponse>());
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{entryId}")]
     [ProducesResponseType(typeof(UserGuestbookEntryResponse), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetGuestbookEntry(Guid id)
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetGuestbookEntry(
+        [FromRoute] Guid entryId,
+        CancellationToken cancellationToken = default)
     {
-        var entry = await _getGuestbookEntryHandler.Handle(id);
+        var entry = await _getGuestbookEntryHandler.HandleAsync(new GetGuestbookEntryQuery(entryId), cancellationToken);
 
         if (entry == null)
             return NotFound();
@@ -55,48 +56,56 @@ public class GuestbookController : ControllerBase
         return Ok(entry);
     }
 
-    [HttpPost("")]
+    [HttpPost]
     [Authorize]
     [ProducesResponseType(typeof(UserGuestbookEntryResponse), StatusCodes.Status201Created)]
-    public async Task<IActionResult> CreateGuestbookEntry([FromBody] CreateGuestbookEntryRequest request)
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> CreateGuestbookEntry(
+        [FromBody] CreateGuestbookEntryRequest request, 
+        CancellationToken cancellationToken = default)
     {
         var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
 
-        if (userId == null)
+        if (userId == null || userId == Guid.Empty)
             return Unauthorized();
 
-        var entry = await _createGuestbookEntryHandler.Handle(request, userId.Value);
+        var entry = await _createGuestbookEntryHandler.HandleAsync(new CreateGuestbookEntryCommand(request, userId.Value), cancellationToken);
 
-        return CreatedAtAction(nameof(GetGuestbookEntry), new { id = entry.Id }, entry);
+        return CreatedAtAction(nameof(GetGuestbookEntry), new { entryId = entry.Id }, entry);
     }
 
-    [HttpPatch("{id}")]
+    [HttpPatch("{entryId}")]
     [Authorize]
     [ProducesResponseType(typeof(UserGuestbookEntryResponse), StatusCodes.Status200OK)]
-    public async Task<IActionResult> UpdateGuestbookEntry(Guid id, [FromBody] UpdateGuestbookEntryRequest request)
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> UpdateGuestbookEntry(
+        [FromRoute] Guid entryId, 
+        [FromBody] UpdateGuestbookEntryRequest request, 
+        CancellationToken cancellationToken = default)
     {
         var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
 
-        if (userId == null)
+        if (userId == null || userId == Guid.Empty)
             return Unauthorized();
 
-        var entry = await _updateGuestbookEntryHandler.Handle(id, request, userId.Value);
+        var entry = await _updateGuestbookEntryHandler.HandleAsync(new UpdateGuestbookEntryCommand(entryId, request.Message, userId.Value), cancellationToken);
 
         return Ok(entry);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{entryId}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Authorize]
-    public async Task<IActionResult> DeleteGuestbookEntry(Guid id)
+    public async Task<IActionResult> DeleteGuestbookEntry(
+        [FromRoute] Guid entryId, 
+        CancellationToken cancellationToken = default)
     {
         var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
 
-        if (userId == null)
+        if (userId == null || userId == Guid.Empty)
             return Unauthorized();
 
-        await _deleteGuestbookEntryHandler.Handle(id, userId.Value);
+        await _deleteGuestbookEntryHandler.HandleAsync(new DeleteGuestbookEntryCommand(entryId, userId.Value), cancellationToken);
         return NoContent();
     }
-
 }

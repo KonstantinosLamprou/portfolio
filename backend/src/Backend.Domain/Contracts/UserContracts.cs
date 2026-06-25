@@ -1,14 +1,6 @@
 using Backend.Domain.Entities;
 namespace Backend.Domain.Contracts;
 
-public record AddUserCommand(
-    string Provider,
-    string ProviderSubjectId,
-    string Email,
-    string Name,
-    string? ProfilePictureUrl
-);
-
 public record AddUserResult(
     Guid UserId,
     string Email,

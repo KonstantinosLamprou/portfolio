@@ -13,7 +13,7 @@ namespace Backend.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20260621202729_tags")]
-    partial class tags
+    partial class Tags
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

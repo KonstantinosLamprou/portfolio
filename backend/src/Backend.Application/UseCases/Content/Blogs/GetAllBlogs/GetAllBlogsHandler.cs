@@ -1,12 +1,13 @@
 ﻿using Backend.Domain.Contracts;
 using Backend.Domain.Interfaces;
+using Backend.Application.Common.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Backend.Application.UseCases.Content
 {
-    public class GetAllBlogsHandler
+    public class GetAllBlogsHandler : IQueryHandler<GetAllBlogsQuery, IEnumerable<ContentListResponse>>
     {
         private readonly IBlogInterface _repository; 
 
@@ -15,9 +16,9 @@ namespace Backend.Application.UseCases.Content
             _repository = repository; 
         }
 
-        public async Task<IEnumerable<ContentListResponse>> Handle()
+        public async Task<IEnumerable<ContentListResponse>> HandleAsync(GetAllBlogsQuery query, CancellationToken cancellationToken = default)
         {
-            var blogs = await _repository.GetAllBlogsAsync();
+            var blogs = await _repository.GetAllBlogsAsync(cancellationToken);
 
             //Mapping Entity -> DTO
             return blogs.Select(b => new ContentListResponse(

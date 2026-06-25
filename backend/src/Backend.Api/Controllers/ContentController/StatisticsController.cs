@@ -1,7 +1,8 @@
 using Backend.Domain.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Backend.Application.UseCases.Interactions;
+using Backend.Application.Common.Interfaces;
+using Backend.Application.Common.Models;
 
 namespace Backend.Api.Controllers;
 
@@ -9,9 +10,9 @@ namespace Backend.Api.Controllers;
 [Route("api/statistics")]
 public class StatisticsController : ControllerBase
 {
-    private readonly GetStatisticsHandler _getStatisticsHandler;
-    private readonly UpdateStatisticsHandler _updateStatisticsHandler;
-    public StatisticsController(GetStatisticsHandler getStatisticsHandler, UpdateStatisticsHandler updateStatisticsHandler)
+    private readonly IQueryHandler<GetStatisticsQuery, StatisticsResponse> _getStatisticsHandler;
+    private readonly ICommandHandler<UpdateStatisticsCommand, Unit> _updateStatisticsHandler;
+    public StatisticsController(IQueryHandler<GetStatisticsQuery, StatisticsResponse> getStatisticsHandler, ICommandHandler<UpdateStatisticsCommand, Unit> updateStatisticsHandler)
     {
         _getStatisticsHandler = getStatisticsHandler;
         _updateStatisticsHandler = updateStatisticsHandler;
@@ -19,9 +20,10 @@ public class StatisticsController : ControllerBase
         
     [HttpGet]
     [ProducesResponseType(typeof(StatisticsResponse), StatusCodes.Status200OK)]
-    public async Task<ActionResult<StatisticsResponse>?> GetStatistics()
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<StatisticsResponse>?> GetStatistics(CancellationToken cancellationToken)
     {
-        var stats = await _getStatisticsHandler.Handle();
+        var stats = await _getStatisticsHandler.HandleAsync(new GetStatisticsQuery(), cancellationToken);
         
         if (stats == null)
             return NotFound();
@@ -32,9 +34,10 @@ public class StatisticsController : ControllerBase
 
     [HttpPatch]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> UpdateStatistics([FromBody] UpdateStatisticsRequest request)
+    public async Task<IActionResult> UpdateStatistics([FromBody] UpdateStatisticsRequest request, CancellationToken cancellationToken)
     {
-        await _updateStatisticsHandler.Handle(request.ViewToAdd, request.LikeToAdd);
+        await _updateStatisticsHandler.HandleAsync(new UpdateStatisticsCommand(request.ViewToAdd, request.LikeToAdd), cancellationToken);
+
         return NoContent();
     }
 }

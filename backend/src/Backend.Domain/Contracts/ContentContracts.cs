@@ -45,7 +45,7 @@ public record ContentBlockDto(
 );
 
 // Admin Dashboard DTO 
-public record CreateBlogRequest(
+public record CreateContentRequest(
     string ContentType, 
     string Title,
     string Slug,

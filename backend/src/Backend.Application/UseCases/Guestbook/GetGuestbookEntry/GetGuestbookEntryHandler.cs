@@ -1,9 +1,10 @@
 using Backend.Domain.Contracts;
 using Backend.Domain.Interfaces;
+using Backend.Application.Common.Interfaces;
 
 namespace Backend.Application.UseCases.Guestbook;
 
-public class GetGuestbookEntryHandler
+public class GetGuestbookEntryHandler : IQueryHandler<GetGuestbookEntryQuery, UserGuestbookEntryResponse>
 {
     private readonly IGuestbookEntry _guestbookEntryRepository;
 
@@ -12,10 +13,10 @@ public class GetGuestbookEntryHandler
         _guestbookEntryRepository = guestbookEntryRepository;
     }
 
-    public async Task<UserGuestbookEntryResponse> Handle(Guid id)
+    public async Task<UserGuestbookEntryResponse> HandleAsync(GetGuestbookEntryQuery query, CancellationToken cancellationToken = default)
     {
-        var entry = await _guestbookEntryRepository.GetEntryByIdAsync(id) 
-            ?? throw new KeyNotFoundException($"Gästebucheintrag mit ID {id} nicht gefunden.");
+        var entry = await _guestbookEntryRepository.GetEntryByIdAsync(query.EntryId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Gästebucheintrag mit ID {query.EntryId} nicht gefunden.");
 
         return new UserGuestbookEntryResponse
         (

@@ -4,14 +4,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Backend.Application.Common.Decorators;
 
-public class PerformanceLoggingDecorator<TQuery, TResult> : IQueryHandler<TQuery, TResult>
+public class QueryPerformanceLoggingDecorator<TQuery, TResult> : IQueryHandler<TQuery, TResult>
 {
     private readonly IQueryHandler<TQuery, TResult> _innerHandler;
-    private readonly ILogger<PerformanceLoggingDecorator<TQuery, TResult>> _logger;
+    private readonly ILogger<QueryPerformanceLoggingDecorator<TQuery, TResult>> _logger;
 
-    public PerformanceLoggingDecorator(
+    public QueryPerformanceLoggingDecorator(
         IQueryHandler<TQuery, TResult> innerHandler, 
-        ILogger<PerformanceLoggingDecorator<TQuery, TResult>> logger)
+        ILogger<QueryPerformanceLoggingDecorator<TQuery, TResult>> logger)
     {
         _innerHandler = innerHandler; // Das ist der echte Handler, der eingepackt wird
         _logger = logger;

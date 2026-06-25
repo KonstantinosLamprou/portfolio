@@ -4,8 +4,8 @@ namespace Backend.Domain.Interfaces;
 
 public interface IGuestbookEntry
 {
-    Task<IEnumerable<GuestbookEntry>?> GetAllEntriesAsync();
-    Task<GuestbookEntry?> GetEntryByIdAsync(Guid id);
-    Task<GuestbookEntry> SaveEntryAsync(GuestbookEntry entry);
-    Task<bool>DeleteEntryAsync(GuestbookEntry? entry);
+    Task<IEnumerable<GuestbookEntry>?> GetAllEntriesAsync(CancellationToken cancellationToken = default);
+    Task<GuestbookEntry?> GetEntryByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<GuestbookEntry> SaveEntryAsync(GuestbookEntry entry, CancellationToken cancellationToken = default);
+    Task DeleteEntryAsync(GuestbookEntry? entry, CancellationToken cancellationToken = default);
 }

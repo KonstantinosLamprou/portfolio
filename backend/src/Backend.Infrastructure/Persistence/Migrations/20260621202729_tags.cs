@@ -5,7 +5,7 @@
 namespace Backend.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class tags : Migration
+    public partial class Tags : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

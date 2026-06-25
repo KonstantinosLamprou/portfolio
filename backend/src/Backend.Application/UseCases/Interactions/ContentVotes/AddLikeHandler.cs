@@ -1,9 +1,10 @@
 ﻿using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
+using Backend.Application.Common.Interfaces;
 
 namespace Backend.Application.UseCases.Interactions;
 
-public class AddLikeHandler
+public class AddLikeHandler : ICommandHandler<AddLikeCommand, int>
 {
     private readonly ILikeInterface _repository;
 
@@ -12,18 +13,18 @@ public class AddLikeHandler
         _repository = repository;
     }
 
-    public async Task<int> Handle(int contentId, Guid userId)
+    public async Task<int> HandleAsync(AddLikeCommand command, CancellationToken cancellationToken = default)
     {
         // Gibt es Likes schon? 
-        var existingLike = await _repository.GetLikeAsync(contentId, userId);
+        var existingLike = await _repository.GetLikeAsync(command.ContentId, command.CurrentUserId, cancellationToken);
 
         // Noch nie geliked
         if (existingLike == null)
         {
             existingLike = new Like
             {
-                ContentId = contentId,
-                UserId = userId,
+                ContentId = command.ContentId,
+                UserId = command.CurrentUserId,
                 Count = 1
             };
             _repository.AddLike(existingLike);
@@ -43,7 +44,7 @@ public class AddLikeHandler
         }
 
         // speichern in der Datenbank 
-        await _repository.SaveChangesAsync();
+        await _repository.SaveChangesAsync(cancellationToken);
 
         return existingLike.Count;
     }

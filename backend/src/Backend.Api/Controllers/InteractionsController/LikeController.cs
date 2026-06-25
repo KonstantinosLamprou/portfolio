@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Backend.Application.UseCases.Interactions;
-using Backend.Api.Helpers;  
+using Backend.Domain.Contracts;
+using Backend.Api.Helpers;
+using Backend.Application.Common.Interfaces; 
 
 namespace Backend.Api.Controllers;
 
@@ -10,37 +11,32 @@ namespace Backend.Api.Controllers;
 [Route("api/like")]
 public class LikeController : ControllerBase
 {
-    private readonly AddLikeHandler _addLikeHandler;
+    private readonly ICommandHandler<AddLikeCommand, int> _addLikeHandler;
 
-    public LikeController(AddLikeHandler addLikeHandler)
+    public LikeController(ICommandHandler<AddLikeCommand, int> addLikeHandler)
     {
         _addLikeHandler = addLikeHandler;
     }
 
     [HttpPost("{contentId}")]
-    [Authorize] // Wichtig: Nur eingeloggte User dürfen liken!
-    [ProducesResponseType(StatusCodes.Status200OK)
-    , ProducesResponseType(StatusCodes.Status400BadRequest)
-    , ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> LikeContent(int contentId)
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> LikeContent(
+        [FromRoute] int contentId,               
+        [FromBody] CreateLikeOnContent request,  
+        CancellationToken cancellationToken)
     {
-        try
-        {
-            var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
+        var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
+        
+        if (userId == null) 
+            return Unauthorized();
 
-            if (userId == Guid.Empty || userId == null)
-                return Unauthorized();
+        var command = new AddLikeCommand(contentId, userId.Value, request.ContentType, request.Slug);
+        
+        var newLikeCount = await _addLikeHandler.HandleAsync(command, cancellationToken);
 
-            var newLikeCount = await _addLikeHandler.Handle(contentId, userId.Value);
-
-            return Ok(new { currentLikeCount = newLikeCount });
-        }
-        catch (InvalidOperationException ex)
-        {
-            // Wenn der User über 3 Likes geht, werfen wir einen 400 Bad Request
-            return BadRequest(new { message = ex.Message });
-        }
+        return Ok(new { currentLikeCount = newLikeCount });
     }
-
-    
 }

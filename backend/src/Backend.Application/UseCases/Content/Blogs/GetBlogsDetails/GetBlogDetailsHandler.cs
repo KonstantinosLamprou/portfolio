@@ -4,10 +4,11 @@ using System.Text;
 using System.Text.Json;
 using Backend.Domain.Contracts;
 using Backend.Domain.Interfaces;
+using Backend.Application.Common.Interfaces;
 
 namespace Backend.Application.UseCases.Content;
 
-public class GetBlogDetailsHandler
+public class GetBlogDetailsHandler : IQueryHandler<GetBlogsDetailsQuery, ContentDetailResponse?>
 {
     private readonly IBlogInterface _repository;
 
@@ -16,10 +17,10 @@ public class GetBlogDetailsHandler
         _repository = repository;
     }
 
-    public async Task<ContentDetailResponse?> Handle(string slug, Guid? currentUserId)
+    public async Task<ContentDetailResponse?> HandleAsync(GetBlogsDetailsQuery query, CancellationToken cancellationToken = default)
     {
-        var blogDetails = await _repository.GetBlogWithDetailsBySlugAsync(slug);
-        
+        var blogDetails = await _repository.GetBlogWithDetailsBySlugAsync(query.Slug, cancellationToken);
+
         if (blogDetails == null)
         {
             return null;
@@ -46,8 +47,8 @@ public class GetBlogDetailsHandler
             Tags: blogDetails.Tags,
 
             // Prüft, ob der aktuelle User in der Like-Liste steht. Wenn ja, gib den Count, sonst 0.
-            CurrentUserLikeCount: currentUserId.HasValue
-                ? blogDetails.Likes?.SingleOrDefault(l => l.UserId == currentUserId.Value)?.Count ?? 0
+            CurrentUserLikeCount: query.CurrentUserId.HasValue
+                ? blogDetails.Likes?.SingleOrDefault(l => l.UserId == query.CurrentUserId.Value)?.Count ?? 0
                 : 0,
 
             Author: new AuthorDto(blogDetails.Author.Id, blogDetails.Author.Name, blogDetails.Author.ProfilePictureUrl, blogDetails.Author.Role)

@@ -14,7 +14,7 @@ namespace Backend.Application.UseCases.Content
             _repository = repository;
         }
 
-        public async Task<bool> Handle(string slug, Guid currentUserId)
+        public async Task Handle(string slug, Guid currentUserId)
         {
             var project = await _repository.GetProjectBySlugAsync(slug);
 
@@ -24,7 +24,7 @@ namespace Backend.Application.UseCases.Content
             if (project.AuthorId != currentUserId /* && !IsCurrentUserAdmin() */)
                 throw new UnauthorizedAccessException("Sie haben keine Berechtigung, dieses Projekt zu löschen.");
 
-            return await _repository.DeleteProjectAsync(project.Id);
+            await _repository.DeleteProjectAsync(project.Id);
         }
     }
 }

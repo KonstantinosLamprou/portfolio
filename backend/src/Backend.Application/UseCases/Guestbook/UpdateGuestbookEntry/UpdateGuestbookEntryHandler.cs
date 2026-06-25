@@ -1,9 +1,10 @@
 using Backend.Domain.Contracts;
 using Backend.Domain.Interfaces;
+using Backend.Application.Common.Interfaces;
 
 namespace Backend.Application.UseCases.Guestbook;
 
-public class UpdateGuestbookEntryHandler
+public class UpdateGuestbookEntryHandler : ICommandHandler<UpdateGuestbookEntryCommand, UserGuestbookEntryResponse>
 {
     private readonly IGuestbookEntry _guestbookEntryRepository;
 
@@ -12,14 +13,14 @@ public class UpdateGuestbookEntryHandler
         _guestbookEntryRepository = guestbookEntryRepository;
     }
 
-    public async Task<UserGuestbookEntryResponse> Handle(Guid id, UpdateGuestbookEntryRequest request, Guid UserId)
+    public async Task<UserGuestbookEntryResponse> HandleAsync(UpdateGuestbookEntryCommand command, CancellationToken cancellationToken = default)
     {
-        var entry = await _guestbookEntryRepository.GetEntryByIdAsync(id) 
-            ?? throw new KeyNotFoundException($"Gästebucheintrag mit ID {id} nicht gefunden.");
+        var entry = await _guestbookEntryRepository.GetEntryByIdAsync(command.EntryId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Gästebucheintrag mit ID {command.EntryId} nicht gefunden.");
 
-        entry.Message = request.Message;
+        entry.Message = command.Message;
 
-        var updatedEntry = await _guestbookEntryRepository.SaveEntryAsync(entry);
+        var updatedEntry = await _guestbookEntryRepository.SaveEntryAsync(entry, cancellationToken);
 
         return new UserGuestbookEntryResponse
         (

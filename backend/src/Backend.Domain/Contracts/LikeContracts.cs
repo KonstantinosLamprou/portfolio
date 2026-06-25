@@ -6,5 +6,6 @@ namespace Backend.Domain.Contracts;
 
 
 public record CreateLikeOnContent(
-    int ContentId
-    ); 
+    string ContentType,
+    string Slug
+);

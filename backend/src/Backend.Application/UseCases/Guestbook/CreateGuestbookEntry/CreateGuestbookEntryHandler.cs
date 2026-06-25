@@ -1,10 +1,11 @@
 using Backend.Domain.Contracts;
 using Backend.Domain.Interfaces;
 using Backend.Domain.Entities;
+using Backend.Application.Common.Interfaces;
 
 namespace Backend.Application.UseCases.Guestbook;
 
-public class CreateGuestbookEntryHandler
+public class CreateGuestbookEntryHandler : ICommandHandler<CreateGuestbookEntryCommand, UserGuestbookEntryResponse>
 {
     private readonly IGuestbookEntry _guestbookEntryRepository;
 
@@ -13,17 +14,17 @@ public class CreateGuestbookEntryHandler
         _guestbookEntryRepository = guestbookEntryRepository;
     }
 
-    public async Task<UserGuestbookEntryResponse> Handle(CreateGuestbookEntryRequest request, Guid UserId)
+    public async Task<UserGuestbookEntryResponse> HandleAsync(CreateGuestbookEntryCommand command, CancellationToken cancellationToken = default)
     {
         var newEntry = new GuestbookEntry
         {
             Id = Guid.Empty,
-            Message = request.Message,
+            Message = command.Request.Message,
             CreatedAt = DateTime.UtcNow, 
-            UserId = UserId
+            UserId = command.AuthorId
         };
 
-        var savedEntry = await _guestbookEntryRepository.SaveEntryAsync(newEntry);
+        var savedEntry = await _guestbookEntryRepository.SaveEntryAsync(newEntry, cancellationToken);
 
         return new UserGuestbookEntryResponse
         (

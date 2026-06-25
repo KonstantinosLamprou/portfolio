@@ -2,21 +2,21 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace Backend.Domain.Interfaces
 {
     public interface IBlogInterface
     {
-        Task<Blog?> GetBlogByIdAsync(int id); 
+        Task<Blog?> GetBlogByIdAsync(int id, CancellationToken cancellationToken = default); 
+        Task<Blog?> GetBlogBySlugAsync(string slug, CancellationToken cancellationToken = default);
+        Task<Blog?> GetBlogWithDetailsBySlugAsync(string slug, CancellationToken cancellationToken = default);
+        Task<Blog> SaveBlogAsync(Blog blog, CancellationToken cancellationToken = default);
+        Task DeleteBlogAsync(int id, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Blog>> GetAllBlogsAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<Blog>> GetLatestBlogsAsync(int count = 3, CancellationToken cancellationToken = default);
 
-        Task<Blog?> GetBlogBySlugAsync(string slug);
-        Task<Blog?> GetBlogWithDetailsBySlugAsync(string slug);
-        Task<Blog> SaveBlogAsync(Blog blog);
-        Task<bool> DeleteBlogAsync(int id);
-        Task<IEnumerable<Blog>> GetAllBlogsAsync();
-        Task<IEnumerable<Blog>> GetLatestBlogsAsync(int count = 3);
-
-        Task<Blog> UpdateBlogViewsAsync(Blog blog);
+        Task<Blog> UpdateBlogViewsAsync(Blog blog, CancellationToken cancellationToken = default);
 
     }
 }
