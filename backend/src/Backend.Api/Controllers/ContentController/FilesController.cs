@@ -20,7 +20,7 @@ public class FilesController : ControllerBase
 
     [HttpPost("upload")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UploadImage(IFormFile? file)
+    public async Task<IActionResult> UploadImage(IFormFile? file, CancellationToken cancellationToken = default)
     {
         
         if (file == null || file.Length == 0)
@@ -43,7 +43,7 @@ public class FilesController : ControllerBase
         // Datei physisch auf die Festplatte kopieren
         using (var stream = new FileStream(filePath, FileMode.Create))
         {
-            await file.CopyToAsync(stream);
+            await file.CopyToAsync(stream, cancellationToken);
         }
 
         // Die fertige URL generieren, die das Frontend später nutzen kann

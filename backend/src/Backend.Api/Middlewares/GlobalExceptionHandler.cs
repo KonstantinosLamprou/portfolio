@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
 
 namespace Backend.Api.Middlewares; 
 
@@ -47,6 +48,16 @@ public class GlobalExceptionHandler : IExceptionHandler
             problemDetails.Title = "Bad Request";
             problemDetails.Detail = exception.Message;
             problemDetails.Status = StatusCodes.Status400BadRequest;
+        }
+        else if (exception is ValidationException validationException)
+        {
+            httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+            problemDetails.Title = "Validation Failed";
+            problemDetails.Detail = "Ein oder mehrere Validierungsfehler sind aufgetreten.";
+            problemDetails.Status = StatusCodes.Status400BadRequest;
+            
+            var allErrors = validationException.Errors.Select(x => x.ErrorMessage);
+            problemDetails.Detail = string.Join(", ", allErrors);
         }
         else
         {

@@ -27,16 +27,20 @@ public class GuestbookEntryRepository : IGuestbookEntry
             .SingleOrDefaultAsync(entry => entry.Id == id, cancellationToken); 
     }
 
-    public async Task<GuestbookEntry> SaveEntryAsync(GuestbookEntry entry, CancellationToken cancellationToken = default)
+    public async Task<GuestbookEntry> CreateEntryAsync(GuestbookEntry entry, CancellationToken cancellationToken = default)
     {
-        if (entry.Id == Guid.Empty)
-        {
-            entry.Id = Guid.NewGuid();
-            _context.GuestbookEntries.Add(entry);
-        } else
-        {
-            _context.GuestbookEntries.Update(entry);
-        }
+        _context.GuestbookEntries.Add(entry);
+        
+        await _context.SaveChangesAsync(cancellationToken);
+
+        await _context.Entry(entry).Reference(e => e.User).LoadAsync(cancellationToken);
+
+        return entry;
+    }
+
+    public async Task<GuestbookEntry> UpdateEntryAsync(GuestbookEntry entry, CancellationToken cancellationToken = default)
+    {
+        
         await _context.SaveChangesAsync(cancellationToken);
 
         await _context.Entry(entry).Reference(e => e.User).LoadAsync(cancellationToken);

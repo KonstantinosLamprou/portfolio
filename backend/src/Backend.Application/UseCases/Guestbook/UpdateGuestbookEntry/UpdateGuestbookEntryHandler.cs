@@ -20,7 +20,7 @@ public class UpdateGuestbookEntryHandler : ICommandHandler<UpdateGuestbookEntryC
 
         entry.Message = command.Message;
 
-        var updatedEntry = await _guestbookEntryRepository.SaveEntryAsync(entry, cancellationToken);
+        var updatedEntry = await _guestbookEntryRepository.UpdateEntryAsync(entry, cancellationToken);
 
         return new UserGuestbookEntryResponse
         (

@@ -18,13 +18,13 @@ public class CreateGuestbookEntryHandler : ICommandHandler<CreateGuestbookEntryC
     {
         var newEntry = new GuestbookEntry
         {
-            Id = Guid.Empty,
+            Id = Guid.NewGuid(),
             Message = command.Request.Message,
             CreatedAt = DateTime.UtcNow, 
             UserId = command.AuthorId
         };
 
-        var savedEntry = await _guestbookEntryRepository.SaveEntryAsync(newEntry, cancellationToken);
+        var savedEntry = await _guestbookEntryRepository.CreateEntryAsync(newEntry, cancellationToken);
 
         return new UserGuestbookEntryResponse
         (
