@@ -33,7 +33,9 @@ public class CommentsController : ControllerBase
 
     [HttpGet("{commentId}")]
     [ProducesResponseType(typeof(CommentResponseDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetComment(Guid commentId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetComment(
+        [FromRoute] Guid commentId, 
+        CancellationToken cancellationToken)
     {
         Guid userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User) ?? Guid.Empty;
 

@@ -53,6 +53,7 @@ public class FilesController : ControllerBase
         // URL an Vue zurückgeben!
         return Ok(new { url = fileUrl });
     }
+    
     [HttpDelete("delete")]
     [Authorize(Roles = "Admin")]
     public IActionResult DeleteImage([FromQuery] string fileUrl)

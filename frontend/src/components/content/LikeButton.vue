@@ -57,7 +57,7 @@ import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import apiClient from '@/services/api.ts'
 import { isAxiosError } from 'axios';
 import Separator from '../ui/Separator.vue';
-
+import type { CreateLikeCommand } from '@/types/like.ts'
 
 const props = defineProps<{
   ContentId: number
@@ -71,9 +71,9 @@ const queryClient = useQueryClient()
 const buttonRef = ref<HTMLButtonElement | null>(null)
 
 const { mutate: likePost, isPending } = useMutation({
-  mutationFn: async () => {
+  mutationFn: async (command: CreateLikeCommand) => {
 
-    const { data } = await apiClient.post(`/like/${props.ContentId}`)
+    const { data } = await apiClient.post(`/like/${props.ContentId}`, command)
     return data
   },
   onMutate: async () => {
@@ -126,8 +126,12 @@ const handleLikeButtonClick = () => {
     return
   }
 
+  const payload = {
+    slug: props.slug,
+    contentType: props.contentType
+  }
   // Mutation auslösen
-  likePost()
+  likePost(payload)
 }
 
 const fillPercentage = computed(() => {

@@ -16,6 +16,7 @@ public record AuthorDto(
 
 public record CommentResponseDto(
     Guid Id,
+    int ContentId,
     string Text,
     DateTime CreatedAt,
     AuthorDto Author,

@@ -148,6 +148,14 @@ import { toast } from 'vue-sonner'
 import apiClient from '@/services/api.ts'
 import { isAxiosError } from 'axios'
 import { TagsInput, TagsInputInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/components/ui/tags-input'
+import { useSession } from '@/composables/useSession.ts'
+
+
+
+// const { data: session, isPending: isSessionLoading } = 
+useSession(); 
+// const isAuthenticated = computed(() => !!session.value && !isSessionLoading.value); 
+
 
 const { 
   mutate: mutateBlog, 

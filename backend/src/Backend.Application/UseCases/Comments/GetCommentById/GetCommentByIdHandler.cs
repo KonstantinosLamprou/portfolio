@@ -24,6 +24,7 @@ public class GetCommentByIdHandler : IQueryHandler<GetCommentByIdQuery, CommentR
         return new CommentResponseDto
         (
             Id: comment.Id,
+            ContentId: comment.ContentId,
             Text: comment.IsDeleted ? "[Kommentar gelöscht]" : comment.Text,
             CreatedAt: comment.CreatedAt,
             Author: comment.IsDeleted ? 

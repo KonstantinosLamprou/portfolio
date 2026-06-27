@@ -57,6 +57,7 @@ public class CreateCommentHandler : ICommandHandler<CreateCommentCommand, Commen
 
         return new CommentResponseDto(
             Id: comment.Id,
+            ContentId: comment.ContentId,
             Text: comment.Text,
             CreatedAt: comment.CreatedAt,
             Author: authorDto,

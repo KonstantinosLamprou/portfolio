@@ -1,7 +1,7 @@
 <template>
 <div class="flex flex-col items-center mt-6">
   
-  <div v-if="entries == null || undefined" class="text-center flex flex-col gap-4 text-muted-foreground mt-10">
+  <div v-if="entries?.length === 0" class="text-center flex flex-col gap-4 text-muted-foreground mt-10">
     <TriangleAlertIcon class="w-12 h-12 mx-auto text-warning" />
     Es gibt noch keine Einträge. Sei der Erste, der einen Gruß hinterlässt!  
   </div>

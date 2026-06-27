@@ -81,7 +81,7 @@ const { mutate: updateStatistics, isPending: isUpdating } = useUpdateStatisticsM
 const handleStatisticsUpdate = (viewToAdd: number, likeToAdd: number) => {
   if (isUpdating.value) return; 
 
-  updateStatistics({ viewToAdd, likeToAdd }, {
+  updateStatistics({ viewToAdd, likeToAdd}, {
     onError: (error) => {
       console.error('Error updating statistics:', error);
     }

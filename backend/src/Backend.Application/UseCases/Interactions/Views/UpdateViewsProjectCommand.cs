@@ -4,7 +4,7 @@ public record UpdateProjectViewsCommand(int ProjectId, string Slug) : ICacheInva
 {
     public IEnumerable<string> CacheKeysToInvalidate =>
     [
-        $"Content_{Slug}",
-        $"Content"
+        $"ProjectDetails_{Slug}",
+        $"Projects"
     ];
 }

@@ -11,6 +11,7 @@ export interface AuthorDto {
 
 export interface CommentResponseDto {
   id: string;
+  contentId: number;
   text: string;
   createdAt: string; 
   author: AuthorDto;

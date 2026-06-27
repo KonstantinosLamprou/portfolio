@@ -153,7 +153,7 @@ interface UpdateViewsContentResponse {
 
 const { mutate: incrementView } = useMutation({
   mutationFn: async (contentId: number): Promise<UpdateViewsContentResponse> => {
-    const { data } = await apiClient.patch(`/blogs/${contentId}/view`);
+    const { data } = await apiClient.patch(`/blogs/${contentId}/view?slug=${slug.value}`);
 
     return data;
   }, 

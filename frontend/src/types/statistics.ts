@@ -1,10 +1,10 @@
 
 export interface StatisticsResponse {
-    totalViews: number;
-    totalLikes: number;
+    totalViews: number
+    totalLikes: number
 }
 
 export interface UpdateStatisticsRequest {
-    viewToAdd: number;
-    likeToAdd: number;
+    viewToAdd: number
+    likeToAdd: number
 }

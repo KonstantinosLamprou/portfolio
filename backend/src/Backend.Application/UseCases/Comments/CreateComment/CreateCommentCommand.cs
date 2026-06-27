@@ -10,5 +10,6 @@ public record CreateCommentCommand(CreateCommentRequest request, Guid authorId) 
         // Invaliedieren des Caches für die Kommentare des Contents, da ein neuer Kommentar hinzugefügt wurde
         // AuthorId ist die UserId aus dem ApplicationUser Modell
         $"Comments_{request.ContentId}_{authorId}",
+        $"Comments_{request.ContentId}_{Guid.Empty}" 
     };
 }

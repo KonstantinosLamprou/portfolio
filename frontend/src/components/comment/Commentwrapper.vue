@@ -50,8 +50,6 @@ const props = defineProps<{
   
 }>()
 
-
-
 export interface CommentResponseDtoExtended extends Omit<CommentResponseDto, 'createdAt'> {
   createdAt: Date; 
 }

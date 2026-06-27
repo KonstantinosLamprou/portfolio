@@ -4,7 +4,7 @@ public record UpdateBlogViewsCommand(int BlogId, string Slug) : ICacheInvalidato
 {
     public IEnumerable<string> CacheKeysToInvalidate =>
     [
-        $"Content_{Slug}",
-        $"Content"
+        $"BlogDetails_{Slug}",
+        $"Blogs"
     ];
 }

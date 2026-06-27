@@ -5,10 +5,11 @@ export function useUpdateCommentVoteMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ commentId, isUpvote }: { commentId: string, isUpvote: boolean }) => {
+    mutationFn: async ({ commentId, isUpvote, contentId }: { commentId: string, isUpvote: boolean, contentId: number }) => {
         const response = await apiClient.patch(`/commentvote/${commentId}`, {
             commentId: commentId,
-            isUpvote: isUpvote
+            isUpvote: isUpvote, 
+            contentId: contentId 
         });
         return response.data;
     },
@@ -29,10 +30,11 @@ export function useCreateCommentVoteMutation() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async ({ commentId, isUpvote }: { commentId: string, isUpvote: boolean }) => {
+    mutationFn: async ({ commentId, isUpvote, contentId }: { commentId: string, isUpvote: boolean, contentId: number }) => {
       const response = await apiClient.post(`/commentvote`, {
         commentId: commentId, 
-        isUpvote: isUpvote
+        isUpvote: isUpvote,
+        contentId: contentId
       });
       return response.data;
     },
@@ -54,8 +56,10 @@ export function useDeleteCommentVoteMutation() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (commentId: string) => {
-      const response = await apiClient.delete(`/commentvote/${commentId}`);
+    mutationFn: async ({commentId, contentId}: {commentId: string, contentId: number}) => {
+      const response = await apiClient.delete(`/commentvote/${commentId}`, { 
+         data: { contentId: contentId } 
+      });
       return response.data;
     },
     onSuccess: () => {

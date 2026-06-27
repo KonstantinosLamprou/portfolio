@@ -7,6 +7,8 @@ public record UpdateCommentCommand(Guid CommentId, int ContentId, UpdateCommentR
 {
     public IEnumerable<string> CacheKeysToInvalidate =>
     [
-        $"Comments_{ContentId}_{CurrentUserId}" 
+        $"Comments_{ContentId}_{CurrentUserId}", 
+        $"Comments_{ContentId}_{Guid.Empty}" 
+
     ];
 }

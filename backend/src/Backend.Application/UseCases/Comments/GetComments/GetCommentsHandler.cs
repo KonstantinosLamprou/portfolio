@@ -23,8 +23,8 @@ public class GetCommentsHandler : IQueryHandler<GetCommentsQuery, List<CommentRe
     {
         ContentBase? content = query.ContentType.ToLower() switch 
         {
-            "blog" => await _blogRepository.GetBlogByIdAsync(query.ContentId),
-            "project" => await _projectRepository.GetProjectByIdAsync(query.ContentId),
+            "blog" => await _blogRepository.GetBlogByIdAsync(query.ContentId, cancellationToken),
+            "project" => await _projectRepository.GetProjectByIdAsync(query.ContentId, cancellationToken),
             _ => throw new ArgumentException($"Ungültiger ContentType: {query.ContentType}")
         };
 
@@ -32,10 +32,11 @@ public class GetCommentsHandler : IQueryHandler<GetCommentsQuery, List<CommentRe
             throw new KeyNotFoundException($"Content mit ID {query.ContentId} nicht gefunden.");
 
 
-        var allComments = await _commentRepository.GetCommentsByContentIdAsync(content.Id);
+        var allComments = await _commentRepository.GetCommentsByContentIdAsync(content.Id, cancellationToken);
 
         var flatDtos = allComments.Select(c => new CommentResponseDto(
             Id: c.Id,
+            ContentId: c.ContentId,
             Text: c.IsDeleted ? "[Kommentar gelöscht]" : c.Text, 
             CreatedAt: c.CreatedAt,
             Author: c.IsDeleted ? new AuthorDto(

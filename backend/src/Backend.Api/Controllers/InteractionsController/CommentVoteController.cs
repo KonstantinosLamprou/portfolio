@@ -62,13 +62,12 @@ public class CommentVoteController : ControllerBase
     [Authorize]
     public async Task<IActionResult> UpdateCommentVote([FromRoute] Guid commentId, [FromBody] UpdateVoteDto updateVoteDto, CancellationToken cancellationToken)
     {
-
         var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
 
         if (userId == Guid.Empty || userId == null)
             return Unauthorized();
 
-        await _updateCommentVoteHandler.HandleAsync(new UpdateCommentVoteCommand(commentId, updateVoteDto.IsUpvote, userId.Value), cancellationToken);
+        await _updateCommentVoteHandler.HandleAsync(new UpdateCommentVoteCommand(commentId, updateVoteDto.IsUpvote, updateVoteDto.ContentId, userId.Value), cancellationToken);
         
         return NoContent();
 
@@ -77,7 +76,7 @@ public class CommentVoteController : ControllerBase
     [HttpDelete("{commentId}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Authorize]
-    public async Task<IActionResult> DeleteCommentVote([FromRoute] Guid commentId, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteCommentVote([FromRoute] Guid commentId, [FromBody] int contentId, CancellationToken cancellationToken)
     {
 
         var userId = CurrentUserHelper.GetCurrentUserIdFromClaims(User);
@@ -85,7 +84,7 @@ public class CommentVoteController : ControllerBase
         if (userId == Guid.Empty || userId == null)
             return Unauthorized();
 
-        await _deleteCommentVoteHandler.HandleAsync(new DeleteCommentVoteCommand(commentId, userId.Value), cancellationToken);
+        await _deleteCommentVoteHandler.HandleAsync(new DeleteCommentVoteCommand(commentId, contentId, userId.Value), cancellationToken);
 
         return NoContent();
 

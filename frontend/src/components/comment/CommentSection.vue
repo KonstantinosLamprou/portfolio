@@ -179,7 +179,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useSession } from '@/composables/useSession.ts';
 import { useDeleteCommentMutation, useUpdateCommentMutation } from '@/composables/useComment';
 

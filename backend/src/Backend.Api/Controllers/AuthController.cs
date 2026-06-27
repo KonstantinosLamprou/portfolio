@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Backend.Application.UseCases.User;
 using Backend.Domain.Contracts; 
+using Backend.Application.Common.Interfaces;
 
 namespace Backend.Api.Controllers;
 
@@ -11,9 +12,9 @@ namespace Backend.Api.Controllers;
 [Route("api/auth")]
 public class AuthController : ControllerBase
 {
-    private readonly AddUserHandler _handler;
+    private readonly ICommandHandler<AddUserCommand, AddUserResult> _handler;
 
-    public AuthController(AddUserHandler handler)
+    public AuthController(ICommandHandler<AddUserCommand, AddUserResult> handler)
     {
         _handler = handler;
     }

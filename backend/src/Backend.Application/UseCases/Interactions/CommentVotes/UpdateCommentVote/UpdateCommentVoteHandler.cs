@@ -17,7 +17,7 @@ public class UpdateCommentVoteHandler : ICommandHandler<UpdateCommentVoteCommand
 
     public async Task<Unit> HandleAsync(UpdateCommentVoteCommand command, CancellationToken cancellationToken)
     {
-        var request = new UpdateVoteDto(command.IsUpvote, command.CommentId);
+        var request = new UpdateVoteDto(command.IsUpvote, command.CommentId, command.ContentId);
         var userId = command.CurrentUserId;
 
         if (request.CommentId != command.CommentId)

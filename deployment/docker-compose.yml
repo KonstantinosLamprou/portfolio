@@ -35,7 +35,6 @@ services:
     command: /bin/sh -c "while sleep 1000; do :; done"
     volumes:
       - ../:/workspace
-      - uploads_data:/workspace/backend/src/Backend.Api/wwwroot/uploads/images
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=db;Database=portfoliodb;Username=${DB_USER:-devuser};Password=${DB_PASSWORD:-devpass}
@@ -48,4 +47,3 @@ services:
 volumes:
   postgres_data:
   seq_data:
-  uploads_data:

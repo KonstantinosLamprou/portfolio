@@ -87,7 +87,7 @@ builder.Services.AddSwaggerGen(options =>
     options.MapType<JsonElement>(() => new OpenApiSchema { Type = Microsoft.OpenApi.JsonSchemaType.Object });
 });
 
-// Den Handler für die Dependency Injection registrieren
+// Handler 
 builder.Services.AddApplicationServices();
 
 builder.Services.AddHostedService<ImageCleanupService>();

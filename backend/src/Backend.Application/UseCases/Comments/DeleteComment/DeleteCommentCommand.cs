@@ -7,7 +7,9 @@ public record DeleteCommentCommand(Guid CommentId, int ContentId, Guid CurrentUs
 {
     public IEnumerable<string> CacheKeysToInvalidate =>
     [
-        $"Comments_{ContentId}_{CurrentUserId}" 
+        $"Comments_{ContentId}_{CurrentUserId}", 
+        $"Comments_{ContentId}_{Guid.Empty}" 
+
     ];
 }
 

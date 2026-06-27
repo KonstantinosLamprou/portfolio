@@ -57,19 +57,21 @@ const { mutate: deleteVote } = useDeleteCommentVoteMutation();
 
 const handleVote = (isUpvote: boolean) => {
     const commentId = props.comment.id;
+    const contentId = props.comment.contentId;
+    
 
     if (!isAuthenticated.value) {
         toast.error('Bitte melde dich an, um abzustimmen.');
         return;
     }
 
-    if (props.isDeleted || props.comment.isDeleted) {
+    if (props.comment.isDeleted || props.comment.isDeleted) {
         toast.info("Gelöschte Kommentare können nicht bewertet werden.");
         return;
     }
 
     if (currentUserVote.value === isUpvote) {
-        deleteVote(commentId, {
+        deleteVote({commentId: commentId, contentId}, {
             onSuccess: () => {
                 currentUserVote.value = null;
                 toast.success("Stimme erfolgreich gelöscht");
@@ -79,7 +81,7 @@ const handleVote = (isUpvote: boolean) => {
             }
         });
     } else if (currentUserVote.value !== null) {
-        updateVote({ commentId, isUpvote }, {
+        updateVote({ commentId, isUpvote, contentId}, {
             onSuccess: () => {
                 currentUserVote.value = isUpvote;
                 toast.success("Stimme erfolgreich aktualisiert");
@@ -89,7 +91,7 @@ const handleVote = (isUpvote: boolean) => {
             }
         });
     } else {
-        createVote({ commentId, isUpvote }, {
+        createVote({ commentId, isUpvote, contentId }, {
             onSuccess: () => {
                 currentUserVote.value = isUpvote;
                 toast.success("Stimme erfolgreich abgegeben");

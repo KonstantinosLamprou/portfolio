@@ -4,13 +4,14 @@ using System.Text;
 
 namespace Backend.Domain.Contracts;
 
-
 public record CreateVoteDto(
      bool IsUpvote,
-     Guid CommentId
+     Guid CommentId, 
+     int ContentId
 );
 
 public record UpdateVoteDto(
      bool IsUpvote,
-     Guid CommentId
+     Guid CommentId,
+     int ContentId
 );
