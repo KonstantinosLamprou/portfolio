@@ -87,13 +87,13 @@
                     <PencilIcon class="w-5 h-5 lg:w-4 lg:h-4 lg:mr-2 shrink-0"/>
                     <p class="hidden lg:block">Bearbeiten</p>
                   </Button>
-                  <button
+                  <Button
                     @click="copyCommentLink"
                     class="flex items-center justify-center lg:justify-start bg-transparent hover:bg-white/10 text-[#fafafa] rounded-lg p-2 lg:px-3 lg:py-2 transition-colors cursor-pointer"
                   >
                     <CopyIcon class="w-5 h-5 lg:w-4 lg:h-4 lg:mr-2 shrink-0"/>
                     <p class="hidden lg:block">Link kopieren</p>
-                  </button>
+                  </Button>
                 </PopoverContent>
               </PopoverPortal>
             </PopoverRoot>

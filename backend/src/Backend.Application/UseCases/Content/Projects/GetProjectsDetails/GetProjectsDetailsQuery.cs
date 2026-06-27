@@ -7,5 +7,5 @@ public record GetProjectDetailsQuery(string Slug, Guid? CurrentUserId) : ICacheQ
 {
     public string CacheKey => $"ProjectDetails_{Slug}";
     
-    public TimeSpan Expiration => TimeSpan.FromMinutes(5);
+    public TimeSpan Expiration => TimeSpan.FromMinutes(1);
 }

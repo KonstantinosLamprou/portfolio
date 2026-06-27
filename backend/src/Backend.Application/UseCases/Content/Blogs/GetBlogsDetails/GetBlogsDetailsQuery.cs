@@ -4,5 +4,5 @@ public record GetBlogsDetailsQuery(string Slug, Guid? CurrentUserId) : ICacheQue
 {
     public string CacheKey => $"BlogDetails_{Slug}";
     
-    public TimeSpan Expiration => TimeSpan.FromMinutes(5);
+    public TimeSpan Expiration => TimeSpan.FromMinutes(1);
 }

@@ -51,7 +51,11 @@
                   </div>
                   <div class=" mb-8 flex space-x-2 text-xs md:text-sm">
                     <div>entwickelt von Konstantinos Lamprou</div>
+                    <div> • </div>
+                    <RouterLink to="/impressum" class="transition-all duration-300 text-link hover:text-sky hover:underline hover:scale-102">Impressum</RouterLink>
+
                   </div>
+
             </div>
         </footer>
 </template>

@@ -60,7 +60,25 @@ const router = createRouter({
       name: 'Guestbook',
       component: () => import ('@/views/GuestbookView.vue'),
       meta: { title: 'Kostas | Gästebuch' }
-    }
+    }, 
+    {
+      path: '/terms-of-service',
+      name: 'TermsOfService',
+      component: () => import ('@/views/TermsOfService.vue'),
+      meta: { title: 'Kostas | Nutzungsbedingungen' }
+    }, 
+    {
+      path: '/privacy-policy',
+      name: 'PrivacyPolicy',
+      component: () => import ('@/views/PrivacyPolicy.vue'),
+      meta: { title: 'Kostas | Datenschutzerklärung' }
+    }, 
+    {
+      path: '/impressum',
+      name: 'Impressum',
+      component: () => import ('@/views/Impressum.vue'),
+      meta: { title: 'Kostas | Impressum' }
+    }, 
   ],
 
   scrollBehavior(to, from, savedPosition) {

@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Backend.Application.UseCases.Comments;
 using Backend.Domain.Contracts; 
 using Backend.Api.Helpers;
+using Backend.Application.Common.Interfaces;
+using Backend.Application.Common.Models;
 
 namespace Backend.Api.Controllers;
 
@@ -11,18 +13,18 @@ namespace Backend.Api.Controllers;
 [Route("api/comments")]
 public class CommentsController : ControllerBase
 {
-    private readonly CreateCommentHandler _createCommentHandler;
-    private readonly GetCommentsHandler _getCommentsHandler;
-    private readonly UpdateCommentHandler _updateCommentHandler;
-    private readonly DeleteCommentHandler _deleteCommentHandler;
-    private readonly GetCommentByIdHandler _getCommentByIdHandler;
+    private readonly ICommandHandler<CreateCommentCommand, CommentResponseDto> _createCommentHandler;
+    private readonly IQueryHandler<GetCommentsQuery, List<CommentResponseDto>> _getCommentsHandler;
+    private readonly ICommandHandler<UpdateCommentCommand, Unit> _updateCommentHandler;
+    private readonly ICommandHandler<DeleteCommentCommand, Unit> _deleteCommentHandler;
+    private readonly IQueryHandler<GetCommentByIdQuery, CommentResponseDto?> _getCommentByIdHandler;
 
     public CommentsController(
-        CreateCommentHandler createCommentHandler, 
-        GetCommentsHandler getCommentsHandler, 
-        UpdateCommentHandler updateCommentHandler, 
-        DeleteCommentHandler deleteCommentHandler,
-        GetCommentByIdHandler getCommentByIdHandler)
+        ICommandHandler<CreateCommentCommand, CommentResponseDto> createCommentHandler, 
+        IQueryHandler<GetCommentsQuery, List<CommentResponseDto>> getCommentsHandler, 
+        ICommandHandler<UpdateCommentCommand, Unit> updateCommentHandler, 
+        ICommandHandler<DeleteCommentCommand, Unit> deleteCommentHandler,
+        IQueryHandler<GetCommentByIdQuery, CommentResponseDto?> getCommentByIdHandler)
     {
         _createCommentHandler = createCommentHandler;
         _getCommentsHandler = getCommentsHandler;

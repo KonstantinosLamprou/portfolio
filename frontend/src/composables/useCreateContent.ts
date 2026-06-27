@@ -7,7 +7,7 @@ export function useCreateContentblogs() {
   return useMutation({
     mutationFn: async (newPost: CreateBlogRequest) => {
       try {
-      const response = await apiClient.post('/blogs/create', newPost)
+      const response = await apiClient.post('/blogs', newPost)
       
       return response.data
 
@@ -29,7 +29,7 @@ export function useCreateContentprojects() {
   return useMutation({
     mutationFn: async (newPost: CreateBlogRequest) => {
       try {
-      const response = await apiClient.post('/projects/create', newPost)
+      const response = await apiClient.post('/projects', newPost)
       
       return response.data
 
