@@ -8,33 +8,38 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { toast } from 'vue-sonner'
 
+const route = useRoute()
 const router = useRouter()
 
 onMounted(() => {
-  // Schau nach, ob wir uns vor dem Login eine Seite gemerkt haben. 
-  // Fallback ist die Startseite ('/'), falls nichts gefunden wird.
+  
   const returnUrl = sessionStorage.getItem('auth:returnUrl') || '/'
   const savedScrollY = sessionStorage.getItem('auth:scrollY')
 
-  // Räume den Speicher sofort wieder auf, damit es sauber bleibt
   sessionStorage.removeItem('auth:returnUrl')
+  sessionStorage.removeItem('auth:scrollY')
 
-router.push(returnUrl).then(() => {
+  if (route.query.error) {
+    toast.error("Die Anmeldung ist fehlgeschlagen oder abgebrochen worden.")
     
-    // Wenn wir eine Scroll-Position gespeichert haben...
+    router.replace(returnUrl) 
+    return 
+  }
+  
+  toast.success("Du hast dich erfolgreich angemeldet.")
+  
+  router.replace(returnUrl).then(() => {
+    
     if (savedScrollY) {
-      // Warten wir kurz, bis Vue und TanStack Query das HTML aufgebaut haben
       setTimeout(() => {
         window.scrollTo({
-          top: parseInt(savedScrollY), // String zurück in eine Zahl wandeln
-          behavior: 'smooth'           // Erzeugt einen geschmeidigen Scroll-Effekt
-        });
-        
-        // aufräumen
-        sessionStorage.removeItem('auth:scrollY');
-      }, 500); 
+          top: parseInt(savedScrollY), 
+          behavior: 'smooth'           
+        })
+      }, 500) 
     }
     
   })

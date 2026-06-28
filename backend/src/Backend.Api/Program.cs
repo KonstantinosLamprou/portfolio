@@ -61,6 +61,21 @@ builder.Services.AddAuthentication(options =>
     options.SaveTokens = true; // Speichert Access Tokens 
     options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
 
+    options.Events.OnRemoteFailure = context =>
+        {
+            // 1. Die Exception abfangen und unterdrücken
+            context.HandleResponse(); 
+
+            // 2. Optional: Loggen, dass der Nutzer abgebrochen hat
+            // (context.Failure enthält Details zur Exception)
+
+            // 3. Den Nutzer zurück zum Frontend leiten
+            // Passe die URL an die Route deines Vue-Frontends an
+            context.Response.Redirect("http://localhost:5173/auth/callback?error=cancelled"); 
+            
+            return Task.CompletedTask;
+        };
+
 })
 .AddGitHub(options =>
 {
@@ -68,7 +83,12 @@ builder.Services.AddAuthentication(options =>
     options.ClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"]!;
     options.Scope.Add("user:email"); 
     options.ClaimActions.MapJsonKey("urn:github:avatar_url", "avatar_url", "url");
-
+    options.Events.OnRemoteFailure = context =>
+        {
+            context.HandleResponse();
+            context.Response.Redirect("http://localhost:5173/auth/callback?error=cancelled");
+            return Task.CompletedTask;
+        };
 });
 
 builder.Services.Configure<AdminOptions>(

@@ -79,6 +79,7 @@ const router = createRouter({
       component: () => import ('@/views/Impressum.vue'),
       meta: { title: 'Kostas | Impressum' }
     }, 
+
   ],
 
   scrollBehavior(to, from, savedPosition) {

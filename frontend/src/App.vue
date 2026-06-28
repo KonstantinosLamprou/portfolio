@@ -25,8 +25,9 @@ import { useTheme } from './composables/useTheme'
 import SplashScreen from './components/ui/SplashScreen.vue';
 import BackgroundGradient from './components/ui/BackgroundGradient.vue'
 import { Toaster } from 'vue-sonner'
+import { useRouter, useRoute } from 'vue-router'
+import { toast } from 'vue-sonner'
 import 'vue-sonner/style.css'
-
 
 const { initTheme } = useTheme()
 

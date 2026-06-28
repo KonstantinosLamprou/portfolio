@@ -60,18 +60,16 @@ import GoogleIcon from "@/assets/google.svg"
 
 const dialogState  = useSignInDialogStore()
 
-
 const startOAuth = (provider: "github" | "google") => {
-  // 1. Merken, wo der User gerade ist (Pfad + Parameter + Anker)
-  const returnUrl = window.location.pathname + window.location.search + window.location.hash;
-  
-  // Im Browser zwischenspeichern
-  sessionStorage.setItem('auth:returnUrl', returnUrl);
+    // Merken, wo der User gerade ist (Pfad + Parameter + Anker)
+    const returnUrl = window.location.pathname + window.location.search + window.location.hash;
+    
+    // Im Browser zwischenspeichern
+    sessionStorage.setItem('auth:returnUrl', returnUrl);
 
-  sessionStorage.setItem('auth:scrollY', window.scrollY.toString());
+    sessionStorage.setItem('auth:scrollY', window.scrollY.toString());
 
-  // 2. Ab zum Backend-Login!
-  window.location.href = `http://localhost:5132/api/auth/${provider}/login`;
+    // Ab zum Backend-Login!
+    window.location.href = `http://localhost:5132/api/auth/${provider}/login`;
 }
-
 </script>
