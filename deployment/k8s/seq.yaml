@@ -3,6 +3,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: seq-pvc
+  namespace: portfolio-prod
 spec:
   accessModes:
     - ReadWriteOnce
@@ -17,6 +18,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: seq-service
+  namespace: portfolio-prod
 spec:
   selector:
     app: seq
@@ -31,6 +33,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: seq-deployment
+  namespace: portfolio-prod
 spec:
   replicas: 1
   selector:

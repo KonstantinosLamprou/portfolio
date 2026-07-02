@@ -1,0 +1,32 @@
+name: CD Deployment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Copy App Manifests via SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HETZNER_HOST }}
+          username: root
+          key: ${{ secrets.HETZNER_SSH_KEY }}
+          source: "deployment/k8s/*" 
+          target: "/root/portfolio-app/"
+
+      - name: Apply Manifests via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HETZNER_HOST }}
+          username: root
+          key: ${{ secrets.HETZNER_SSH_KEY }}
+          script: |
+            kubectl apply -f /root/portfolio-app/deployment/k8s/ -n portfolio-prod
+            
+            kubectl rollout restart deployment/frontend-deployment -n portfolio-prod
+            kubectl rollout restart deployment/backend-deployment -n portfolio-prod

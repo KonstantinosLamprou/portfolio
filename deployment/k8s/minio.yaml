@@ -3,6 +3,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: minio-pvc
+  namespace: portfolio-prod
 spec:
   accessModes:
     - ReadWriteOnce
@@ -17,6 +18,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: minio-service
+  namespace: portfolio-prod
 spec:
   selector:
     app: minio
@@ -35,6 +37,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: minio-deployment
+  namespace: portfolio-prod
 spec:
   replicas: 1
   selector:
