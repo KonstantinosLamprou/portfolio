@@ -61,7 +61,6 @@ spec:
             - containerPort: 9000
             - containerPort: 9001
           env:
-            # (Später auf dem Hetzner-Server ziehen wir die natürlich wieder aus dem K8s-Secret!)
             - name: MINIO_ROOT_USER
               valueFrom:
                 secretKeyRef:
