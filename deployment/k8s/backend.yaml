@@ -31,8 +31,8 @@ spec:
     spec:
       containers:
         - name: backend
-          image: portfolio-backend:latest
-          imagePullPolicy: Never 
+          image: ghcr.io/KonstantinosLamprou/portfolio-backend:latest
+          imagePullPolicy: Always 
           ports:
             - containerPort: 8080
           env:
