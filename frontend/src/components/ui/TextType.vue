@@ -82,7 +82,7 @@ const currentTextColor = computed(() => {
 
 const shouldHideCursor = computed(() => {
   return props.hideCursorWhileTyping &&
-    (currentCharIndex.value < textArray.value[currentTextIndex.value].length || isDeleting.value)
+    (currentCharIndex.value < textArray.value[currentTextIndex.value]!.length || isDeleting.value)
 })
 
 // 4. Die Tipp-Logik (Kernstück)
@@ -96,7 +96,7 @@ const executeTypingAnimation = () => {
   if (!isVisible.value) return
 
   const currentText = textArray.value[currentTextIndex.value]
-  const processedText = props.reverseMode ? currentText.split('').reverse().join('') : currentText
+  const processedText = props.reverseMode ? currentText!.split('').reverse().join('') : currentText
 
   if (isDeleting.value) {
     // Text löschen
@@ -104,7 +104,7 @@ const executeTypingAnimation = () => {
       isDeleting.value = false
       if (currentTextIndex.value === textArray.value.length - 1 && !props.loop) return
 
-      emit('sentenceComplete', textArray.value[currentTextIndex.value], currentTextIndex.value)
+      emit('sentenceComplete', textArray.value[currentTextIndex.value]!, currentTextIndex.value)
       currentTextIndex.value = (currentTextIndex.value + 1) % textArray.value.length
       currentCharIndex.value = 0
       timeoutId = setTimeout(() => { executeTypingAnimation() }, props.pauseDuration)
@@ -116,9 +116,9 @@ const executeTypingAnimation = () => {
     }
   } else {
     // Text tippen
-    if (currentCharIndex.value < processedText.length) {
+    if (currentCharIndex.value < processedText!.length) {
       timeoutId = setTimeout(() => {
-        displayedText.value += processedText[currentCharIndex.value]
+        displayedText.value += processedText![currentCharIndex.value]
         currentCharIndex.value++
         executeTypingAnimation()
       }, props.variableSpeed ? getRandomSpeed() : props.typingSpeed)

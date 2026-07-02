@@ -1,8 +1,6 @@
+using Backend.Application.Common.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Backend.Api.Controllers;
 
@@ -10,80 +8,75 @@ namespace Backend.Api.Controllers;
 [Route("api/files")]
 public class FilesController : ControllerBase
 {
-    private readonly IWebHostEnvironment _env;
+    private readonly IMinIOService _storageService;
 
-    // IWebHostEnvironment gibt uns den Pfad zum wwwroot-Ordner des Servers
-    public FilesController(IWebHostEnvironment env)
+    // Das Interface wird hier per Dependency Injection injiziert
+    public FilesController(IMinIOService storageService)
     {
-        _env = env;
+        _storageService = storageService;
     }
 
     [HttpPost("upload")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UploadImage(IFormFile? file, CancellationToken cancellationToken = default)
     {
-        
         if (file == null || file.Length == 0)
-            return BadRequest("Backend sagt: Keine Datei hochgeladen oder Datei ist leer.");
+            return BadRequest("Keine Datei hochgeladen oder Datei ist leer.");
 
         if (!file.ContentType.StartsWith("image/"))
-            return BadRequest($"Backend sagt: Nur Bilder sind erlaubt. Erhalten: {file.ContentType}");
+            return BadRequest($"Nur Bilder sind erlaubt. Erhalten: {file.ContentType}");
 
-        // Zielordner erstellen (wwwroot/uploads/images)
-        var webRoot = _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
-        var uploadsFolder = Path.Combine(webRoot, "uploads", "images");
+        // Öffne den Stream der hochgeladenen Datei
+        using var stream = file.OpenReadStream();
+        
+        // Speicher-Logik an den Service delegieren
+        var uniqueFileName = await _storageService.UploadImageAsync(stream, file.FileName, cancellationToken);
 
-        if (!Directory.Exists(uploadsFolder))
-            Directory.CreateDirectory(uploadsFolder);
-
-        // Einen sicheren, einmaligen Dateinamen generieren
-        var uniqueFileName = $"{Guid.NewGuid()}_{file.FileName}";
-        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-        // Datei physisch auf die Festplatte kopieren
-        using (var stream = new FileStream(filePath, FileMode.Create))
-        {
-            await file.CopyToAsync(stream, cancellationToken);
-        }
-
-        // Die fertige URL generieren, die das Frontend später nutzen kann
+        // Web-Logik: Absolute URL für das Frontend bauen
         var request = HttpContext.Request;
-        var fileUrl = $"{request.Scheme}://{request.Host}/uploads/images/{uniqueFileName}";
+        var fileUrl = $"{request.Scheme}://{request.Host}/api/files/{uniqueFileName}";
 
-        // URL an Vue zurückgeben!
         return Ok(new { url = fileUrl });
     }
-    
+
+    [HttpGet("{fileName}")]
+    public async Task<IActionResult> GetImage(
+        [FromRoute] string fileName, 
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrEmpty(fileName))
+            return BadRequest("Dateiname fehlt.");
+
+        Response.ContentType = "image/jpeg";
+        await _storageService.GetFileAsync(fileName, Response.Body, cancellationToken);
+        
+        return new EmptyResult();
+    }
+
     [HttpDelete("delete")]
     [Authorize(Roles = "Admin")]
-    public IActionResult DeleteImage([FromQuery] string fileUrl)
+    public async Task<IActionResult> DeleteImage([FromQuery] string fileUrl, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(fileUrl))
             return BadRequest("Keine URL angegeben.");
 
         try
         {
-            // reinen Dateinamen aus der URL (z.B. "guid_bild.png")
+            // Reinen Dateinamen aus der URL extrahieren
             var uri = new Uri(fileUrl);
             var fileName = Path.GetFileName(uri.LocalPath);
 
-            // Physischer Pfad
-            var webRoot = _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
-            var filePath = Path.Combine(webRoot, "uploads", "images", fileName);
+            // Lösch-Logik an den Service delegieren
+            var success = await _storageService.DeleteFileAsync(fileName, cancellationToken);
 
-            // Sicherheitscheck: Verhindern von Directory Traversal Attacks ("../")
-            var uploadsFolder = Path.Combine(webRoot, "uploads", "images");
-            if (!filePath.StartsWith(uploadsFolder))
-                return Forbid("Ungültiger Dateipfad.");
-
-            // Datei löschen
-            if (System.IO.File.Exists(filePath))
-            {
-                System.IO.File.Delete(filePath);
+            if (success)
                 return Ok(new { message = "Bild erfolgreich gelöscht." });
-            }
 
-            return NotFound("Bild auf dem Server nicht gefunden.");
+            return NotFound("Bild auf dem Storage nicht gefunden.");
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid("Ungültiger Dateipfad.");
         }
         catch (Exception ex)
         {

@@ -1,0 +1,97 @@
+# ============================
+# .NET BUILD OUTPUTS
+# ============================
+**/bin/
+**/obj/
+**/publish/
+**/out/
+
+# ============================
+# RUNTIME & DEPENDENCIES
+# ============================
+**/packages/
+**/*.user
+**/*.suo
+**/project.lock.json
+**/project.assets.json
+
+# ============================
+# LOCAL CONFIGURATIONS
+# ============================
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+*.local.json
+.env
+.env.*
+**/secrets.json
+**/appsettings.Secrets.json
+
+# ============================
+# LOGS & TEMP FILES
+# ============================
+**/*.log
+**/*.tmp
+**/logs/
+**/temp/
+**/wwwroot/*.map
+
+# ============================
+# GIT & VERSION CONTROL
+# ============================
+.git/
+.gitignore
+.gitattributes
+.github/
+.dockerignore
+.gitmodules
+
+# ============================
+# IDE & EDITOR FILES
+# ============================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+**/.vs/
+**/Properties/launchSettings.json
+
+# ============================
+# SYSTEM FILES
+# ============================
+.DS_Store
+Thumbs.db
+*.bak
+
+# ============================
+# TEST COVERAGE & REPORTS
+# ============================
+**/coverage/
+**/TestResults/
+**/*.trx
+**/cobertura.xml
+
+# ============================
+# DEPENDENCY FOLDERS (werden im Container neu installiert)
+# ============================
+**/node_modules/
+**/wwwroot/lib/
+
+# ============================
+# BUILD SCRIPTS (optional)
+# ============================
+*.sh
+*.ps1
+*.cmd
+*.bat
+
+# ============================
+# MISC
+# ============================
+README.md
+CHANGELOG.md
+LICENSE
+*.sln
+*.slnx
+*.DotSettings

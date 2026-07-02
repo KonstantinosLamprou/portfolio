@@ -183,7 +183,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useSession } from '@/composables/useSession.ts';
 import { useDeleteCommentMutation, useUpdateCommentMutation } from '@/composables/useComment';
 
-import type { CommentResponseDto } from '@/types/comment.ts';
+import type { CommentResponseDtoExtended } from '@/components/comment/Commentwrapper.vue';
 
 import CommentIcon  from '@/assets/comment.svg';
 import ChevronDownIcon from '@/assets/chevron-down.svg';
@@ -205,10 +205,12 @@ import { toast } from 'vue-sonner';
 import CommentVote from './CommentVote.vue';
 
 const props = defineProps<{
-  comment: CommentResponseDto;
+  comment: CommentResponseDtoExtended;
   contentId: number;
   contentType: string;
 }>();
+
+
 
 //Helper für Links
 const commentNode = ref<HTMLElement | null>(null);

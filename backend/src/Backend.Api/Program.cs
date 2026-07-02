@@ -15,6 +15,9 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Authentication;
 using Backend.Api.Middlewares;
 using Serilog;
+using Backend.Application.Common.Interfaces;
+using Backend.Infrastructure.Storage;
+using Minio; 
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -99,6 +102,18 @@ builder.Services.AddMemoryCache();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
+builder.Services.AddScoped<IMinIOService, MinIOStorageService>();
+
+var minioEndpoint = Environment.GetEnvironmentVariable("MINIO_ENDPOINT"); 
+var minioAccessKey = Environment.GetEnvironmentVariable("MINIO_ACCESS_KEY"); 
+var minioSecretKey = Environment.GetEnvironmentVariable("MINIO_SECRET_KEY"); 
+
+builder.Services.AddMinio(configureClient => configureClient
+    .WithEndpoint(minioEndpoint)
+    .WithCredentials(minioAccessKey, minioSecretKey)
+    .WithSSL(false) 
+    .Build());
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -145,6 +160,17 @@ app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+// Datenbank-Migration beim Start der Anwendung
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    
+    Log.Information("Starte Datenbank-Migration...");
+    dbContext.Database.Migrate();
+    Log.Information("Datenbank-Migration abgeschlossen.");
+}
 
 app.Run();
 

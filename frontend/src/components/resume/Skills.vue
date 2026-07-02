@@ -37,15 +37,12 @@
 import { shallowRef, onMounted } from 'vue'
 import Badge from '../ui/Bagde.vue'
 
-// Typdefinition für unsere Skill-Objekte
 interface Skill {
   name: string;
   iconComponent: any;
 }
 
 const skillsList = shallowRef<Skill[]>([])
-
-
 const svgModules = import.meta.glob('@/assets/skills/*.svg', { eager: true, query: '?component' })
 
 onMounted(() => {
@@ -54,11 +51,11 @@ onMounted(() => {
   // iterieren über die gefundenen Dateien
   for (const path in svgModules) {
     // Extrahieren den Dateinamen ohne .svg (z.B. 'vuejs' aus '/src/assets/skills/vuejs.svg')
-    const match = path.match(/\/([^/]+)\.svg$/)
+    const match = path.match(/\/([^/]+)\.svg$/) 
     const name = match ? match[1] : 'Unknown'
 
     loadedSkills.push({
-      name: name,
+      name: name!,
       // Die SVG-Datei als renderbare Vue-Komponente
       iconComponent: svgModules[path]
     })

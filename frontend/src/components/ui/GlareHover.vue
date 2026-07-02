@@ -15,7 +15,6 @@
 <script setup lang="ts">
 import { ref, computed, type CSSProperties } from 'vue';
 
-// 1. Props definieren (inklusive Default-Werten wie in React)
 const props = withDefaults(defineProps<{
   width?: string;
   height?: string;
@@ -56,19 +55,18 @@ const rgba = computed(() => {
     g = parseInt(hex.slice(2, 4), 16);
     b = parseInt(hex.slice(4, 6), 16);
   } else if (/^[\dA-Fa-f]{3}$/.test(hex)) {
-    r = parseInt(hex[0] + hex[0], 16);
-    g = parseInt(hex[1] + hex[1], 16);
-    b = parseInt(hex[2] + hex[2], 16);
+    r = parseInt(hex[0]! + hex[0]!, 16);
+    g = parseInt(hex[1]! + hex[1]!, 16);
+    b = parseInt(hex[2]! + hex[2]!, 16);
   } else {
     return props.glareColor;
   }
   return `rgba(${r}, ${g}, ${b}, ${props.glareOpacity})`;
 });
 
-// 3. DOM-Referenz (Äquivalent zu const overlayRef = useRef(null) in React)
 const overlayRef = ref<HTMLElement | null>(null);
 
-// 4. Die Animations-Logik
+// Animations-Logik
 const animateIn = () => {
   const el = overlayRef.value;
   if (!el) return;

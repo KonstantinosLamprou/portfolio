@@ -29,6 +29,25 @@ services:
       restart: unless-stopped
       volumes:
         - seq_data:/data
+  minio-dev:
+      image: minio/minio:latest
+      container_name: portfolio_minio
+      restart: always
+      ports:
+        - "9000:9000" # API für deinen .NET 
+        - "9001:9001" # für Browser
+      volumes:
+        - minio_data:/data
+      environment:
+        MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+        MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      command: server /data --console-address ":9001"
+      healthcheck:
+       # Prüft, ob die MinIO API wirklich erreichbar ist
+        test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+        interval: 5s
+        timeout: 5s
+        retries: 5
   workspace:
     image: mcr.microsoft.com/devcontainers/dotnet:10.0
     container_name: portfolio_workspace
@@ -38,12 +57,18 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=db;Database=portfoliodb;Username=${DB_USER:-devuser};Password=${DB_PASSWORD:-devpass}
+      - MINIO_ENDPOINT=minio-dev:9000
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
     depends_on:
       db:
         condition: service_healthy
       seq:
         condition: service_started
+      minio-dev:
+        condition: service_healthy
 
 volumes:
   postgres_data:
   seq_data:
+  minio_data:

@@ -50,8 +50,9 @@ const props = defineProps<{
   
 }>()
 
-export interface CommentResponseDtoExtended extends Omit<CommentResponseDto, 'createdAt'> {
+export interface CommentResponseDtoExtended extends Omit<CommentResponseDto, 'createdAt' | 'replies'> {
   createdAt: Date; 
+  replies?: CommentResponseDtoExtended[];
 }
 
 const currentSort = ref<'newest' | 'oldest'>('newest');

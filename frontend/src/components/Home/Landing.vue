@@ -188,7 +188,6 @@ import { RouterLink } from 'vue-router'
 import GlareHover from '@/components/ui/GlareHover.vue'
 import SpinnerLoader from '@/components/ui/loaders/SpinnerLoader.vue'
 import TextType from '@/components/ui/TextType.vue'
-import { Button } from "@/components/ui/buttons"
 import LoginIcon from '@/assets/login.svg';
 import { useSignInDialogStore } from "@/stores/useSignInDialogStore"
 import { useSession } from "@/composables/useSession"

@@ -32,7 +32,7 @@
 import { ref, computed } from 'vue';
 import ThumbsUpIcon from '@/assets/thumb-up.svg';
 import ThumbsDownIcon from '@/assets/thumb-down.svg';
-import type { CommentResponseDto } from '@/types/comment';
+import type { CommentResponseDtoExtended } from '@/components/comment/Commentwrapper.vue';
 import { 
   useUpdateCommentVoteMutation, 
   useCreateCommentVoteMutation,
@@ -45,7 +45,7 @@ const { data: session, isPending: isSessionLoading } = useSession()
 const isAuthenticated = computed(() => !!session.value && !isSessionLoading.value)
 
 const props = defineProps<{
-    comment: CommentResponseDto
+    comment: CommentResponseDtoExtended
 }>();
 
 // true = Upvote, false = Downvote, null = Keine Stimme

@@ -134,7 +134,7 @@
 </template>
 
 <script setup lang="ts">
-import type { CommentResponseDto } from '@/types/comment';
+import type { CommentResponseDtoExtended } from '@/components/comment/Commentwrapper.vue';
 
 import EllipsisIcon from '@/assets/ellipsis.svg';
 import TrashIcon from '@/assets/trash.svg';
@@ -153,7 +153,7 @@ import { ref, computed } from 'vue';
 import CommentVote from './CommentVote.vue';
 
 const props = defineProps<{
-  comment: CommentResponseDto;
+  comment: CommentResponseDtoExtended;
   contentId: number;
 }>();
 

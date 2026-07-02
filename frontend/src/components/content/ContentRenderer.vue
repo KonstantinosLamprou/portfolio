@@ -13,7 +13,7 @@
 import HeadingBlock from '../content/HeadingBlock.vue';
 import TextBlock from '../content/TextBlock.vue';
 import { type Component } from 'vue';
-import { type ContentBlock } from '@/data/mockBlogPostData';
+import { type ContentBlock } from '@/types/blogTypes.ts';
 import ImageBlock from '../content/ImageBlock.vue';
 import CodeBlock from '../content/CodeBlock.vue';
 

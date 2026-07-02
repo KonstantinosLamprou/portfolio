@@ -1,0 +1,34 @@
+# Node.js Abhängigkeiten (werden im Container neu installiert)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build- und Cache-Ordner (werden im Container neu gebaut)
+dist/
+.cache/
+.vite/
+
+# Lokale Umgebungskonfigurationen
+.env
+.env.local
+.env.*.local
+
+# Versionskontrolle und Metadaten
+.git/
+.gitignore
+.gitattributes
+.github/
+.dockerignore
+
+# System- und Editor-Dateien
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Test-, Build- und Log-Dateien
+coverage/
+*.log
