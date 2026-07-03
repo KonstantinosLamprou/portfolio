@@ -19,7 +19,7 @@ RUN dotnet publish "src/Backend.Api/Backend.Api.csproj" -c Release -o /app/publi
 
 # ------------- Phase 2: Run (Das schlanke finale Image für die Ausführung) -------------
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-jammy AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble AS final
 WORKDIR /app
 EXPOSE 8080
 
