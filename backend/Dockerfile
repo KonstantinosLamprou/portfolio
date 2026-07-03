@@ -23,6 +23,8 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble AS final
 WORKDIR /app
 EXPOSE 8080
 
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+
 # Kopiere nur die fertig gebauten Dateien aus der Build-Phase hier rüber
 COPY --from=build /app/publish .
 
