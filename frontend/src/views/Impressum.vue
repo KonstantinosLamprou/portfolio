@@ -14,7 +14,7 @@
 
     <section class="mb-8">
       <h2 class="text-xl md:text-2xl font-semibold mb-4">Kontakt</h2>
-      <p class="mb-4">E-Mail: [Deine Kontakt-E-Mail-Adresse]</p>
+      <p class="mb-4">E-Mail: kostaslamprounk@gmail.com</p>
     </section>
 
     <section class="mb-8">
