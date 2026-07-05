@@ -1,5 +1,5 @@
 # ------------ Phase 1: Build -------------
-FROM [mcr.microsoft.com/dotnet/sdk:10.0](https://mcr.microsoft.com/dotnet/sdk:10.0) AS build
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble AS build
 WORKDIR /src
 
 # Projektdateien kopieren und wiederherstellen
@@ -14,7 +14,7 @@ COPY . .
 RUN dotnet publish "src/Backend.Api/Backend.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # ------------- Phase 2: Run -------------
-FROM [mcr.microsoft.com/dotnet/aspnet:10.0-noble](https://mcr.microsoft.com/dotnet/aspnet:10.0-noble) AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble AS final
 WORKDIR /app
 EXPOSE 8080
 
