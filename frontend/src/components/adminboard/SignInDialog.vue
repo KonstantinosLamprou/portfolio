@@ -71,6 +71,6 @@ const startOAuth = (provider: "github" | "google") => {
     sessionStorage.setItem('auth:scrollY', window.scrollY.toString());
 
     // Ab zum Backend-Login!
-    window.location.href = `${apiClient}/auth/${provider}/login`;
+    window.location.href = `${apiClient.defaults.baseURL}/auth/${provider}/login`;
 }
 </script>
