@@ -5,11 +5,11 @@
     <h1 class="text-3xl md:text-4xl font-bold mb-8">Impressum</h1>
 
     <section class="mb-8">
-      <h2 class="text-xl md:text-2xl font-semibold mb-4">Angaben gemäß § 5 DDG</h2>
+      <h2 class="text-xl md:text-2xl font-semibold mb-4">Inhalte gemäß §5 DDG</h2>
       <p class="mb-1">Konstantinos Lamprou</p>
-      <p class="mb-1">[c/o Impressum-Service Platzhalter]</p>
-      <p class="mb-1">[Musterstraße 1]</p>
-      <p class="mb-4">[12345 Musterstadt]</p>
+      <p class="mb-1">c/o IP-Management #10931</p>
+      <p class="mb-1">Ludwig-Erhard-Straße 18</p>
+      <p class="mb-4">20459 Hamburg</p>
     </section>
 
     <section class="mb-8">
@@ -20,9 +20,9 @@
     <section class="mb-8">
       <h2 class="text-xl md:text-2xl font-semibold mb-4">Verantwortlich für den Inhalt nach § 18 MStV</h2>
       <p class="mb-1">Konstantinos Lamprou</p>
-      <p class="mb-1">[c/o Impressum-Service Platzhalter]</p>
-      <p class="mb-1">[Musterstraße 1]</p>
-      <p class="mb-4">[12345 Musterstadt]</p>
+      <p class="mb-1">c/o IP-Management #10931</p>
+      <p class="mb-1">Ludwig-Erhard-Straße 18</p>
+      <p class="mb-4">20459 Hamburg</p>
     </section>
 
     <section class="mb-8">
