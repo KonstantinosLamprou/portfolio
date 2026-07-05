@@ -17,13 +17,13 @@ using Backend.Api.Middlewares;
 using Serilog;
 using Backend.Application.Common.Interfaces;
 using Backend.Infrastructure.Storage;
-using Minio; 
+using Minio;
+using Microsoft.AspNetCore.HttpOverrides;
 
 
 var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.IsDevelopment())
 {
-    // Die .env wird nur lokal geladen (in Produktion übernimmt K8s das)
     Env.Load();
 }
 builder.Configuration.AddEnvironmentVariables();
@@ -147,6 +147,11 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
 
 if (app.Environment.IsDevelopment())
