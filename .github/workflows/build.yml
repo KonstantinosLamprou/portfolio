@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 # WICHTIG: Erlaubnis erteilen, in die Registry zu schreiben
 permissions:
