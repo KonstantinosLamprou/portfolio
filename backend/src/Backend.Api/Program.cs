@@ -21,19 +21,23 @@ using Minio;
 
 
 var builder = WebApplication.CreateBuilder(args);
+if (builder.Environment.IsDevelopment())
+{
+    // Die .env wird nur lokal geladen (in Produktion übernimmt K8s das)
+    Env.Load();
+}
+builder.Configuration.AddEnvironmentVariables();
 
-// Logger Lokal
+var frontendUrl = builder.Configuration["FrontendUrl"] ?? "http://localhost:5173";
+
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration) 
     .Enrich.FromLogContext()
     .WriteTo.Console() 
-    .WriteTo.Seq("http://seq:80") 
+    .WriteTo.Seq("http://seq-service:80") 
     .CreateLogger();
 
 builder.Host.UseSerilog();
-
-Env.Load();
-builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -74,7 +78,7 @@ builder.Services.AddAuthentication(options =>
 
             // 3. Den Nutzer zurück zum Frontend leiten
             // Passe die URL an die Route deines Vue-Frontends an
-            context.Response.Redirect("http://localhost:5173/auth/callback?error=cancelled"); 
+            context.Response.Redirect($"{frontendUrl}/auth/callback?error=cancelled"); 
             
             return Task.CompletedTask;
         };
@@ -89,7 +93,7 @@ builder.Services.AddAuthentication(options =>
     options.Events.OnRemoteFailure = context =>
         {
             context.HandleResponse();
-            context.Response.Redirect("http://localhost:5173/auth/callback?error=cancelled");
+            context.Response.Redirect($"{frontendUrl}/auth/callback?error=cancelled");
             return Task.CompletedTask;
         };
 });
@@ -135,7 +139,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5173") 
+        policy.WithOrigins(frontendUrl) 
               .AllowAnyHeader()                     
               .AllowAnyMethod()                     
               .AllowCredentials();                 
@@ -154,7 +158,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors();
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
+
 app.UseExceptionHandler(); 
 app.UseStaticFiles();
 app.UseAuthentication();

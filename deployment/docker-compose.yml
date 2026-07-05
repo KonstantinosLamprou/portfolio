@@ -18,7 +18,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-  seq:
+  seq-service:
       image: datalust/seq:latest
       container_name: portfolio_seq
       environment:
@@ -63,7 +63,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      seq:
+      seq-service:
         condition: service_started
       minio-dev:
         condition: service_healthy
