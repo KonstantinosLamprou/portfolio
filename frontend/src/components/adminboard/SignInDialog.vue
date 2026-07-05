@@ -54,6 +54,7 @@
 
 <script setup lang="ts">
 import { useSignInDialogStore } from "@/stores/useSignInDialogStore"
+import apiClient from "@/services/api"
 import CancelIcon from "@/assets/cancel.svg"
 import GithubIcon from "@/assets/github.svg"
 import GoogleIcon from "@/assets/google.svg"
@@ -70,6 +71,6 @@ const startOAuth = (provider: "github" | "google") => {
     sessionStorage.setItem('auth:scrollY', window.scrollY.toString());
 
     // Ab zum Backend-Login!
-    window.location.href = `http://localhost:5132/api/auth/${provider}/login`;
+    window.location.href = `${apiClient}/auth/${provider}/login`;
 }
 </script>
