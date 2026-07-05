@@ -15,8 +15,8 @@
           Konstantinos Lamprou
         </h3>
         <div class="">Informatikstudent</div>
-        <div class="">Praktikant, Meierhofer AG</div>
-        <div class="">Zurzeit: Testautomatisierer</div>
+        <div class="">Werkstudent, Meierhofer AG</div>
+        <div class="">Zurzeit: Test Engineer</div>
 
         //Svgs hier:
         <div class="flex space-x-4">
@@ -61,9 +61,10 @@
 
     <div class="flex items-center xl:w-1/2">
       <p class="text-1xl text-center sm:text-2xl text-body">
-        Zurzeit bin ich noch Student und mit dem Programmieren, habe ich zeitgleich wie mit dem Studium gestartet.
-        Seitdem arbeite ich hauptsächlich in C++, JavaScript/TypeScript und C#. Ich habe aber auch schon mit Python gearbeitet.
-        Meine Interessen liegen in Systemprogrammierung, Low-level und Fullstack dev. Außerdem mache ich aber auch viel mit DevOps, Networking und Sysadmin für mein Homelab.
+        Ich würde sagen, dass ich leidenschaftlich gerne programmiere und ich mir auch viele persönliche Ziele gesetzt habe um besser zu werden. 
+        Zurzeit arbeite und lerne ich hauptsächlich in C++, JavaScript/TypeScript und C#. Ich habe aber auch schon mit Python gearbeitet und werde auch dort noch das eine oder das andere Projekt machen.
+        Meine größten Interessen liegen in der Fullstack-Entwicklung, Systemprogrammierung, Low-Level-Programmierung und DevOps. Mit dieser Website möchte ich meine Projekte und mein Wissen präsentieren und natürlich auch durch den Aufbau und das Maintainen der Website lernen! 
+        Viel Spaß beim Durchstöbern meiner Website und hinterlasse gerne Feedback in meinem Gästebuch! Ciao for now, Kostas. 
       </p>
     </div>
 
