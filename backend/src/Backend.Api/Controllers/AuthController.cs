@@ -13,10 +13,12 @@ namespace Backend.Api.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly ICommandHandler<AddUserCommand, AddUserResult> _handler;
+    private readonly IConfiguration _configuration;
 
-    public AuthController(ICommandHandler<AddUserCommand, AddUserResult> handler)
+    public AuthController(ICommandHandler<AddUserCommand, AddUserResult> handler, IConfiguration configuration)
     {
         _handler = handler;
+        _configuration = configuration;
     }
 
     private static readonly Dictionary<string, string> ProviderMap =
@@ -63,7 +65,8 @@ public class AuthController : ControllerBase
     [HttpGet("{provider}/callback")]
     public async Task<IActionResult> Callback([FromRoute] string provider)
     {
-        // 1. Gäste-Cookie von GitHub/Google auslesen
+        // Gäste-Cookie von GitHub/Google auslesen
+        
         var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
         if (!authenticateResult.Succeeded) return Unauthorized();
@@ -81,7 +84,7 @@ public class AuthController : ControllerBase
 
         if (providerSubjectId == null || email == null) return BadRequest("Unzureichende Daten vom Provider.");
 
-        // 2. Command an deinen Handler schicken
+        // Command an Handler schicken
         var cmd = new AddUserCommand(
             Provider: provider,
             ProviderSubjectId: providerSubjectId,
@@ -90,10 +93,10 @@ public class AuthController : ControllerBase
             ProfilePictureUrl: profilePictureUrl
         );
 
-        // HIER IST DIE MAGIE: Wir fangen dein AddUserResult auf!
+
         var result = await _handler.HandleAsync(cmd, HttpContext.RequestAborted);
 
-        // 3. Eigene Claims mit DEINER Guid erstellen
+        // Claims 
         var internalClaims = new List<Claim>
         {
             // result.Id (bzw. wie auch immer die Property in deinem Record heißt) ist die Guid!
@@ -107,14 +110,17 @@ public class AuthController : ControllerBase
 
         var internalIdentity = new ClaimsIdentity(internalClaims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-        // 4. Den User mit DEINEM Cookie neu anmelden
+        // User mit Cookie neu anmelden
         await HttpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(internalIdentity)
         );
 
-        // 5. Zurück zum Vue-Frontend
-        return Redirect("http://localhost:5173/auth/callback"); 
+        // Zurück zum Vue-Frontend
+        var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:5173";
+
+        return Redirect($"{frontendUrl}/auth/callback");    
+    
     }
 
     [HttpGet("session")]
