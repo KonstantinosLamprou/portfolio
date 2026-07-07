@@ -165,7 +165,7 @@
 
         </div>
 
-        <div class="mt-4 flex w-full flex-col items-center justify-center">
+        <!-- <div class="mt-4 flex w-full flex-col items-center justify-center">
           <p class="mb-2">
             Derzeitiges KI-Modell im Einsatz:
           </p>
@@ -176,7 +176,7 @@
               </div>
               </button>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -214,7 +214,17 @@ const fetchTagline = async () => {
     const dummySentences = [
       "Ich zähle in Nullen und Einsen. Meistens Nullen.",
       "Vom Kaffee direkt in den Code. Bugfrei (meistens).",
-      "Fullstack-Entwickler mit einer leichten Dark-Mode-Sucht."
+      "Fullstack-Entwickler mit einer leichten Dark-Mode-Sucht.",
+      "Ich spreche fließend JSON und ein bisschen Menschlich.", 
+      "Mein Lieblings-String? 'It works on my machine'.",
+      "Ich baue Brücken – zwischen Frontend, Backend und deiner Erwartung.",
+      "0 Bugs? Challenge accepted.",
+      "Dieser Satz wurde nicht von einer KI generiert. Aber mein Code schon fast.", 
+      "Mein Code kompiliert beim ersten Mal. Meistens. Manchmal. Okay, selten. Aber dann richtig.",
+      "Ich bin nicht faul – ich bin effizient. Deshalb kopiere ich von Stack Overflow so schnell, dass es aussieht wie Eigenleistung.",
+      "80 % meiner Zeit verbringe ich mit Coden. Die anderen 20 % damit, herauszufinden, warum es nicht läuft.",
+      "Ich schreibe keine Kommentare. Mein Code ist selbsterklärend. – Zumindest für mich. Vor 3 Stunden.",
+      "Mein DevOps-Workflow: 'Es läuft lokal' → 'Es läuft lokal nicht mehr' → 'Ich suche einen neuen Job'."
     ]
 
     tagline.value = dummySentences[Math.floor(Math.random() * dummySentences.length)] || "Ich liebe Code."
