@@ -9,7 +9,7 @@
   <div 
     v-for="entry in entries"
     :key="entry.id" 
-    class="mb-4 rounded-xl border w-2/3 border-[color:var(--border)] p-4">
+    class="mb-4 rounded-xl border w-full lg:w-2/3 border-[color:var(--border)] p-4">
     
     <div class="flex gap-4">
       <img 
