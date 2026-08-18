@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<{
     <SegmentGroup.Indicator
       data-slot="segment-group-indicator"
       :class="cn(
-        'border-accent-background data-[orientation=horizontal]:bottom-0 data-[orientation=horizontal]:w-(--width) data-[orientation=horizontal]:translate-y-px data-[orientation=horizontal]:border-b-2 data-[orientation=vertical]:h-(--height) data-[orientation=vertical]:-translate-x-px data-[orientation=vertical]:border-l-2'
+        'border-accent data-[orientation=horizontal]:bottom-0 data-[orientation=horizontal]:w-(--width) data-[orientation=horizontal]:translate-y-px data-[orientation=horizontal]:border-b-2 data-[orientation=vertical]:h-(--height) data-[orientation=vertical]:-translate-x-px data-[orientation=vertical]:border-l-2'
       )"
     />
     <slot />
