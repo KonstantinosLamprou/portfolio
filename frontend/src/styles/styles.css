@@ -57,6 +57,8 @@
   --color-drawer-text: var(--drawer-text);
   --color-drawer-text-muted: var(--drawer-text-muted);
 
+  --color-content-text: var(--content-text);
+
   --animate-blink: blink 3s linear infinite;
   @keyframes blink {
     0%, 100% { opacity: 1; }
@@ -119,6 +121,9 @@
     --drawer-border: #e4e4e7;      /* Rahmen und Handle */
     --drawer-text: #09090b;        /* Fast Schwarz für gute Lesbarkeit */
     --drawer-text-muted: #71717a;  /* Mittleres Grau (zinc-500) für Subtexte */
+
+    /* Content Styles */
+    --content-text: #475569;
   }
 
   .dark {
@@ -173,6 +178,9 @@
     --drawer-border: #27272a;      /* border-zinc-800 */
     --drawer-text: #ffffff;        /* text-white */
     --drawer-text-muted: #a1a1aa;  /* text-zinc-400 */
+
+    /* Content Styles */
+    --content-text: #ffffff;
   }
 }
 

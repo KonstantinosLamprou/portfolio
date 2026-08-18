@@ -96,6 +96,20 @@ builder.Services.AddAuthentication(options =>
             context.Response.Redirect($"{frontendUrl}/auth/callback?error=cancelled");
             return Task.CompletedTask;
         };
+    options.Events.OnCreatingTicket = context =>
+        {
+            if (!context.User.TryGetProperty("email", out var emailElement) || 
+                emailElement.ValueKind == JsonValueKind.Null ||
+                string.IsNullOrEmpty(emailElement.GetString()))
+            {
+                var username = context.Identity?.Name ?? "unknown";
+                var fallbackEmail = $"github-{username}@no-email.local";
+                
+                context.Identity?.AddClaim(new Claim(ClaimTypes.Email, fallbackEmail));
+            }
+
+            return Task.CompletedTask;
+        };
 });
 
 builder.Services.Configure<AdminOptions>(

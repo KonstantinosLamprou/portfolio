@@ -10,7 +10,7 @@
     <!-- Die Bildunterschrift (wird nur gerendert, wenn eine im JSON steht) -->
     <figcaption
       v-if="block.data.caption"
-      class="mt-3 text-center text-sm text-slate-500 italic"
+      class="mt-3 text-center text-sm text-color-content-text italic"
     >
       {{ block.data.caption }}
     </figcaption>

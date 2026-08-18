@@ -1,5 +1,5 @@
 <template>
-  <p class="text-base md:text-lg leading-relaxed text-slate-600 mb-5">
+  <p class="text-base md:text-lg leading-relaxed text-color-content-text mb-5">
     <!-- Wenn dein Editor reinen Text liefert: -->
     {{ block.data.text }}
 

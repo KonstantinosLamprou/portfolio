@@ -7,7 +7,7 @@
     <BackButton v-show="!dialogState.open" class="hidden md:flex"/>
 
     <header class="text-center max-w-3xl mx-auto px-4 pt-16">
-      <h1 class="text-5xl font-extrabold text-slate-600 mb-12">{{ currentPost.title }}</h1>
+      <h1 class="text-5xl font-extrabold text-color-content-text mb-12">{{ currentPost.title }}</h1>
       <div class="grid grid-cols-2 text-sm max-md:gap-4 md:grid-cols-4">
         <div class='space-y-1 md:mx-auto'>
           <div class="text-muted-foreground">geschrieben von</div>
