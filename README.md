@@ -25,3 +25,53 @@
 
 ---
 
+<details>
+<summary><b>Table of Contents</b></summary>
+
+- [About the Project](#about-the-project)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [API](#api)
+- [Security](#security)
+- [Deployment](#deployment)
+- [Monitoring](#monitoring)
+- [Testing](#testing)
+- [Future Scope](#future-scope)
+- [Key Takeaways & Decisions](#key-takeaways--decisions)
+- [Author](#author)
+
+</details>
+
+## About the Project
+...
+
+## Tech Stack
+...
+
+## Project Structure
+...
+
+## API
+...
+
+## Security
+...
+
+## Deployment
+...
+
+## Monitoring
+...
+
+## Testing
+...
+
+## Future Scope
+...
+
+## Key Takeaways & Decisions
+...
+
+## Author
+...
+
