@@ -15,8 +15,8 @@
           Konstantinos Lamprou
         </h3>
         <div class="">Informatikstudent</div>
-        <div class="">Werkstudent, Meierhofer AG</div>
-        <div class="">Zurzeit: Test Engineer</div>
+        <div class="">Werkstudent, WSCAD</div>
+        <div class="">Zurzeit: Software Developer</div>
 
         //Svgs hier:
         <div class="flex space-x-4">

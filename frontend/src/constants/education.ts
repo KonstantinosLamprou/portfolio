@@ -3,7 +3,7 @@ import type { TimelineViewerData } from "@/types/TimelineViewerData";
 
 export const education: TimelineViewerData[] = [{
     title: 'B.Sc. Softwareentwicklung',
-    date: 'Okt 2024 - Sem 2027 (vorraussichtlich)',
+    date: 'Okt 2024 - Sep 2027 (vorraussichtlich)',
     description: `Studium mit dem Schwerpunkt in der Softwareentwicklung: 
     Programmieren, Software-Architektur und Projektarbeit von der Konzeption bis zur produktiven Umsetzung.`,
     latest: true, 
