@@ -1,4 +1,3 @@
-
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -9,10 +8,9 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 2Gi 
+      storage: 2Gi
 
 ---
-
 
 apiVersion: v1
 kind: Service
@@ -29,7 +27,6 @@ spec:
 
 ---
 
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -37,6 +34,9 @@ metadata:
   namespace: portfolio-prod
 spec:
   replicas: 1
+  # Nie zwei Postgres-Pods gleichzeitig auf demselben Volume
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: postgres
@@ -47,9 +47,15 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:15-alpine 
+          image: postgres:15-alpine
           ports:
             - containerPort: 5432
+          # Workaround: AppArmor blockiert Signale von gosu (Ubuntu 26.04 / Kernel 7.0),
+          # dadurch startet Postgres sonst nie. Nach größeren k3s/Ubuntu-Updates
+          # testweise entfernen und prüfen, ob es ohne läuft.
+          securityContext:
+            appArmorProfile:
+              type: Unconfined
           env:
             - name: POSTGRES_DB
               value: "portfoliodb"
@@ -63,6 +69,15 @@ spec:
                 secretKeyRef:
                   name: portfolio-secrets
                   key: DB_PASSWORD
+          # Pod gilt erst als bereit, wenn Postgres wirklich Verbindungen annimmt
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -U "$POSTGRES_USER" -d portfoliodb
+            initialDelaySeconds: 10
+            periodSeconds: 10
           # Hier sagen wir dem Container, wohin der Speicher gemountet wird
           volumeMounts:
             - name: postgres-storage
