@@ -5,6 +5,10 @@ using Backend.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Backend.Application.Common.Interfaces;
+using Backend.Infrastructure.Storage;
+using Amazon.S3;
+using Amazon.Runtime;
 
 namespace Backend.Infrastructure;
 
@@ -14,12 +18,31 @@ public static class DependencyInjection
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-        // DbContext mit PostgreSQL konfigurieren
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(connectionString));
 
-        // Repositories registrieren
         services.AddRepositories();
+
+        return services;
+    }
+
+    public static IServiceCollection AddObjectStorageService(this IServiceCollection services)
+    {
+        var endpoint  = Environment.GetEnvironmentVariable("S3_ENDPOINT"); 
+        var accessKey = Environment.GetEnvironmentVariable("S3_ACCESS_KEY"); 
+        var secretKey = Environment.GetEnvironmentVariable("S3_SECRET_KEY");     
+
+        services.AddSingleton<IAmazonS3>(_ => new AmazonS3Client(
+            new BasicAWSCredentials(accessKey, secretKey),
+            new AmazonS3Config
+            {
+                ServiceURL = endpoint,
+                ForcePathStyle = true,
+                RequestChecksumCalculation = RequestChecksumCalculation.WHEN_REQUIRED,
+                ResponseChecksumValidation = ResponseChecksumValidation.WHEN_REQUIRED
+            }));
+
+        services.AddScoped<IObjectStorageService, ObjectStorageService>();
 
         return services;
     }

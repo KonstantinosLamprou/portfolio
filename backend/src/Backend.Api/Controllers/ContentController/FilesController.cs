@@ -8,10 +8,10 @@ namespace Backend.Api.Controllers;
 [Route("api/files")]
 public class FilesController : ControllerBase
 {
-    private readonly IMinIOService _storageService;
+    private readonly IObjectStorageService _storageService;
+    private readonly string _bucketName = "portfolio-images"; 
 
-    // Das Interface wird hier per Dependency Injection injiziert
-    public FilesController(IMinIOService storageService)
+    public FilesController(IObjectStorageService storageService)
     {
         _storageService = storageService;
     }
@@ -26,13 +26,10 @@ public class FilesController : ControllerBase
         if (!file.ContentType.StartsWith("image/"))
             return BadRequest($"Nur Bilder sind erlaubt. Erhalten: {file.ContentType}");
 
-        // Öffne den Stream der hochgeladenen Datei
         using var stream = file.OpenReadStream();
         
-        // Speicher-Logik an den Service delegieren
-        var uniqueFileName = await _storageService.UploadImageAsync(stream, file.FileName, cancellationToken);
+        var uniqueFileName = await _storageService.UploadImageAsync(_bucketName, stream, file.FileName, file.ContentType, cancellationToken);
 
-        // Web-Logik: Absolute URL für das Frontend bauen
         var request = HttpContext.Request;
         var fileUrl = $"{request.Scheme}://{request.Host}/api/files/{uniqueFileName}";
 
@@ -48,7 +45,7 @@ public class FilesController : ControllerBase
             return BadRequest("Dateiname fehlt.");
 
         Response.ContentType = "image/jpeg";
-        await _storageService.GetFileAsync(fileName, Response.Body, cancellationToken);
+        await _storageService.GetFileAsync(_bucketName, fileName, Response.Body, cancellationToken);
         
         return new EmptyResult();
     }
@@ -67,7 +64,7 @@ public class FilesController : ControllerBase
             var fileName = Path.GetFileName(uri.LocalPath);
 
             // Lösch-Logik an den Service delegieren
-            var success = await _storageService.DeleteFileAsync(fileName, cancellationToken);
+            var success = await _storageService.DeleteFileAsync(_bucketName, fileName, cancellationToken);
 
             if (success)
                 return Ok(new { message = "Bild erfolgreich gelöscht." });

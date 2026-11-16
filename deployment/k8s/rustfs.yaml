@@ -1,0 +1,97 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rustfs-pvc
+  namespace: portfolio-prod
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: rustfs-service
+  namespace: portfolio-prod
+spec:
+  selector:
+    app: rustfs
+  ports:
+    - name: api
+      port: 9100
+      targetPort: 9000
+    - name: console
+      port: 9101
+      targetPort: 9001
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rustfs-deployment
+  namespace: portfolio-prod
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: rustfs
+  template:
+    metadata:
+      labels:
+        app: rustfs
+    spec:
+      initContainers:
+        - name: fix-permissions
+          image: alpine:3
+          command: ["sh", "-c", "chown -R 10001:10001 /data"]
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: rustfs-storage
+              mountPath: /data
+      containers:
+        - name: rustfs
+          image: rustfs/rustfs:latest  
+          args: ["/data"]
+          ports:
+            - name: api
+              containerPort: 9000
+            - name: console
+              containerPort: 9001
+          env:
+            - name: RUSTFS_ADDRESS
+              value: ":9000"
+            - name: RUSTFS_CONSOLE_ADDRESS
+              value: ":9001"
+            - name: RUSTFS_CONSOLE_ENABLE
+              value: "true"
+            - name: RUSTFS_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: portfolio-secrets
+                  key: S3_ACCESS_KEY
+            - name: RUSTFS_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: portfolio-secrets
+                  key: S3_SECRET_KEY
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 9000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - name: rustfs-storage
+              mountPath: /data
+      volumes:
+        - name: rustfs-storage
+          persistentVolumeClaim:
+            claimName: rustfs-pvc

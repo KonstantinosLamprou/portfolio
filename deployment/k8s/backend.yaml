@@ -48,18 +48,18 @@ spec:
                   key: DB_PASSWORD
             - name: FrontendUrl
               value: "https://kostas-lamprou.de"
-            - name: MINIO_ENDPOINT
-              value: "minio-service:9000" 
-            - name: MINIO_ACCESS_KEY
+            - name: S3_ENDPOINT
+              value: "http://rustfs-service:9100" 
+            - name: S3_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
                   name: portfolio-secrets
-                  key: MINIO_ROOT_USER
-            - name: MINIO_SECRET_KEY
+                  key: S3_ACCESS_KEY
+            - name: S3_SECRET_KEY
               valueFrom:
                 secretKeyRef:
                   name: portfolio-secrets
-                  key: MINIO_ROOT_PASSWORD
+                  key: S3_SECRET_KEY
             - name: ConnectionStrings__DefaultConnection
               value: "Host=postgres-service;Port=5432;Database=portfoliodb;Username=$(SECRET_USER);Password=$(SECRET_PASSWORD)"
             - name: Authentication__GitHub__ClientId

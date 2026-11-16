@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   db:
@@ -19,35 +18,31 @@ services:
       timeout: 5s
       retries: 5
   seq-service:
-      image: datalust/seq:latest
-      container_name: portfolio_seq
-      environment:
-        - ACCEPT_EULA=Y
-        - SEQ_FIRSTRUN_ADMINPASSWORD=${SEQ_FIRSTRUN_ADMINPASSWORD}
-      ports:
-        - "5341:80"
-      restart: unless-stopped
-      volumes:
-        - seq_data:/data
-  minio-dev:
-      image: minio/minio:latest
-      container_name: portfolio_minio
-      restart: always
-      ports:
-        - "9000:9000" # API für deinen .NET 
-        - "9001:9001" # für Browser
-      volumes:
-        - minio_data:/data
-      environment:
-        MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-        MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-      command: server /data --console-address ":9001"
-      healthcheck:
-       # Prüft, ob die MinIO API wirklich erreichbar ist
-        test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-        interval: 5s
-        timeout: 5s
-        retries: 5
+    image: datalust/seq:latest
+    container_name: portfolio_seq
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=${SEQ_FIRSTRUN_ADMINPASSWORD}
+    ports:
+      - "5341:80"
+    restart: unless-stopped
+    volumes:
+      - seq_data:/data
+  rustfs:
+    image: rustfs/rustfs:latest 
+    container_name: portfolio_rustfs
+    restart: unless-stopped
+    ports:
+      - "9000:9000"  
+      - "9001:9001"   
+    environment:
+      RUSTFS_ACCESS_KEY: ${S3_ACCESS_KEY}
+      RUSTFS_SECRET_KEY: ${S3_SECRET_KEY}
+      RUSTFS_CONSOLE_ENABLE: "true"
+    command: ["--address", ":9000", "--console-enable", "/data"]
+    volumes:
+      - rustfs-data:/data
+
   workspace:
     image: mcr.microsoft.com/devcontainers/dotnet:10.0
     container_name: portfolio_workspace
@@ -57,18 +52,18 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=db;Database=portfoliodb;Username=${DB_USER:-devuser};Password=${DB_PASSWORD:-devpass}
-      - MINIO_ENDPOINT=minio-dev:9000
-      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
-      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY}
+      - S3_SECRET_KEY=${S3_SECRET_KEY}
+      - S3_ENDPOINT=${S3_ENDPOINT}
     depends_on:
       db:
         condition: service_healthy
       seq-service:
         condition: service_started
-      minio-dev:
-        condition: service_healthy
+      rustfs:
+        condition: service_started
 
 volumes:
   postgres_data:
   seq_data:
-  minio_data:
+  rustfs-data:

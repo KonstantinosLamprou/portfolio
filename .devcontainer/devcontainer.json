@@ -18,7 +18,8 @@
         "Vue.volar",
         "dbaeumer.vscode-eslint",
         "ms-dotnettools.csharp",
-        "ms-dotnettools.vscode-dotnet-runtime"
+        "ms-dotnettools.vscode-dotnet-runtime",
+        "cweijan.vscode-postgresql-client2"
       ]
     }
   },
